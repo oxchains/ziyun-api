@@ -115,15 +115,17 @@ public class ChaincodeService extends BaseService {
         InstantiateProposalRequest instantiateProposalRequest = hfClient.newInstantiationProposalRequest();
         instantiateProposalRequest.setChaincodeID(chainCodeID);
         instantiateProposalRequest.setFcn("init");
-        instantiateProposalRequest.setArgs(new String[]{"a", "500", "b", "" + 200});
+        instantiateProposalRequest.setArgs(new String[]{});
 
             /*
               policy OR(Org1MSP.member, Org2MSP.member) meaning 1 signature from someone in either Org1 or Org2
               See README.md Chaincode endorsement policies section for more details.
             */
         ChaincodeEndorsementPolicy chaincodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
+        // TODO 背书策略
+        //chaincodeEndorsementPolicy.fromFile(new File(TEST_FIXTURES_PATH + "/members_from_org1_or_2.policy"));
         chaincodeEndorsementPolicy.fromYamlFile(new File(TEST_FIXTURES_PATH + "/chaincodeendorsementpolicy.yaml"));
-        instantiateProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
+        //instantiateProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
 
         Collection<ProposalResponse> successful = new ArrayList<>();
         // Send instantiate transaction to peers
