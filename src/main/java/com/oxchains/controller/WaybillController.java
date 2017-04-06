@@ -4,12 +4,10 @@ import com.oxchains.common.RespDTO;
 import com.oxchains.model.ziyun.Waybill;
 import com.oxchains.service.WaybillService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * WaybillController
@@ -26,7 +24,32 @@ public class WaybillController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     public RespDTO<String> add(@RequestBody String body) {
-        Waybill waybill = gson.fromJson(body, Waybill.class);
-        return waybillService.add(waybill);
+        try {
+            Waybill waybill = gson.fromJson(body, Waybill.class);
+            return waybillService.add(waybill);
+        } catch (Exception e) {
+            log.error("add waybill error!", e);
+        }
+        return RespDTO.fail();
+    }
+
+    @RequestMapping(value = "/docNumOrNoteNum", method = RequestMethod.GET)
+    public RespDTO<Waybill> queryDocNumOrNoteNum(@RequestParam String number) {
+        try {
+            return waybillService.getWaybillDataByDocNumOrNoteNum(number);
+        } catch (Exception e) {
+            log.error("query error!", e);
+        }
+        return RespDTO.fail();
+    }
+
+    @RequestMapping(value = "/{uniqueID}", method = RequestMethod.GET)
+    public RespDTO<List<Waybill>> queryUnique(@PathVariable String uniqueID) {
+        try {
+            return waybillService.getWaybillByID(uniqueID);
+        } catch (Exception e) {
+            log.error("query uniqueID error!", e);
+        }
+        return RespDTO.fail();
     }
 }

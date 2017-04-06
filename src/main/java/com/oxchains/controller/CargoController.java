@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -31,18 +32,28 @@ public class CargoController extends BaseController {
     public RespDTO<Boolean> install() {
         try {
             return RespDTO.success(cargoService.instantiateChaincode());
-        } catch (ProposalException | InvalidArgumentException | InterruptedException | TimeoutException | ExecutionException | IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return RespDTO.fail();
+    }
+
+    @RequestMapping(value = "/{code}", method = RequestMethod.GET)
+    public RespDTO<Cargo> getCargoInfo(@PathVariable String code) {
+        try {
+            return cargoService.getCargo(code);
+        } catch (InvalidArgumentException | ProposalException e) {
             e.printStackTrace();
         }
         return RespDTO.fail();
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public RespDTO<String> query(@RequestParam String code) {
+    public RespDTO<List<Cargo>> query(@RequestParam String NDCNumber, @RequestParam String productionBatch) {
         try {
-            return cargoService.getCargo(code);
-        } catch (InvalidArgumentException | ProposalException e) {
-            e.printStackTrace();
+            return cargoService.getBatchProductInfo(NDCNumber, productionBatch);
+        } catch (Exception e) {
+            log.error(String.format("query error! NDCNumber: %s, ProductionBatch: %s.", NDCNumber, productionBatch), e);
         }
         return RespDTO.fail();
     }

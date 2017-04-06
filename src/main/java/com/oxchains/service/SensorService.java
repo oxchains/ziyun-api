@@ -1,11 +1,20 @@
 package com.oxchains.service;
 
+import com.google.gson.reflect.TypeToken;
 import com.oxchains.common.RespDTO;
 import com.oxchains.model.ziyun.Sensor;
 import lombok.extern.slf4j.Slf4j;
+import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
+import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * SensorService
@@ -19,13 +28,21 @@ public class SensorService extends BaseService {
     @Resource
     private ChaincodeService chaincodeService;
 
-    public RespDTO<String> add(Sensor sensor) {
-        try {
-            String txID = chaincodeService.invoke("saveSensorData", new String[]{gson.toJson(sensor)});
-            return RespDTO.success("操作成功", txID);
-        } catch (Exception e) {
-            log.error("addSensor error!", e);
+    public RespDTO<String> add(Sensor sensor) throws InterruptedException, InvalidArgumentException, TimeoutException, ProposalException, ExecutionException {
+        String txID = chaincodeService.invoke("saveSensorData", new String[]{gson.toJson(sensor)});
+        return RespDTO.success("操作成功", txID);
+    }
+
+    public RespDTO<List<Sensor>> getSensorData(String number, Long startTime, Long endTime) throws InvalidArgumentException, ProposalException {
+        String jsonStr = chaincodeService.query("getSensorDataBySensorNum", new String[] { number, startTime + "", endTime + ""});
+        if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
+            jsonStr = chaincodeService.query("getSensorDataByEquipmentNum", new String[] { number, startTime + "", endTime + ""});
         }
-        return RespDTO.fail();
+        if (StringUtils.isEmpty(jsonStr)) {
+            return RespDTO.fail("没有数据");
+        }
+        Type type = new TypeToken<ArrayList<Sensor>>(){}.getType();
+        ArrayList<Sensor> list = gson.fromJson(jsonStr, type);
+        return RespDTO.success(list);
     }
 }

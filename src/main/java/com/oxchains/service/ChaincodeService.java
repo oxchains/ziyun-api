@@ -4,6 +4,7 @@ import com.oxchains.model.Customer;
 import com.oxchains.util.CryptoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.*;
+import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.hyperledger.fabric.sdk.exception.TransactionException;
@@ -107,7 +108,7 @@ public class ChaincodeService extends BaseService {
         }
     }
 
-    public void instantiateChaincode() throws IOException, ProposalException, InvalidArgumentException, InterruptedException, ExecutionException, TimeoutException {
+    public void instantiateChaincode() throws IOException, ProposalException, InvalidArgumentException, InterruptedException, ExecutionException, TimeoutException, ChaincodeEndorsementPolicyParseException {
         ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
                 .setVersion(CHAIN_CODE_VERSION)
                 .setPath(CHAIN_CODE_PATH).build();
@@ -119,9 +120,9 @@ public class ChaincodeService extends BaseService {
             /*
               policy OR(Org1MSP.member, Org2MSP.member) meaning 1 signature from someone in either Org1 or Org2
               See README.md Chaincode endorsement policies section for more details.
-              new File(TEST_FIXTURES_PATH + "/members_from_org1_or_2.policy")
             */
         ChaincodeEndorsementPolicy chaincodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
+        chaincodeEndorsementPolicy.fromYamlFile(new File(TEST_FIXTURES_PATH + "/chaincodeendorsementpolicy.yaml"));
         instantiateProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
 
         Collection<ProposalResponse> successful = new ArrayList<>();
@@ -198,7 +199,7 @@ public class ChaincodeService extends BaseService {
         return null;
     }
 
-    public String query(String func, String[] args) throws ProposalException, InvalidArgumentException {
+    public String query(String func, String[] args) {
         ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
                 .setVersion(CHAIN_CODE_VERSION).build();
         // .setPath(CHAIN_CODE_PATH).build(); // 查询不需要path
@@ -208,7 +209,12 @@ public class ChaincodeService extends BaseService {
         queryByChaincodeRequest.setFcn(func);
         queryByChaincodeRequest.setChaincodeID(chainCodeID);
 
-        Collection<ProposalResponse> queryProposals = chain.queryByChaincode(queryByChaincodeRequest, chain.getPeers());
+        Collection<ProposalResponse> queryProposals = null;
+        try {
+            queryProposals = chain.queryByChaincode(queryByChaincodeRequest, chain.getPeers());
+        } catch (InvalidArgumentException | ProposalException ignored) {
+            return null;
+        }
         for (ProposalResponse proposalResponse : queryProposals) {
             if (proposalResponse.isVerified() && proposalResponse.getStatus() == ProposalResponse.Status.SUCCESS) {
                 String payload = proposalResponse.getProposalResponse().getResponse().getPayload().toStringUtf8();
