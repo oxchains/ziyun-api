@@ -1,8 +1,9 @@
 package com.oxchains.service;
 
 import com.google.gson.reflect.TypeToken;
+import com.oxchains.bean.dto.WaybillDTO;
 import com.oxchains.common.RespDTO;
-import com.oxchains.model.ziyun.Waybill;
+import com.oxchains.bean.model.ziyun.Waybill;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.ProposalException;
@@ -49,8 +50,7 @@ public class WaybillService extends BaseService {
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
-        Type type = new TypeToken<ArrayList<Waybill>>(){}.getType();
-        ArrayList<Waybill> list = gson.fromJson(jsonStr, type);
-        return RespDTO.success(list);
+        WaybillDTO waybillDTO = simpleGson.fromJson(jsonStr, WaybillDTO.class);
+        return RespDTO.success(waybillDTO.getList());
     }
 }

@@ -12,4 +12,6 @@ import com.google.gson.GsonBuilder;
  */
 public abstract class BaseService {
     protected final Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+
+    protected final Gson simpleGson = new Gson();
 }

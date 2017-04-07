@@ -1,8 +1,9 @@
 package com.oxchains.service;
 
 import com.google.gson.reflect.TypeToken;
+import com.oxchains.bean.dto.SensorDTO;
 import com.oxchains.common.RespDTO;
-import com.oxchains.model.ziyun.Sensor;
+import com.oxchains.bean.model.ziyun.Sensor;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.ProposalException;
@@ -41,8 +42,7 @@ public class SensorService extends BaseService {
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
-        Type type = new TypeToken<ArrayList<Sensor>>(){}.getType();
-        ArrayList<Sensor> list = gson.fromJson(jsonStr, type);
-        return RespDTO.success(list);
+        SensorDTO sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
+        return RespDTO.success(sensorDTO.getList());
     }
 }

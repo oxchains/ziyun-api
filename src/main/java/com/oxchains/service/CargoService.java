@@ -1,13 +1,13 @@
 package com.oxchains.service;
 
 import com.google.gson.reflect.TypeToken;
+import com.oxchains.bean.dto.CargoDTO;
 import com.oxchains.common.RespDTO;
-import com.oxchains.model.ziyun.Cargo;
+import com.oxchains.bean.model.ziyun.Cargo;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.ProposalException;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -55,7 +55,7 @@ public class CargoService extends BaseService {
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
-        Type type = new TypeToken<ArrayList<Cargo>>(){}.getType();
-        return RespDTO.success(gson.fromJson(jsonStr, type));
+        CargoDTO cargoDTO = simpleGson.fromJson(jsonStr, CargoDTO.class);
+        return RespDTO.success(cargoDTO.getList());
     }
 }

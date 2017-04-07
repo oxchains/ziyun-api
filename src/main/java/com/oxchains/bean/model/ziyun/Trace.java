@@ -1,4 +1,4 @@
-package com.oxchains.model.ziyun;
+package com.oxchains.bean.model.ziyun;
 
 import com.oxchains.common.BaseEntity;
 import lombok.Data;

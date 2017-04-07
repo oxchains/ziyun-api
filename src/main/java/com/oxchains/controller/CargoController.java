@@ -1,7 +1,7 @@
 package com.oxchains.controller;
 
 import com.oxchains.common.RespDTO;
-import com.oxchains.model.ziyun.Cargo;
+import com.oxchains.bean.model.ziyun.Cargo;
 import com.oxchains.service.CargoService;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -9,10 +9,7 @@ import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 
 /**

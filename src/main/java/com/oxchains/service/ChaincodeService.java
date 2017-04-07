@@ -1,6 +1,6 @@
 package com.oxchains.service;
 
-import com.oxchains.model.Customer;
+import com.oxchains.bean.model.Customer;
 import com.oxchains.util.CryptoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.*;
@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -30,7 +29,7 @@ import java.util.concurrent.TimeoutException;
 @Service
 @Slf4j
 public class ChaincodeService extends BaseService {
-    private static final String CHAIN_CODE_NAME = "demo.go";
+    private static final String CHAIN_CODE_NAME = "ziyun_demo";
 
     private static final String CHAIN_CODE_PATH = "ziyun_cc";
 
@@ -75,7 +74,7 @@ public class ChaincodeService extends BaseService {
             Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
             try {
                 // 只有第一次需要创建chain
-                chain = createChain(hfClient, configPath, orderer, "foo");
+                chain = createChain(hfClient, configPath, orderer, chainName);
             } catch (Exception e2) {
                 chain = getChain(hfClient, chainName, orderer);
             }
@@ -117,15 +116,11 @@ public class ChaincodeService extends BaseService {
         instantiateProposalRequest.setFcn("init");
         instantiateProposalRequest.setArgs(new String[]{});
 
-            /*
-              policy OR(Org1MSP.member, Org2MSP.member) meaning 1 signature from someone in either Org1 or Org2
-              See README.md Chaincode endorsement policies section for more details.
-            */
         ChaincodeEndorsementPolicy chaincodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
-        // TODO 背书策略
+        // 背书策略
         //chaincodeEndorsementPolicy.fromFile(new File(TEST_FIXTURES_PATH + "/members_from_org1_or_2.policy"));
         chaincodeEndorsementPolicy.fromYamlFile(new File(TEST_FIXTURES_PATH + "/chaincodeendorsementpolicy.yaml"));
-        //instantiateProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
+        instantiateProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
 
         Collection<ProposalResponse> successful = new ArrayList<>();
         // Send instantiate transaction to peers
@@ -133,7 +128,7 @@ public class ChaincodeService extends BaseService {
         for (ProposalResponse response : responses) {
             if (response.isVerified() && response.getStatus() == ProposalResponse.Status.SUCCESS) {
                 successful.add(response);
-                System.out.println(String.format("Succesful instantiate proposal response Txid: %s from peer %s",
+                log.info(String.format("Succesful instantiate proposal response Txid: %s from peer %s",
                         response.getTransactionID(),
                         response.getPeer().getName()));
             } else {
@@ -142,7 +137,7 @@ public class ChaincodeService extends BaseService {
         }
 
         /// Send instantiate transaction to orderer
-        chain.sendTransaction(successful, chain.getOrderers()).get(120, TimeUnit.SECONDS);
+        chain.sendTransaction(successful, chain.getOrderers());
         System.out.println("instantiateChaincode done");
     }
 
@@ -162,6 +157,13 @@ public class ChaincodeService extends BaseService {
     public Chain createChain(HFClient hfClient, String configPath, Orderer orderer, String chainName) throws IOException, InvalidArgumentException, TransactionException, ProposalException {
         ChainConfiguration chainConfiguration = new ChainConfiguration(new File(configPath));
         Chain newChain = hfClient.newChain(chainName, orderer, chainConfiguration);
+        /**
+         * defaultProperty(GOSSIPWAITTIME, "5000");
+         defaultProperty(INVOKEWAITTIME, "100000");
+         defaultProperty(DEPLOYWAITTIME, "120000");
+         */
+        chain.setTransactionWaitTime(100000);
+        chain.setDeployWaitTime(120000);
 
         Set<Peer> peers = getPeers();
         for (Peer peer : peers) {
@@ -183,6 +185,8 @@ public class ChaincodeService extends BaseService {
     }
 
     public String invoke(String func, String[] args) throws InvalidArgumentException, ProposalException, InterruptedException, ExecutionException, TimeoutException {
+        String txID = null;
+
         ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
                 .setVersion(CHAIN_CODE_VERSION).build();
 
@@ -192,13 +196,19 @@ public class ChaincodeService extends BaseService {
         transactionProposalRequest.setArgs(args);
 
         Collection<ProposalResponse> transactionPropResp = chain.sendTransactionProposal(transactionProposalRequest, chain.getPeers());
+
+        // send orderer
+        Collection<ProposalResponse> successful = new ArrayList<>();
         for (ProposalResponse response : transactionPropResp) {
             if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
-                return response.getTransactionID();
+                txID = response.getTransactionID();
+                System.out.println("txID: " + txID);
+                successful.add(response);
             }
         }
+        chain.sendTransaction(successful, chain.getOrderers());
 
-        return null;
+        return txID;
     }
 
     public String query(String func, String[] args) {
@@ -220,6 +230,7 @@ public class ChaincodeService extends BaseService {
         for (ProposalResponse proposalResponse : queryProposals) {
             if (proposalResponse.isVerified() && proposalResponse.getStatus() == ProposalResponse.Status.SUCCESS) {
                 String payload = proposalResponse.getProposalResponse().getResponse().getPayload().toStringUtf8();
+                System.out.println(payload);
                 return payload;
             }
         }

@@ -1,7 +1,7 @@
 package com.oxchains.controller;
 
 import com.oxchains.common.RespDTO;
-import com.oxchains.model.ziyun.Sensor;
+import com.oxchains.bean.model.ziyun.Sensor;
 import com.oxchains.service.SensorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

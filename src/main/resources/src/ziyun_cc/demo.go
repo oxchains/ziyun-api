@@ -199,7 +199,7 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
         return t.getTransferInfoByUniqueID(stub, args)
 
     default:
-        return shim.Error("Unsupported operation " + function)
+        return shim.Error("Unsupported operation")
     }
 }
 
@@ -226,7 +226,7 @@ func (t *myChaincode) saveProductInfo(stub shim.ChaincodeStubInterface, args []s
     }
 
     //save the json info
-    err = stub.PutState(product.DrugElectronicSupervisionCode, bProduct)
+    err = stub.PutState("product" + sp + product.DrugElectronicSupervisionCode, bProduct)
     if err != nil {
     	return shim.Error("putting state err: " +  err.Error())
     }
@@ -272,16 +272,17 @@ func (t *myChaincode) saveSensorData(stub shim.ChaincodeStubInterface, args []st
 		return shim.Error("bad format of the eqmtNum")
 	}
 	//save the json data
-	key := sensor.SensorNumber + sp + sTm
+	key := "sensor" + sp + sensor.SensorNumber + sp + sTm
 	err = stub.PutState(key, bSensor)
 	if err != nil {
 		return shim.Error("saveSensorData operation failed. Error while putting the SensorData : " + err.Error())
 	}
 	//save the other info
-	err = stub.PutState(sensor.SensorNumber, []byte(eqmtNum))
+	err = stub.PutState("eq" + sp + eqmtNum, []byte(sensor.SensorNumber))
 	if err != nil {
 		return shim.Error("saveSensorData operation failed. Error while putting the other info : " + err.Error())
 	}
+	fmt.Println("the equNUm is " + eqmtNum + "and the sensorNum is " + sensor.SensorNumber)
 	return shim.Success(nil)
 }
 
@@ -300,12 +301,12 @@ func (t *myChaincode) saveTransferInfo(stub shim.ChaincodeStubInterface, args []
 	noteNum := transfer.ShippingNoteNumber
 
 	//save the json data
-	err = stub.PutState(docNum, bTransfer)
+	err = stub.PutState("transfer" + sp + docNum, bTransfer)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 	//save the other info
-	err = stub.PutState(docNum, []byte(noteNum))
+	err = stub.PutState("tran" + sp + noteNum, []byte(docNum))
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -313,17 +314,18 @@ func (t *myChaincode) saveTransferInfo(stub shim.ChaincodeStubInterface, args []
 	for _, trace := range transfer.GoodsTraceList {
 		uniqueId := trace.UniqueID
 		//find the uniquedId's state 
-		value, err := stub.GetState(uniqueId)
+		value, err := stub.GetState("tranUni" + sp + uniqueId)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
 		newValue := ""
+		//some check for the duplicate???
 		if value == nil {
-			newValue = uniqueId
+			newValue = docNum
 		} else {
-			newValue = string(value) + sp + uniqueId
+			newValue = string(value) + sp + docNum
 		}
-		err = stub.PutState(uniqueId, []byte(newValue))
+		err = stub.PutState("tranUni" + sp + uniqueId, []byte(newValue))
 		if err != nil {
 			return shim.Error(err.Error())
 		}
@@ -336,7 +338,7 @@ func (t *myChaincode) getProductInfo(stub shim.ChaincodeStubInterface, args []st
 	if len(args) < 1{
         return shim.Error("getProductInfo operation must have 1 arg")
     }
-    key := string(args[0])
+    key := "product" + sp + string(args[0])
 
     value, err := stub.GetState(key)
     if err != nil{
@@ -363,22 +365,26 @@ func (t *myChaincode) getBatchProductInfo(stub shim.ChaincodeStubInterface, args
 	}
 	listValue := strings.Split(string(value), sp)
 	//get the value of the list
-	var ret []string 
+	var ret string
+	ret = "{\"list\":["
+	flag := true
 	for _, ky := range listValue {
 		if ky == "" {
 			continue
 		}
-		value, err = stub.GetState(ky)
+		value, err = stub.GetState("product" + sp + ky)
 		if err != nil {
-			return shim.Error("Error while getting the data of the key: " + key + "and the err is : " + err.Error())
+			return shim.Error("Error while getting the data of the key: " + ky + "and the err is : " + err.Error())
 		}
-		ret = append(ret, string(value))
+		if flag {
+			ret = ret + string(value)
+			flag = false
+		} else {
+			ret = ret + "," + string(value)
+		}
 	}
-	jsonRet, err := json.Marshal(ret)
-	if err != nil {
-		return shim.Error("query operation failed. Error marshaling JSON: " + err.Error())
-	}
-	return shim.Success(jsonRet)
+	ret = ret + "]}"
+	return shim.Success([]byte(ret))
 }
 
 func (t *myChaincode) getSensorDataBySensorNum(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -391,8 +397,8 @@ func (t *myChaincode) getSensorDataBySensorNum(stub shim.ChaincodeStubInterface,
 	endTime := args[2]
 	//fix? do some check for the time????
 
-	startKey := sensorNum + sp + startTime
-	endKey := sensorNum + sp + endTime
+	startKey := "sensor" + sp + sensorNum + sp + startTime
+	endKey := "sensor" + sp + sensorNum + sp + endTime
 
 	resultsIterator, err := stub.GetStateByRange(startKey, endKey)
 	if err != nil {
@@ -400,28 +406,33 @@ func (t *myChaincode) getSensorDataBySensorNum(stub shim.ChaincodeStubInterface,
 	}
 	defer resultsIterator.Close()
 
-	var ret []string
+	var ret string
+	ret = "{\"list\":["
+	flag := true
 	for resultsIterator.HasNext() {
-		_, res, err := resultsIterator.Next()
+		_, value, err := resultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-		ret = append(ret, string(res))
-
+		if flag {
+			ret = ret + string(value)
+			flag = false
+		} else {
+			ret = ret + "," + string(value)
+		}
+		//ret = append(ret, string(res))
 	}
-	jsonRet, err := json.Marshal(ret)
-	if err != nil {
-		return shim.Error("query operation failed. Error marshaling JSON: " + err.Error())
-	}
-	return shim.Success(jsonRet)
+	ret = ret + "]}"
+	return shim.Success([]byte(ret))
 }
 
 func (t *myChaincode) getSensorDataByEquipmentNum(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(args) < 3{
-		return shim.Error("getSensorDataBySensorNum operation must have 3 args: EquipmentNumber, startTime and endTime")
+		return shim.Error("getSensorDataByEquipmentNum operation must have 3 args: EquipmentNumber, startTime and endTime")
 	}
+	fmt.Println("the equNum is :" + args[0])
 	//get the SensorNum of the EquipmentNumber
-	value, err := stub.GetState(args[0])
+	value, err := stub.GetState("eq" + sp + args[0])
 	if err != nil {
 		return shim.Error("getSensorDataByEquipmentNum operation failed while get the SensorNumber : " + err.Error())
 	}
@@ -438,7 +449,7 @@ func (t *myChaincode) getTransferInfoByDocNum(stub shim.ChaincodeStubInterface, 
 	}
 	//get the args
 	docNum := args[0]
-	value, err := stub.GetState(docNum)
+	value, err := stub.GetState("transfer" + sp + docNum)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -456,7 +467,7 @@ func (t *myChaincode) getTransferInfoByNoteNum(stub shim.ChaincodeStubInterface,
 	//get the args
 	noteNum := args[0]
 	//get the docNum of this noteNum
-	value, err := stub.GetState(noteNum)
+	value, err := stub.GetState("tran" + sp + noteNum)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -474,24 +485,27 @@ func (t *myChaincode) getTransferInfoByUniqueID(stub shim.ChaincodeStubInterface
 	//get the args[0]
 	uniqueId := args[0]
 	//get the list of the uniquedid
-	value, err := stub.GetState(uniqueId)
+	value, err := stub.GetState("tranUni" + sp + uniqueId)
 	listValue := strings.Split(string(value), sp)
+		
 
-	var ret []string
+	var ret string 
+	ret = "{\"list\":["
+	flag := true
 	for _, ky := range listValue {
-		value, err = stub.GetState(ky)
+		value, err = stub.GetState("transfer" + sp + ky)
 		if err != nil {
 			return shim.Error("getTransferInfoByUniqueID operation failed while get the -" + ky + "-, and the err is :" + err.Error())
 		}
 		//check the nil of the value?
-		ret = append(ret, string(value))
+		if flag {
+			ret = ret + string(value)
+			flag = false
+		} else {
+			ret = ret + "," + string(value)
+		}
 	}
-	jsonRet, err := json.Marshal(ret)
-	if err != nil {
-		return shim.Error("query operation failed. Error marshaling JSON: " + err.Error())
-	}
-	return shim.Success(jsonRet)
+	ret = ret + "]}"
+	return shim.Success([]byte(ret))
 }
-
-
 

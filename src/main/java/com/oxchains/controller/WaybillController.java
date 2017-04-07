@@ -1,7 +1,7 @@
 package com.oxchains.controller;
 
 import com.oxchains.common.RespDTO;
-import com.oxchains.model.ziyun.Waybill;
+import com.oxchains.bean.model.ziyun.Waybill;
 import com.oxchains.service.WaybillService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.oxchains.model;
+package com.oxchains.bean.model;
 
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.User;
