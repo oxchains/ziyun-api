@@ -4,8 +4,6 @@ import com.oxchains.common.RespDTO;
 import com.oxchains.bean.model.ziyun.Cargo;
 import com.oxchains.service.CargoService;
 import lombok.extern.slf4j.Slf4j;
-import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
-import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,7 +28,7 @@ public class CargoController extends BaseController {
         try {
             return RespDTO.success(cargoService.instantiateChaincode());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("install error!", e);
         }
         return RespDTO.fail();
     }
@@ -39,8 +37,8 @@ public class CargoController extends BaseController {
     public RespDTO<Cargo> getCargoInfo(@PathVariable String code) {
         try {
             return cargoService.getCargo(code);
-        } catch (InvalidArgumentException | ProposalException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("getCargoInfo erro!", e);
         }
         return RespDTO.fail();
     }

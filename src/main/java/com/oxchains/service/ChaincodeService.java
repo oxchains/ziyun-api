@@ -8,7 +8,10 @@ import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseExcep
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.hyperledger.fabric.sdk.exception.TransactionException;
+import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import org.hyperledger.fabric_ca.sdk.HFCAClient;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -28,61 +31,31 @@ import java.util.concurrent.TimeoutException;
  */
 @Service
 @Slf4j
-public class ChaincodeService extends BaseService {
-    private static final String CHAIN_CODE_NAME = "ziyun_demo";
+public class ChaincodeService extends BaseService implements InitializingBean {
+    @Value("${chaincode.name}")
+    private String CHAIN_CODE_NAME;
 
-    private static final String CHAIN_CODE_PATH = "ziyun_cc";
+    @Value("${chaincode.path}")
+    private String CHAIN_CODE_PATH;
 
-    private static final String CHAIN_CODE_VERSION = "1.0";
+    @Value("${chaincode.version}")
+    private String CHAIN_CODE_VERSION;
 
-    private static final String TEST_FIXTURES_PATH = "/Users/liuruichao/javaSRC/oxchains/ziyundemo/src/main/resources";
+    @Value("${chaincode.resource.path}")
+    private String TEST_FIXTURES_PATH;
 
-    private static final String CA_URL = "http://localhost:7054";
+    @Value("${chaincode.ca.url}")
+    private String CA_URL;
 
-    private static final String ORDERER_URL = "grpc://localhost:7050";
+    @Value("${chaincode.orderer.url}")
+    private String ORDERER_URL;
 
-    private static final String PEER_LIST = "peer0@grpc://localhost:7051,peer1@grpc://localhost:7056";
+    @Value("${chaincode.peer.address.list}")
+    private String PEER_LIST;
 
     private Chain chain;
 
     private HFClient hfClient;
-
-    public ChaincodeService() {
-        try {
-            String username = "admin";
-            String password = "adminpw";
-            ArrayList<String> roles = new ArrayList<>();
-            String account = null;
-            String affiliation = "peerOrg1";
-            String mspID = "Org1MSP";
-            //String mspID = "ziyun.MSP";
-            String configPath = "/Users/liuruichao/javaSRC/oxchains/ziyundemo/src/main/resources/foo.tx";
-            String ordererName = "orderer0";
-            String chainName = "foo";
-
-            MemberServices memberServices = new HFCAClient(CA_URL, null);
-            memberServices.setCryptoSuite(CryptoUtils.createCryptoSuite());
-            Enrollment enrollment = memberServices.enroll(username, password);
-
-            Customer customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
-
-            hfClient = HFClient.createNewInstance();
-            hfClient.setCryptoSuite(CryptoUtils.createCryptoSuite());
-            hfClient.setMemberServices(memberServices);
-            hfClient.setUserContext(customer);
-
-            Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
-            try {
-                // 只有第一次需要创建chain
-                chain = createChain(hfClient, configPath, orderer, chainName);
-            } catch (Exception e2) {
-                chain = getChain(hfClient, chainName, orderer);
-            }
-        } catch (Exception e) {
-            log.error("CargoService init error!", e);
-            System.exit(1);
-        }
-    }
 
     public void installChaincode() throws InvalidArgumentException, ProposalException {
         ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
@@ -94,8 +67,7 @@ public class ChaincodeService extends BaseService {
         installProposalRequest.setChaincodeSourceLocation(new File(TEST_FIXTURES_PATH));
         installProposalRequest.setChaincodeVersion(CHAIN_CODE_VERSION);
 
-        Collection<Peer> peersFromOrg = chain.getPeers();
-        Collection<ProposalResponse> responses = chain.sendInstallProposal(installProposalRequest, peersFromOrg);
+        Collection<ProposalResponse> responses = chain.sendInstallProposal(installProposalRequest, chain.getPeers());
         for (ProposalResponse response : responses) {
             if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
                 System.out.println(String.format("Successful install proposal response Txid: %s from peer %s",
@@ -118,27 +90,29 @@ public class ChaincodeService extends BaseService {
 
         ChaincodeEndorsementPolicy chaincodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
         // 背书策略
-        //chaincodeEndorsementPolicy.fromFile(new File(TEST_FIXTURES_PATH + "/members_from_org1_or_2.policy"));
-        chaincodeEndorsementPolicy.fromYamlFile(new File(TEST_FIXTURES_PATH + "/chaincodeendorsementpolicy.yaml"));
+        chaincodeEndorsementPolicy.fromFile(new File(TEST_FIXTURES_PATH + "/members_from_org1_or_2.policy"));
+        //chaincodeEndorsementPolicy.fromYamlFile(new File(TEST_FIXTURES_PATH + "/chaincodeendorsementpolicy.yaml"));
         instantiateProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
 
         Collection<ProposalResponse> successful = new ArrayList<>();
         // Send instantiate transaction to peers
         Collection<ProposalResponse> responses = chain.sendInstantiationProposal(instantiateProposalRequest, chain.getPeers());
-        for (ProposalResponse response : responses) {
-            if (response.isVerified() && response.getStatus() == ProposalResponse.Status.SUCCESS) {
-                successful.add(response);
-                log.info(String.format("Succesful instantiate proposal response Txid: %s from peer %s",
-                        response.getTransactionID(),
-                        response.getPeer().getName()));
-            } else {
-                System.out.println("Instantiate Chaincode error! " + response.getMessage());
+        if (responses != null && responses.size() > 0) {
+            for (ProposalResponse response : responses) {
+                if (response.isVerified() && response.getStatus() == ProposalResponse.Status.SUCCESS) {
+                    successful.add(response);
+                    log.info(String.format("Succesful instantiate proposal response Txid: %s from peer %s",
+                            response.getTransactionID(),
+                            response.getPeer().getName()));
+                } else {
+                    System.out.println("Instantiate Chaincode error! " + response.getMessage());
+                }
             }
-        }
 
-        /// Send instantiate transaction to orderer
-        chain.sendTransaction(successful, chain.getOrderers());
-        System.out.println("instantiateChaincode done");
+            /// Send instantiate transaction to orderer
+            chain.sendTransaction(successful, chain.getOrderers());
+            System.out.println("instantiateChaincode done");
+        }
     }
 
     public Chain getChain(HFClient hfClient, String chainName, Orderer orderer) throws InvalidArgumentException, TransactionException {
@@ -157,11 +131,6 @@ public class ChaincodeService extends BaseService {
     public Chain createChain(HFClient hfClient, String configPath, Orderer orderer, String chainName) throws IOException, InvalidArgumentException, TransactionException, ProposalException {
         ChainConfiguration chainConfiguration = new ChainConfiguration(new File(configPath));
         Chain newChain = hfClient.newChain(chainName, orderer, chainConfiguration);
-        /**
-         * defaultProperty(GOSSIPWAITTIME, "5000");
-         defaultProperty(INVOKEWAITTIME, "100000");
-         defaultProperty(DEPLOYWAITTIME, "120000");
-         */
         chain.setTransactionWaitTime(100000);
         chain.setDeployWaitTime(120000);
 
@@ -230,11 +199,45 @@ public class ChaincodeService extends BaseService {
         for (ProposalResponse proposalResponse : queryProposals) {
             if (proposalResponse.isVerified() && proposalResponse.getStatus() == ProposalResponse.Status.SUCCESS) {
                 String payload = proposalResponse.getProposalResponse().getResponse().getPayload().toStringUtf8();
-                System.out.println(payload);
                 return payload;
             }
         }
 
         return null;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try {
+            String username = "admin";
+            String password = "adminpw";
+            ArrayList<String> roles = new ArrayList<>();
+            String account = null;
+            String affiliation = "peerOrg1";
+            String mspID = "Org1MSP";
+            //String mspID = "ziyun.MSP";
+            String configPath = "/Users/liuruichao/javaSRC/oxchains/ziyundemo/src/main/resources/foo.tx";
+            String ordererName = "orderer0";
+            String chainName = "foo";
+
+            hfClient = HFClient.createNewInstance();
+            hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
+            hfClient.setMemberServices(new HFCAClient(CA_URL, null));
+
+            Enrollment enrollment = hfClient.getMemberServices().enroll(username, password);
+            Customer customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
+            hfClient.setUserContext(customer);
+
+            Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
+            try {
+                // 只有第一次需要创建chain
+                chain = createChain(hfClient, configPath, orderer, chainName);
+            } catch (Exception e2) {
+                chain = getChain(hfClient, chainName, orderer);
+            }
+        } catch (Exception e) {
+            log.error("CargoService init error!", e);
+            System.exit(1);
+        }
     }
 }

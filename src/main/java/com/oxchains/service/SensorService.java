@@ -1,6 +1,5 @@
 package com.oxchains.service;
 
-import com.google.gson.reflect.TypeToken;
 import com.oxchains.bean.dto.SensorDTO;
 import com.oxchains.common.RespDTO;
 import com.oxchains.bean.model.ziyun.Sensor;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -36,13 +33,14 @@ public class SensorService extends BaseService {
 
     public RespDTO<List<Sensor>> getSensorData(String number, Long startTime, Long endTime) throws InvalidArgumentException, ProposalException {
         String jsonStr = chaincodeService.query("getSensorDataBySensorNum", new String[] { number, startTime + "", endTime + ""});
-        if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
+        SensorDTO sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
+        if (sensorDTO.getList() == null || sensorDTO.getList().size() <= 0) {
             jsonStr = chaincodeService.query("getSensorDataByEquipmentNum", new String[] { number, startTime + "", endTime + ""});
         }
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
-        SensorDTO sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
+        sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
         return RespDTO.success(sensorDTO.getList());
     }
 }
