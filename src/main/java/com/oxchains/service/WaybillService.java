@@ -1,6 +1,5 @@
 package com.oxchains.service;
 
-import com.google.gson.reflect.TypeToken;
 import com.oxchains.bean.dto.WaybillDTO;
 import com.oxchains.common.RespDTO;
 import com.oxchains.bean.model.ziyun.Waybill;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;

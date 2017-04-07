@@ -64,6 +64,6 @@ public class CargoController extends BaseController {
         } catch (Exception e) {
             log.error("add cargo error!", e);
         }
-        return RespDTO.fail("系统繁忙，请稍后再试!");
+        return RespDTO.fail();
     }
 }
