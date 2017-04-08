@@ -52,6 +52,9 @@ public class ChaincodeService extends BaseService implements InitializingBean {
     @Value("${chaincode.peer.address.list}")
     private String PEER_LIST;
 
+    @Value("${chain.config.path}")
+    private String configPath;
+
     private Chain chain;
 
     private HFClient hfClient;
@@ -112,7 +115,7 @@ public class ChaincodeService extends BaseService implements InitializingBean {
         }
     }
 
-    public Chain getChain(HFClient hfClient, String chainName, Orderer orderer) throws InvalidArgumentException, TransactionException {
+    public Chain getChain(String chainName, Orderer orderer) throws InvalidArgumentException, TransactionException {
         Chain chain = hfClient.newChain(chainName);
 
         Set<Peer> peers = getPeers();
@@ -125,15 +128,15 @@ public class ChaincodeService extends BaseService implements InitializingBean {
         return chain;
     }
 
-    public Chain createChain(HFClient hfClient, String configPath, Orderer orderer, String chainName) throws IOException, InvalidArgumentException, TransactionException, ProposalException {
+    public Chain createChain(String configPath, Orderer orderer, String chainName) throws IOException, InvalidArgumentException, TransactionException, ProposalException {
         ChainConfiguration chainConfiguration = new ChainConfiguration(new File(configPath));
         Chain newChain = hfClient.newChain(chainName, orderer, chainConfiguration);
-        chain.setTransactionWaitTime(100000);
-        chain.setDeployWaitTime(120000);
+        newChain.setTransactionWaitTime(100000);
+        newChain.setDeployWaitTime(120000);
 
         Set<Peer> peers = getPeers();
         for (Peer peer : peers) {
-            newChain.joinPeer(peer);
+            System.out.println("join chain: " + newChain.joinPeer(peer));
         }
 
         newChain.initialize();
@@ -158,14 +161,14 @@ public class ChaincodeService extends BaseService implements InitializingBean {
         transactionProposalRequest.setFcn(func);
         transactionProposalRequest.setArgs(args);
 
+        // send Proposal to peers
         Collection<ProposalResponse> transactionPropResp = chain.sendTransactionProposal(transactionProposalRequest, chain.getPeers());
 
-        // send orderer
+        // send Proposal to orderers
         Collection<ProposalResponse> successful = new ArrayList<>();
         for (ProposalResponse response : transactionPropResp) {
             if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
                 txID = response.getTransactionID();
-                System.out.println("txID: " + txID);
                 successful.add(response);
             }
         }
@@ -206,7 +209,6 @@ public class ChaincodeService extends BaseService implements InitializingBean {
             String affiliation = "peerOrg1";
             String mspID = "Org1MSP";
             //String mspID = "ziyun.MSP";
-            String configPath = "/Users/liuruichao/javaSRC/oxchains/ziyundemo/src/main/resources/foo.tx";
             String ordererName = "orderer0";
             String chainName = "foo";
 
@@ -219,11 +221,15 @@ public class ChaincodeService extends BaseService implements InitializingBean {
             hfClient.setUserContext(customer);
 
             Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
-            try {
                 // 只有第一次需要创建chain
-                chain = createChain(hfClient, configPath, orderer, chainName);
-            } catch (Exception e2) {
-                chain = getChain(hfClient, chainName, orderer);
+            // IOException, InvalidArgumentException, TransactionException, ProposalException
+            try {
+                chain = createChain(configPath, orderer, chainName);
+            } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
+                log.warn("createChain error!", e);
+                chain = getChain(chainName, orderer);
+            } catch (Exception e) {
+                log.error("createChain error!", e);
             }
             chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
                     .setVersion(CHAIN_CODE_VERSION)

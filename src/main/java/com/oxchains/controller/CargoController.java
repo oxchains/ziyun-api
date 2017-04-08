@@ -58,7 +58,6 @@ public class CargoController extends BaseController {
     public RespDTO<String> add(@RequestBody String body) {
         try {
             Cargo cargo = gson.fromJson(body, Cargo.class);
-            System.out.println(cargo);
             return cargoService.addCargo(cargo);
         } catch (Exception e) {
             log.error("add cargo error!", e);
