@@ -1,7 +1,6 @@
 package com.oxchains.service;
 
 import com.oxchains.bean.model.Customer;
-import com.oxchains.util.CryptoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
@@ -57,13 +56,11 @@ public class ChaincodeService extends BaseService implements InitializingBean {
 
     private HFClient hfClient;
 
+    private ChainCodeID chainCodeID;
+
     public void installChaincode() throws InvalidArgumentException, ProposalException {
-        ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
-                .setVersion(CHAIN_CODE_VERSION)
-                .setPath(CHAIN_CODE_PATH).build();
         InstallProposalRequest installProposalRequest = hfClient.newInstallProposalRequest();
         installProposalRequest.setChaincodeID(chainCodeID);
-
         installProposalRequest.setChaincodeSourceLocation(new File(TEST_FIXTURES_PATH));
         installProposalRequest.setChaincodeVersion(CHAIN_CODE_VERSION);
 
@@ -143,7 +140,7 @@ public class ChaincodeService extends BaseService implements InitializingBean {
         return newChain;
     }
 
-    public Set<Peer> getPeers() throws InvalidArgumentException {
+    private Set<Peer> getPeers() throws InvalidArgumentException {
         Set<Peer> peers = new HashSet<>();
         String[] peerAddressList = PEER_LIST.split(",");
         for (String address : peerAddressList) {
@@ -155,9 +152,6 @@ public class ChaincodeService extends BaseService implements InitializingBean {
 
     public String invoke(String func, String[] args) throws InvalidArgumentException, ProposalException, InterruptedException, ExecutionException, TimeoutException {
         String txID = null;
-
-        ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
-                .setVersion(CHAIN_CODE_VERSION).build();
 
         TransactionProposalRequest transactionProposalRequest = hfClient.newTransactionProposalRequest();
         transactionProposalRequest.setChaincodeID(chainCodeID);
@@ -181,10 +175,6 @@ public class ChaincodeService extends BaseService implements InitializingBean {
     }
 
     public String query(String func, String[] args) {
-        ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
-                .setVersion(CHAIN_CODE_VERSION).build();
-        // .setPath(CHAIN_CODE_PATH).build(); // 查询不需要path
-
         QueryByChaincodeRequest queryByChaincodeRequest = hfClient.newQueryProposalRequest();
         queryByChaincodeRequest.setArgs(args);
         queryByChaincodeRequest.setFcn(func);
@@ -235,6 +225,9 @@ public class ChaincodeService extends BaseService implements InitializingBean {
             } catch (Exception e2) {
                 chain = getChain(hfClient, chainName, orderer);
             }
+            chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
+                    .setVersion(CHAIN_CODE_VERSION)
+                    .setPath(CHAIN_CODE_PATH).build();
         } catch (Exception e) {
             log.error("CargoService init error!", e);
             System.exit(1);
