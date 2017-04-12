@@ -80,9 +80,6 @@ public class ChaincodeService extends BaseService implements InitializingBean {
     }
 
     public void instantiateChaincode() throws IOException, ProposalException, InvalidArgumentException, InterruptedException, ExecutionException, TimeoutException, ChaincodeEndorsementPolicyParseException {
-        ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
-                .setVersion(CHAIN_CODE_VERSION)
-                .setPath(CHAIN_CODE_PATH).build();
         InstantiateProposalRequest instantiateProposalRequest = hfClient.newInstantiationProposalRequest();
         instantiateProposalRequest.setChaincodeID(chainCodeID);
         instantiateProposalRequest.setFcn("init");
