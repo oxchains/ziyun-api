@@ -50,4 +50,13 @@ public class WaybillService extends BaseService {
         WaybillDTO waybillDTO = simpleGson.fromJson(jsonStr, WaybillDTO.class);
         return RespDTO.success(waybillDTO.getList());
     }
+
+    public RespDTO<List<Waybill>> getByCodeOrProBatch(String code, String proBatch) {
+        String jsonStr = chaincodeService.query("getTransferInfoByBatch", new String[]{code, proBatch});
+        if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
+            return RespDTO.fail("没有数据");
+        }
+        WaybillDTO waybillDTO = simpleGson.fromJson(jsonStr, WaybillDTO.class);
+        return RespDTO.success(waybillDTO.getList());
+    }
 }

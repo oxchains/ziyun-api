@@ -2,6 +2,7 @@ package com.oxchains.service;
 
 import com.oxchains.bean.model.Customer;
 import lombok.extern.slf4j.Slf4j;
+import org.hyperledger.fabric.protos.peer.Chaincode;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -80,6 +81,9 @@ public class ChaincodeService extends BaseService implements InitializingBean {
     }
 
     public void instantiateChaincode() throws IOException, ProposalException, InvalidArgumentException, InterruptedException, ExecutionException, TimeoutException, ChaincodeEndorsementPolicyParseException {
+        ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
+                .setVersion(CHAIN_CODE_VERSION)
+                .setPath(CHAIN_CODE_PATH).build();
         InstantiateProposalRequest instantiateProposalRequest = hfClient.newInstantiationProposalRequest();
         instantiateProposalRequest.setChaincodeID(chainCodeID);
         instantiateProposalRequest.setFcn("init");

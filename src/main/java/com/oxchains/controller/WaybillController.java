@@ -4,6 +4,7 @@ import com.oxchains.common.RespDTO;
 import com.oxchains.bean.model.ziyun.Waybill;
 import com.oxchains.service.WaybillService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,6 +38,16 @@ public class WaybillController extends BaseController {
     public RespDTO<Waybill> queryDocNumOrNoteNum(@RequestParam String number) {
         try {
             return waybillService.getWaybillDataByDocNumOrNoteNum(number);
+        } catch (Exception e) {
+            log.error("query error!", e);
+        }
+        return RespDTO.fail();
+    }
+
+    @RequestMapping(value = "/codeAndProBatch", method = RequestMethod.GET)
+    public RespDTO<List<Waybill>> queryCodeAndProBatch(@RequestParam String commoditycode, @RequestParam String productionBatch) {
+        try {
+            return waybillService.getByCodeOrProBatch(commoditycode, productionBatch);
         } catch (Exception e) {
             log.error("query error!", e);
         }
