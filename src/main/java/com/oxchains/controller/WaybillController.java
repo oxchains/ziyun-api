@@ -26,6 +26,7 @@ public class WaybillController extends BaseController {
     @RequestMapping(method = RequestMethod.POST)
     public RespDTO<String> add(@RequestBody String body) {
         try {
+            log.info("waybill body: " + body);
             Waybill waybill = gson.fromJson(body, Waybill.class);
             return waybillService.add(waybill);
         } catch (Exception e) {

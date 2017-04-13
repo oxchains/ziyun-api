@@ -47,6 +47,7 @@ public class WaybillService extends BaseService {
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
+        System.out.println(jsonStr);
         WaybillDTO waybillDTO = simpleGson.fromJson(jsonStr, WaybillDTO.class);
         return RespDTO.success(waybillDTO.getList());
     }
