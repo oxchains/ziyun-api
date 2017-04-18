@@ -31,9 +31,17 @@ public class CargoService extends BaseService {
     @Resource
     private ChaincodeService chaincodeService;
 
-    public boolean instantiateChaincode() throws ProposalException, InvalidArgumentException, InterruptedException, ExecutionException, TimeoutException, IOException, ChaincodeEndorsementPolicyParseException {
-        chaincodeService.installChaincode();
-        chaincodeService.instantiateChaincode();
+    public boolean instantiateChaincode() {
+        try {
+            chaincodeService.installChaincode();
+        } catch (InvalidArgumentException | ProposalException e) {
+            e.printStackTrace();
+        }
+        try {
+            chaincodeService.instantiateChaincode();
+        } catch (IOException | ProposalException | InvalidArgumentException | ExecutionException | InterruptedException | ChaincodeEndorsementPolicyParseException | TimeoutException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 

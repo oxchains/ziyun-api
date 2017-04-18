@@ -1,7 +1,10 @@
 package com.oxchains.service;
 
+import com.google.protobuf.ByteString;
 import com.oxchains.bean.model.Customer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
+import org.hyperledger.fabric.protos.common.Common;
 import org.hyperledger.fabric.protos.peer.Chaincode;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
@@ -55,6 +58,9 @@ public class ChaincodeService extends BaseService implements InitializingBean {
 
     @Value("${chain.config.path}")
     private String configPath;
+
+    @Value("${chain.name}")
+    private String chainName;
 
     private Chain chain;
 
@@ -200,6 +206,52 @@ public class ChaincodeService extends BaseService implements InitializingBean {
         return null;
     }
 
+    public String queryBlockInfo() throws InvalidArgumentException, ProposalException {
+        BlockchainInfo channelInfo = chain.queryBlockchainInfo();
+        String chainCurrentHash = Hex.encodeHexString(channelInfo.getCurrentBlockHash());
+        String chainPreviousHash = Hex.encodeHexString(channelInfo.getPreviousBlockHash());
+
+        System.out.println("height: " + channelInfo.getHeight());
+        System.out.println("currentHash: " + chainCurrentHash);
+        System.out.println("previousHash: " + chainPreviousHash);
+
+        // TODO test
+        BlockInfo blockInfo = queryBlock(channelInfo.getHeight() - 1);
+        System.out.println(blockInfo);
+        /*blockInfo = queryBlock(blockInfo.getPreviousHash());
+        System.out.println(blockInfo);*/
+        Common.BlockData blockData = blockInfo.getBlock().getData();
+        for (ByteString str : blockData.getDataList()) {
+            System.out.println(str.toStringUtf8());
+        }
+        return null;
+    }
+
+    public BlockInfo queryBlock(long blockNumber) throws ProposalException, InvalidArgumentException {
+        BlockInfo blockInfo = chain.queryBlockByNumber(blockNumber);
+        String previousHash = Hex.encodeHexString(blockInfo.getPreviousHash());
+        System.out.println("queryBlockByNumber returned correct block with blockNumber " + blockInfo.getBlockNumber()
+                + " \n previous_hash " + previousHash);
+        return blockInfo;
+    }
+
+    public BlockInfo queryBlock(byte[] hash) throws ProposalException, InvalidArgumentException {
+        BlockInfo blockInfo = chain.queryBlockByHash(hash);
+        System.out.println("queryBlockByHash returned block with blockNumber " + blockInfo.getBlockNumber());
+        return null;
+    }
+
+    public BlockInfo queryBlock(String txID) throws ProposalException, InvalidArgumentException {
+        BlockInfo blockInfo = chain.queryBlockByTransactionID(txID);
+        System.out.println("queryBlockByTxID returned block with blockNumber " + blockInfo.getBlockNumber());
+        return null;
+    }
+
+    public TransactionInfo queryTransactionInfo(String txID) throws InvalidArgumentException, ProposalException {
+        TransactionInfo transactionInfo = chain.queryTransactionByID(txID);
+        return transactionInfo;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
@@ -211,7 +263,6 @@ public class ChaincodeService extends BaseService implements InitializingBean {
             String mspID = "Org1MSP";
             //String mspID = "ziyun.MSP";
             String ordererName = "orderer0";
-            String chainName = "foo";
 
             hfClient = HFClient.createNewInstance();
             hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
