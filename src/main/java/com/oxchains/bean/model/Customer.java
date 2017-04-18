@@ -3,7 +3,7 @@ package com.oxchains.bean.model;
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.User;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Customer
@@ -16,7 +16,7 @@ public class Customer implements User {
 
     private Enrollment enrollment;
 
-    private ArrayList<String> roles;
+    private Set<String> roles;
 
     private String account;
 
@@ -24,7 +24,7 @@ public class Customer implements User {
 
     private String mspID;
 
-    public Customer(String name, Enrollment enrollment, ArrayList<String> roles, String account, String affiliation, String mspID) {
+    public Customer(String name, Enrollment enrollment, Set<String> roles, String account, String affiliation, String mspID) {
         this.name = name;
         this.enrollment = enrollment;
         this.roles = roles;
@@ -39,7 +39,7 @@ public class Customer implements User {
     }
 
     @Override
-    public ArrayList<String> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 

@@ -5,7 +5,6 @@ import com.oxchains.bean.model.Customer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.hyperledger.fabric.protos.common.Common;
-import org.hyperledger.fabric.protos.peer.Chaincode;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -66,6 +65,8 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     private Chain chain;
 
     private HFClient hfClient;
+
+    private HFCAClient hfcaClient;
 
     private ChainCodeID chainCodeID;
 
@@ -258,7 +259,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         try {
             String username = "admin";
             String password = "adminpw";
-            ArrayList<String> roles = new ArrayList<>();
+            Set<String> roles = null;
             String account = null;
             String affiliation = "peerOrg1";
             String mspID = "Org1MSP";
@@ -267,9 +268,9 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
 
             hfClient = HFClient.createNewInstance();
             hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-            hfClient.setMemberServices(new HFCAClient(CA_URL, null));
+            hfcaClient = new HFCAClient(CA_URL, null);
 
-            Enrollment enrollment = hfClient.getMemberServices().enroll(username, password);
+            Enrollment enrollment = hfcaClient.enroll(username, password);
             Customer customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
             hfClient.setUserContext(customer);
 
@@ -296,5 +297,6 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     @Override
     public void destroy() throws Exception {
         // TODO chain shutdown
+        chain.shutdown(true);
     }
 }
