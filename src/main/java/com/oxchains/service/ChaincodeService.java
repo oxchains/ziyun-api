@@ -145,7 +145,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
 
         Set<Peer> peers = getPeers();
         for (Peer peer : peers) {
-            System.out.println("join chain: " + newChain.joinPeer(peer));
+            log.info("join chain: " + newChain.joinPeer(peer));
         }
 
         newChain.initialize();
@@ -269,6 +269,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             hfClient = HFClient.createNewInstance();
             hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
             hfcaClient = new HFCAClient(CA_URL, null);
+            hfcaClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
 
             Enrollment enrollment = hfcaClient.enroll(username, password);
             Customer customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
@@ -296,7 +297,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
 
     @Override
     public void destroy() throws Exception {
-        // TODO chain shutdown
+        // chain shutdown
         chain.shutdown(true);
     }
 }
