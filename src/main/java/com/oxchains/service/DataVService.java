@@ -1,5 +1,8 @@
 package com.oxchains.service;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.dto.datav.NameValue;
 import com.oxchains.bean.dto.datav.ValueContent;
@@ -16,6 +19,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * DataVService
@@ -29,23 +35,31 @@ public class DataVService extends BaseService {
     @Resource
     private ChaincodeService chaincodeService;
 
+    private Cache<String, Long> cache = CacheBuilder.newBuilder()
+            .maximumSize(100)
+            .expireAfterWrite(60, TimeUnit.SECONDS).build();
+
     public NameValue<Long> getChainHeight() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException {
         BlockchainInfo blockchainInfo = getBlockChain();
 
         return new NameValue<>("", blockchainInfo.getHeight());
     }
 
-    public NameValue<Long> getChainTxCount() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException {
-        Long count = 0L;
+    public NameValue<Long> getChainTxCount() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
         BlockchainInfo blockchainInfo = getBlockChain();
-        //blockchainInfo.
-        for (int i = 1; i < blockchainInfo.getHeight(); i++) {
-            BlockInfo blockInfo = chaincodeService.queryBlock(i);
-            Common.BlockData blockData = blockInfo.getBlock().getData();
-            log.debug("height: " + i + ", blockData count: " + blockData.getDataCount());
-            count += blockData.getDataCount();
-        }
-        return new NameValue<>("", count);
+
+        String key = "getChainTxCount";
+        Long result = cache.get(key, () -> {
+            Long count = 0L;
+            for (int i = 1; i < blockchainInfo.getHeight(); i++) {
+                BlockInfo blockInfo = chaincodeService.queryBlock(i);
+                count += blockInfo.getBlock().getData().getDataCount();
+            }
+            cache.put(key, count);
+            return count;
+        });
+
+        return new NameValue<>("", result);
     }
 
     /**
