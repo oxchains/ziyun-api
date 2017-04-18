@@ -13,6 +13,7 @@ import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.hyperledger.fabric.sdk.exception.TransactionException;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import org.hyperledger.fabric_ca.sdk.HFCAClient;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeoutException;
  */
 @Service
 @Slf4j
-public class ChaincodeService extends BaseService implements InitializingBean {
+public class ChaincodeService extends BaseService implements InitializingBean, DisposableBean {
     @Value("${chaincode.name}")
     private String CHAIN_CODE_NAME;
 
@@ -290,5 +291,10 @@ public class ChaincodeService extends BaseService implements InitializingBean {
             log.error("CargoService init error!", e);
             System.exit(1);
         }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        // TODO chain shutdown
     }
 }
