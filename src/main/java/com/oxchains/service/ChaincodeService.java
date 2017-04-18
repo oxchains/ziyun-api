@@ -1,10 +1,12 @@
 package com.oxchains.service;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.model.Customer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.hyperledger.fabric.protos.common.Common;
+import org.hyperledger.fabric.protos.common.Ledger;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -208,32 +210,34 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         return null;
     }
 
-    public String queryBlockInfo() throws InvalidArgumentException, ProposalException {
-        BlockchainInfo channelInfo = chain.queryBlockchainInfo();
-        String chainCurrentHash = Hex.encodeHexString(channelInfo.getCurrentBlockHash());
-        String chainPreviousHash = Hex.encodeHexString(channelInfo.getPreviousBlockHash());
+    public BlockchainInfo queryChain() throws InvalidArgumentException, ProposalException, InvalidProtocolBufferException {
+        BlockchainInfo blockchainInfo = chain.queryBlockchainInfo();
+        return blockchainInfo;
+        /*String chainCurrentHash = Hex.encodeHexString(blockchainInfo.getCurrentBlockHash());
+        String chainPreviousHash = Hex.encodeHexString(blockchainInfo.getPreviousBlockHash());*/
 
-        System.out.println("height: " + channelInfo.getHeight());
+        /*System.out.println("height: " + blockchainInfo.getHeight());
         System.out.println("currentHash: " + chainCurrentHash);
-        System.out.println("previousHash: " + chainPreviousHash);
+        System.out.println("previousHash: " + chainPreviousHash);*/
 
         // TODO test
-        BlockInfo blockInfo = queryBlock(channelInfo.getHeight() - 1);
-        System.out.println(blockInfo);
-        /*blockInfo = queryBlock(blockInfo.getPreviousHash());
-        System.out.println(blockInfo);*/
-        Common.BlockData blockData = blockInfo.getBlock().getData();
-        for (ByteString str : blockData.getDataList()) {
-            System.out.println(str.toStringUtf8());
+        /*for (int i = 1; i < blockchainInfo.getHeight(); i++) {
+            BlockInfo blockInfo = queryBlock(i);
+            Common.BlockData blockData = blockInfo.getBlock().getData();
+            System.out.println("height: " + i + ", blockData count: " + blockData.getDataCount());
         }
-        return null;
+        System.out.println();*/
+
+        /*System.out.println("==================================");
+        TransactionInfo transactionInfo = queryTransactionInfo("d2433a1e17e542bf865cbe2d3dd952d6c3f4a66f46476d86622313d6fcefbd3d");
+        System.out.println(transactionInfo.getEnvelope());*/
     }
 
     public BlockInfo queryBlock(long blockNumber) throws ProposalException, InvalidArgumentException {
         BlockInfo blockInfo = chain.queryBlockByNumber(blockNumber);
         String previousHash = Hex.encodeHexString(blockInfo.getPreviousHash());
-        System.out.println("queryBlockByNumber returned correct block with blockNumber " + blockInfo.getBlockNumber()
-                + " \n previous_hash " + previousHash);
+        /*System.out.println("queryBlockByNumber returned correct block with blockNumber " + blockInfo.getBlockNumber()
+                + " \n previous_hash: " + previousHash);*/
         return blockInfo;
     }
 
