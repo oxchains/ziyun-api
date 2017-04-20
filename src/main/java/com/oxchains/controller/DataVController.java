@@ -3,6 +3,7 @@ package com.oxchains.controller;
 import com.oxchains.bean.dto.datav.NameValue;
 import com.oxchains.bean.dto.datav.ValueContent;
 import com.oxchains.bean.dto.datav.XY;
+import com.oxchains.service.ChaincodeService;
 import com.oxchains.service.DataVService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,19 @@ import java.util.List;
 public class DataVController extends BaseController {
     @Resource
     private DataVService dataVService;
+
+    @Resource
+    private ChaincodeService chaincodeService;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String test() {
+        try {
+            chaincodeService.queryChain();
+        } catch (Exception e) {
+            log.error("test error!", e);
+        }
+        return "success";
+    }
 
     @RequestMapping(value = "/chain/height", method = RequestMethod.GET)
     public List<NameValue<Long>> chainHeight() {

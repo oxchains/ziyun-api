@@ -6,7 +6,11 @@ import com.oxchains.bean.model.Customer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.hyperledger.fabric.protos.common.Common;
+import org.hyperledger.fabric.protos.common.Configtx;
 import org.hyperledger.fabric.protos.common.Ledger;
+import org.hyperledger.fabric.protos.msp.Identities;
+import org.hyperledger.fabric.protos.peer.FabricProposalResponse;
+import org.hyperledger.fabric.protos.peer.FabricTransaction;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -27,6 +31,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * ChaincodeService
@@ -212,7 +218,6 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
 
     public BlockchainInfo queryChain() throws InvalidArgumentException, ProposalException, InvalidProtocolBufferException {
         BlockchainInfo blockchainInfo = chain.queryBlockchainInfo();
-        return blockchainInfo;
         /*String chainCurrentHash = Hex.encodeHexString(blockchainInfo.getCurrentBlockHash());
         String chainPreviousHash = Hex.encodeHexString(blockchainInfo.getPreviousBlockHash());*/
 
@@ -220,23 +225,79 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         System.out.println("currentHash: " + chainCurrentHash);
         System.out.println("previousHash: " + chainPreviousHash);*/
 
-        // TODO test
-        /*for (int i = 1; i < blockchainInfo.getHeight(); i++) {
+        System.out.println("size: " + blockchainInfo.getBlockchainInfo().getSerializedSize());
+       // TODO test
+        for (int i = 0; i < blockchainInfo.getHeight(); i++) {
             BlockInfo blockInfo = queryBlock(i);
+            // block header
+            Common.BlockHeader blockHeader = blockInfo.getBlock().getHeader();
+            /*System.out.printf("dataHash: %s, previousHash: %s.\n",
+                    Hex.encodeHexString(blockHeader.getDataHash().toByteArray()),
+                    Hex.encodeHexString(blockHeader.getPreviousHash().toByteArray()));*/
+            Common.BlockMetadata blockMetadata = blockInfo.getBlock().getMetadata();
+            /*for (ByteString str : blockMetadata.getMetadataList()) {
+                Common.Metadata metadata = Common.Metadata.parseFrom(str);
+                System.out.println(metadata);
+            }*/
+            //System.out.println(blockMetadata);
+
+            // block data
             Common.BlockData blockData = blockInfo.getBlock().getData();
-            System.out.println("height: " + i + ", blockData count: " + blockData.getDataCount());
+            for (ByteString data : blockData.getDataList()) {
+                // 获取txID
+                Common.Envelope envelope = Common.Envelope.parseFrom(data);
+                Common.Payload payload = Common.Payload.parseFrom(envelope.getPayload());
+                Common.ChannelHeader channelHeader = Common.ChannelHeader.parseFrom(payload.getHeader().getChannelHeader());
+                System.out.println("txID: " + channelHeader.getTxId());
+                //TransactionInfo transactionInfo = queryTransactionInfo(channelHeader.getTxId());
+
+                if (channelHeader.getType() == 1) {
+                    // 获取config
+                    Configtx.ConfigEnvelope configEnvelope = Configtx.ConfigEnvelope.parseFrom(payload.getData());
+                    configEnvelope.getConfig()
+                            .getChannelGroup()
+                            .getGroupsMap()
+                            .forEach((s, configGroup) ->
+                                    System.out.println(String.format("key: %s, value: %s.", s, configGroup.getModPolicy()))
+                            );
+                } else if (channelHeader.getType() == 3) {
+                    // 获取transaction
+                    FabricTransaction.Transaction transaction = FabricTransaction.Transaction.parseFrom(payload.getData());
+                    for (FabricTransaction.TransactionAction transactionAction : transaction.getActionsList()) {
+                        FabricTransaction.ChaincodeActionPayload chaincodeActionPayload = FabricTransaction.ChaincodeActionPayload.parseFrom(transactionAction.getPayload());
+                        chaincodeActionPayload
+                                .getAction()
+                                .getEndorsementsList()
+                                .forEach(endorsement -> {
+                                    try {
+                                        Identities.SerializedIdentity endorser = Identities.SerializedIdentity.parseFrom(endorsement.getEndorser());
+                                        System.out.println(String.format("mspID: %s, idByte: %s.", endorser.getMspid(), endorser.getIdBytes().toStringUtf8()));
+                                    } catch (InvalidProtocolBufferException e) {
+                                        e.printStackTrace();
+                                    }
+                                    System.out.println();
+                                });
+                        System.out.println();
+                    }
+                } else {
+                    throw new RuntimeException("Only able to decode ENDORSER_TRANSACTION and CONFIG type blocks");
+                }
+                System.out.println();
+            }
+            //System.out.println("height: " + i + ", blockData count: " + blockData.getDataCount());
         }
-        System.out.println();*/
+        System.out.println();
 
         /*System.out.println("==================================");
         TransactionInfo transactionInfo = queryTransactionInfo("d2433a1e17e542bf865cbe2d3dd952d6c3f4a66f46476d86622313d6fcefbd3d");
         System.out.println(transactionInfo.getEnvelope());*/
+        return blockchainInfo;
     }
 
     public BlockInfo queryBlock(long blockNumber) throws ProposalException, InvalidArgumentException {
         BlockInfo blockInfo = chain.queryBlockByNumber(blockNumber);
-        String previousHash = Hex.encodeHexString(blockInfo.getPreviousHash());
-        /*System.out.println("queryBlockByNumber returned correct block with blockNumber " + blockInfo.getBlockNumber()
+        /*String previousHash = Hex.encodeHexString(blockInfo.getPreviousHash());
+        System.out.println("queryBlockByNumber returned correct block with blockNumber " + blockInfo.getBlockNumber()
                 + " \n previous_hash: " + previousHash);*/
         return blockInfo;
     }
@@ -253,8 +314,12 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         return null;
     }
 
-    public TransactionInfo queryTransactionInfo(String txID) throws InvalidArgumentException, ProposalException {
+    public TransactionInfo queryTransactionInfo(String txID) throws InvalidArgumentException, ProposalException, InvalidProtocolBufferException {
         TransactionInfo transactionInfo = chain.queryTransactionByID(txID);
+        Common.Payload payload = Common.Payload.parseFrom(transactionInfo.getProcessedTransaction().getTransactionEnvelope().getPayload());
+        Common.ChannelHeader channelHeader = Common.ChannelHeader.parseFrom(payload.getHeader().getChannelHeader());
+        System.out.println(channelHeader.getChannelId());
+        System.out.println("time: " + channelHeader.getTimestamp().getNanos());
         return transactionInfo;
     }
 
