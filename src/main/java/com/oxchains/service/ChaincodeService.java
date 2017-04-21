@@ -4,13 +4,11 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.model.Customer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Hex;
 import org.hyperledger.fabric.protos.common.Common;
 import org.hyperledger.fabric.protos.common.Configtx;
-import org.hyperledger.fabric.protos.common.Ledger;
 import org.hyperledger.fabric.protos.msp.Identities;
-import org.hyperledger.fabric.protos.peer.FabricProposalResponse;
 import org.hyperledger.fabric.protos.peer.FabricTransaction;
+import org.hyperledger.fabric.protos.peer.Query;
 import org.hyperledger.fabric.sdk.*;
 import org.hyperledger.fabric.sdk.exception.ChaincodeEndorsementPolicyParseException;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -25,14 +23,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * ChaincodeService
@@ -130,6 +123,19 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             chain.sendTransaction(successful, chain.getOrderers());
             System.out.println("instantiateChaincode done");
         }
+    }
+
+    public Set<String> getChannels() throws ProposalException, InvalidArgumentException {
+        Set<String> channels = hfClient.queryChannels(chain.getPeers().iterator().next());
+        return channels;
+    }
+
+    public List<Query.ChaincodeInfo> getInstalledChaincodes() throws ProposalException, InvalidArgumentException {
+        List<Query.ChaincodeInfo> chaincodeInfos = hfClient.queryInstalledChaincodes(chain.getPeers().iterator().next());
+        for (Query.ChaincodeInfo chaincodeInfo : chaincodeInfos) {
+            System.out.println(chaincodeInfo.getName());
+        }
+        return chaincodeInfos;
     }
 
     public Chain getChain(String chainName, Orderer orderer) throws InvalidArgumentException, TransactionException {
