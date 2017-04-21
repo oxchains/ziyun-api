@@ -33,7 +33,9 @@ public class DataVController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     public String test() {
         try {
-            chaincodeService.queryChain();
+            //chaincodeService.queryChain();
+            System.out.println(chaincodeService.getChannels());
+            chaincodeService.getInstalledChaincodes();
         } catch (Exception e) {
             log.error("test error!", e);
         }
