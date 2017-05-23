@@ -4,6 +4,11 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.model.Customer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.hyperledger.fabric.protos.common.Common;
 import org.hyperledger.fabric.protos.common.Configtx;
 import org.hyperledger.fabric.protos.msp.Identities;
@@ -16,16 +21,22 @@ import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.hyperledger.fabric.sdk.exception.TransactionException;
 import org.hyperledger.fabric.sdk.security.CryptoSuite;
 import org.hyperledger.fabric_ca.sdk.HFCAClient;
+import org.hyperledger.fabric_ca.sdk.HFCAEnrollment;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Paths;
+import java.security.PrivateKey;
+import java.security.Security;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+
+import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * ChaincodeService
@@ -57,56 +68,65 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     @Value("${chaincode.peer.address.list}")
     private String PEER_LIST;
 
-    @Value("${chain.config.path}")
+    @Value("${channel.config.path}")
     private String configPath;
 
-    @Value("${chain.name}")
-    private String chainName;
+    @Value("${channel.name}")
+    private String channelName;
 
-    private Chain chain;
+    private Channel channel;
 
     private HFClient hfClient;
 
     private HFCAClient hfcaClient;
 
-    private ChainCodeID chainCodeID;
+    private ChaincodeID channelCodeID;
+
+    private Customer peerOrgAdmin;
+
+    private Customer customer;
 
     public void installChaincode() throws InvalidArgumentException, ProposalException {
         InstallProposalRequest installProposalRequest = hfClient.newInstallProposalRequest();
-        installProposalRequest.setChaincodeID(chainCodeID);
+        installProposalRequest.setChaincodeID(channelCodeID);
         installProposalRequest.setChaincodeSourceLocation(new File(TEST_FIXTURES_PATH));
         installProposalRequest.setChaincodeVersion(CHAIN_CODE_VERSION);
 
-        Collection<ProposalResponse> responses = chain.sendInstallProposal(installProposalRequest, chain.getPeers());
+        Collection<ProposalResponse> responses = hfClient.sendInstallProposal(installProposalRequest, channel.getPeers());
         for (ProposalResponse response : responses) {
             if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
                 System.out.println(String.format("Successful install proposal response Txid: %s from peer %s",
                         response.getTransactionID(),
                         response.getPeer().getName()));
             } else {
-                System.out.println("install chaincode error!");
+                System.out.println("install channelcode error!");
             }
         }
     }
 
     public void instantiateChaincode() throws IOException, ProposalException, InvalidArgumentException, InterruptedException, ExecutionException, TimeoutException, ChaincodeEndorsementPolicyParseException {
-        ChainCodeID chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
+        //hfClient.setUserContext(customer);
+        ChaincodeID channelCodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME)
                 .setVersion(CHAIN_CODE_VERSION)
                 .setPath(CHAIN_CODE_PATH).build();
         InstantiateProposalRequest instantiateProposalRequest = hfClient.newInstantiationProposalRequest();
-        instantiateProposalRequest.setChaincodeID(chainCodeID);
+        instantiateProposalRequest.setChaincodeID(channelCodeID);
         instantiateProposalRequest.setFcn("init");
         instantiateProposalRequest.setArgs(new String[]{});
+        Map<String, byte[]> transientMap = new HashMap<>();
+        transientMap.put("HyperLedgerFabric", "InstantiateProposalRequest:JavaSDK".getBytes(UTF_8));
+        transientMap.put("method", "InstantiateProposalRequest".getBytes(UTF_8));
+        instantiateProposalRequest.setTransientMap(transientMap);
 
-        ChaincodeEndorsementPolicy chaincodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
+        ChaincodeEndorsementPolicy channelcodeEndorsementPolicy = new ChaincodeEndorsementPolicy();
         // 背书策略
-        chaincodeEndorsementPolicy.fromFile(new File(TEST_FIXTURES_PATH + "/members_from_org1_or_2.policy"));
-        //chaincodeEndorsementPolicy.fromYamlFile(new File(TEST_FIXTURES_PATH + "/chaincodeendorsementpolicy.yaml"));
-        instantiateProposalRequest.setChaincodeEndorsementPolicy(chaincodeEndorsementPolicy);
+        //channelcodeEndorsementPolicy.fromFile(new File(TEST_FIXTURES_PATH + "/members_from_org1_or_2.policy"));
+        channelcodeEndorsementPolicy.fromYamlFile(new File(TEST_FIXTURES_PATH + "/channelcodeendorsementpolicy.yaml"));
+        instantiateProposalRequest.setChaincodeEndorsementPolicy(channelcodeEndorsementPolicy);
 
         Collection<ProposalResponse> successful = new ArrayList<>();
         // Send instantiate transaction to peers
-        Collection<ProposalResponse> responses = chain.sendInstantiationProposal(instantiateProposalRequest, chain.getPeers());
+        Collection<ProposalResponse> responses = channel.sendInstantiationProposal(instantiateProposalRequest, channel.getPeers());
         if (responses != null && responses.size() > 0) {
             for (ProposalResponse response : responses) {
                 if (response.isVerified() && response.getStatus() == ProposalResponse.Status.SUCCESS) {
@@ -120,46 +140,47 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             }
 
             /// Send instantiate transaction to orderer
-            chain.sendTransaction(successful, chain.getOrderers());
+            channel.sendTransaction(successful, channel.getOrderers());
             System.out.println("instantiateChaincode done");
         }
     }
 
     public Set<String> getChannels() throws ProposalException, InvalidArgumentException {
-        Set<String> channels = hfClient.queryChannels(chain.getPeers().iterator().next());
+        Set<String> channels = hfClient.queryChannels(channel.getPeers().iterator().next());
         return channels;
     }
 
     public List<Query.ChaincodeInfo> getInstalledChaincodes() throws ProposalException, InvalidArgumentException {
-        List<Query.ChaincodeInfo> chaincodeInfos = hfClient.queryInstalledChaincodes(chain.getPeers().iterator().next());
-        for (Query.ChaincodeInfo chaincodeInfo : chaincodeInfos) {
-            System.out.println(chaincodeInfo.getName());
+        List<Query.ChaincodeInfo> channelcodeInfos = hfClient.queryInstalledChaincodes(channel.getPeers().iterator().next());
+        for (Query.ChaincodeInfo channelcodeInfo : channelcodeInfos) {
+            System.out.println(channelcodeInfo.getName());
         }
-        return chaincodeInfos;
+        return channelcodeInfos;
     }
 
-    public Chain getChain(String chainName, Orderer orderer) throws InvalidArgumentException, TransactionException {
-        Chain chain = hfClient.newChain(chainName);
+    public Channel getChain(String channelName, Orderer orderer) throws InvalidArgumentException, TransactionException {
+        Channel channel = hfClient.newChannel(channelName);
 
         Set<Peer> peers = getPeers();
         for (Peer peer : peers) {
-            chain.addPeer(peer);
+            channel.addPeer(peer);
         }
 
-        chain.addOrderer(orderer);
-        chain.initialize();
-        return chain;
+        channel.addOrderer(orderer);
+        channel.initialize();
+        return channel;
     }
 
-    public Chain createChain(String configPath, Orderer orderer, String chainName) throws IOException, InvalidArgumentException, TransactionException, ProposalException {
-        ChainConfiguration chainConfiguration = new ChainConfiguration(new File(configPath));
-        Chain newChain = hfClient.newChain(chainName, orderer, chainConfiguration);
+    public Channel createChain(String configPath, Orderer orderer, String channelName) throws IOException, InvalidArgumentException, TransactionException, ProposalException {
+        ChannelConfiguration channelConfiguration = new ChannelConfiguration(new File(configPath));
+        hfClient.setUserContext(peerOrgAdmin);
+        Channel newChain = hfClient.newChannel(channelName, orderer, channelConfiguration, hfClient.getChannelConfigurationSignature(channelConfiguration, peerOrgAdmin));
         newChain.setTransactionWaitTime(100000);
         newChain.setDeployWaitTime(120000);
 
         Set<Peer> peers = getPeers();
         for (Peer peer : peers) {
-            log.info("join chain: " + newChain.joinPeer(peer));
+            log.info("join channel: " + newChain.joinPeer(peer));
         }
 
         newChain.initialize();
@@ -180,12 +201,12 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         String txID = null;
 
         TransactionProposalRequest transactionProposalRequest = hfClient.newTransactionProposalRequest();
-        transactionProposalRequest.setChaincodeID(chainCodeID);
+        transactionProposalRequest.setChaincodeID(channelCodeID);
         transactionProposalRequest.setFcn(func);
         transactionProposalRequest.setArgs(args);
 
         // send Proposal to peers
-        Collection<ProposalResponse> transactionPropResp = chain.sendTransactionProposal(transactionProposalRequest, chain.getPeers());
+        Collection<ProposalResponse> transactionPropResp = channel.sendTransactionProposal(transactionProposalRequest, channel.getPeers());
 
         // send Proposal to orderers
         Collection<ProposalResponse> successful = new ArrayList<>();
@@ -195,7 +216,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 successful.add(response);
             }
         }
-        chain.sendTransaction(successful, chain.getOrderers());
+        channel.sendTransaction(successful, channel.getOrderers());
 
         return txID;
     }
@@ -204,11 +225,11 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         QueryByChaincodeRequest queryByChaincodeRequest = hfClient.newQueryProposalRequest();
         queryByChaincodeRequest.setArgs(args);
         queryByChaincodeRequest.setFcn(func);
-        queryByChaincodeRequest.setChaincodeID(chainCodeID);
+        queryByChaincodeRequest.setChaincodeID(channelCodeID);
 
         Collection<ProposalResponse> queryProposals = null;
         try {
-            queryProposals = chain.queryByChaincode(queryByChaincodeRequest, chain.getPeers());
+            queryProposals = channel.queryByChaincode(queryByChaincodeRequest, channel.getPeers());
         } catch (InvalidArgumentException | ProposalException ignored) {
             return null;
         }
@@ -223,17 +244,17 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     }
 
     public BlockchainInfo queryChain() throws InvalidArgumentException, ProposalException, InvalidProtocolBufferException {
-        BlockchainInfo blockchainInfo = chain.queryBlockchainInfo();
-        /*String chainCurrentHash = Hex.encodeHexString(blockchainInfo.getCurrentBlockHash());
-        String chainPreviousHash = Hex.encodeHexString(blockchainInfo.getPreviousBlockHash());*/
+        BlockchainInfo blockchannelInfo = channel.queryBlockchainInfo();
+        /*String channelCurrentHash = Hex.encodeHexString(blockchannelInfo.getCurrentBlockHash());
+        String channelPreviousHash = Hex.encodeHexString(blockchannelInfo.getPreviousBlockHash());*/
 
-        /*System.out.println("height: " + blockchainInfo.getHeight());
-        System.out.println("currentHash: " + chainCurrentHash);
-        System.out.println("previousHash: " + chainPreviousHash);*/
+        /*System.out.println("height: " + blockchannelInfo.getHeight());
+        System.out.println("currentHash: " + channelCurrentHash);
+        System.out.println("previousHash: " + channelPreviousHash);*/
 
-        System.out.println("size: " + blockchainInfo.getBlockchainInfo().getSerializedSize());
+        System.out.println("size: " + blockchannelInfo.getBlockchainInfo().getSerializedSize());
        // TODO test
-        for (int i = 0; i < blockchainInfo.getHeight(); i++) {
+        for (int i = 0; i < blockchannelInfo.getHeight(); i++) {
             BlockInfo blockInfo = queryBlock(i);
             // block header
             Common.BlockHeader blockHeader = blockInfo.getBlock().getHeader();
@@ -260,18 +281,18 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 if (channelHeader.getType() == 1) {
                     // 获取config
                     Configtx.ConfigEnvelope configEnvelope = Configtx.ConfigEnvelope.parseFrom(payload.getData());
-                    configEnvelope.getConfig()
+                    Map<String, Configtx.ConfigGroup> map = configEnvelope.getConfig()
                             .getChannelGroup()
-                            .getGroupsMap()
-                            .forEach((s, configGroup) ->
-                                    System.out.println(String.format("key: %s, value: %s.", s, configGroup.getModPolicy()))
-                            );
+                            .getGroupsMap();
+
+                    // decode ConfigGroup
+                    parseConfigGroup(map);
                 } else if (channelHeader.getType() == 3) {
                     // 获取transaction
                     FabricTransaction.Transaction transaction = FabricTransaction.Transaction.parseFrom(payload.getData());
                     for (FabricTransaction.TransactionAction transactionAction : transaction.getActionsList()) {
-                        FabricTransaction.ChaincodeActionPayload chaincodeActionPayload = FabricTransaction.ChaincodeActionPayload.parseFrom(transactionAction.getPayload());
-                        chaincodeActionPayload
+                        FabricTransaction.ChaincodeActionPayload channelcodeActionPayload = FabricTransaction.ChaincodeActionPayload.parseFrom(transactionAction.getPayload());
+                        channelcodeActionPayload
                                 .getAction()
                                 .getEndorsementsList()
                                 .forEach(endorsement -> {
@@ -297,11 +318,33 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         /*System.out.println("==================================");
         TransactionInfo transactionInfo = queryTransactionInfo("d2433a1e17e542bf865cbe2d3dd952d6c3f4a66f46476d86622313d6fcefbd3d");
         System.out.println(transactionInfo.getEnvelope());*/
-        return blockchainInfo;
+        return blockchannelInfo;
+    }
+
+    private void parseConfigGroup(Map<String, Configtx.ConfigGroup> map) {
+        Set<Map.Entry<String, Configtx.ConfigGroup>> entrySet = map.entrySet();
+        for (Map.Entry<String, Configtx.ConfigGroup> entry : entrySet) {
+            String key = entry.getKey();
+            Configtx.ConfigGroup configGroup = entry.getValue();
+            long version = configGroup.getVersion();
+            // TODO groups 这是一个递归的过程
+
+            // values
+            Map<String, Configtx.ConfigValue> valueMap = configGroup.getValuesMap();
+            for (String valueKey : valueMap.keySet()) {
+                Configtx.ConfigValue configValue = valueMap.get(valueKey);
+            }
+        }
+    }
+
+    private void parseConfigValue(Configtx.ConfigValue configValue) {
+        long version = configValue.getVersion();
+        String modPolicy = configValue.getModPolicy();
+        Map map = new HashMap();
     }
 
     public BlockInfo queryBlock(long blockNumber) throws ProposalException, InvalidArgumentException {
-        BlockInfo blockInfo = chain.queryBlockByNumber(blockNumber);
+        BlockInfo blockInfo = channel.queryBlockByNumber(blockNumber);
         /*String previousHash = Hex.encodeHexString(blockInfo.getPreviousHash());
         System.out.println("queryBlockByNumber returned correct block with blockNumber " + blockInfo.getBlockNumber()
                 + " \n previous_hash: " + previousHash);*/
@@ -309,19 +352,19 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     }
 
     public BlockInfo queryBlock(byte[] hash) throws ProposalException, InvalidArgumentException {
-        BlockInfo blockInfo = chain.queryBlockByHash(hash);
+        BlockInfo blockInfo = channel.queryBlockByHash(hash);
         System.out.println("queryBlockByHash returned block with blockNumber " + blockInfo.getBlockNumber());
         return null;
     }
 
     public BlockInfo queryBlock(String txID) throws ProposalException, InvalidArgumentException {
-        BlockInfo blockInfo = chain.queryBlockByTransactionID(txID);
+        BlockInfo blockInfo = channel.queryBlockByTransactionID(txID);
         System.out.println("queryBlockByTxID returned block with blockNumber " + blockInfo.getBlockNumber());
         return null;
     }
 
     public TransactionInfo queryTransactionInfo(String txID) throws InvalidArgumentException, ProposalException, InvalidProtocolBufferException {
-        TransactionInfo transactionInfo = chain.queryTransactionByID(txID);
+        TransactionInfo transactionInfo = channel.queryTransactionByID(txID);
         Common.Payload payload = Common.Payload.parseFrom(transactionInfo.getProcessedTransaction().getTransactionEnvelope().getPayload());
         Common.ChannelHeader channelHeader = Common.ChannelHeader.parseFrom(payload.getHeader().getChannelHeader());
         System.out.println(channelHeader.getChannelId());
@@ -332,6 +375,8 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
+            initPeerAdmin();
+            // SampleUser{name='peerOrg1Admin', roles=null, account='null', affiliation='null', organization='peerOrg1', enrollmentSecret='null', enrollment=org.hyperledger.fabric.sdkintegration.SampleStore$SampleStoreEnrollement@ffaa6af, keyValStore=org.hyperledger.fabric.sdkintegration.SampleStore@5562c41e, keyValStoreName='user.peerOrg1AdminpeerOrg1', mspID='Org1MSP'}
             String username = "admin";
             String password = "adminpw";
             Set<String> roles = null;
@@ -343,25 +388,25 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
 
             hfClient = HFClient.createNewInstance();
             hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-            hfcaClient = new HFCAClient(CA_URL, null);
+            hfcaClient = HFCAClient.createNewInstance(CA_URL, null);
             hfcaClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
 
             Enrollment enrollment = hfcaClient.enroll(username, password);
-            Customer customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
+            customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
             hfClient.setUserContext(customer);
 
             Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
-                // 只有第一次需要创建chain
+                // 只有第一次需要创建channel
             // IOException, InvalidArgumentException, TransactionException, ProposalException
             try {
-                chain = createChain(configPath, orderer, chainName);
+                channel = createChain(configPath, orderer, channelName);
             } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
                 log.warn("createChain error!", e);
-                chain = getChain(chainName, orderer);
+                channel = getChain(channelName, orderer);
             } catch (Exception e) {
                 log.error("createChain error!", e);
             }
-            chainCodeID = ChainCodeID.newBuilder().setName(CHAIN_CODE_NAME)
+            channelCodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME)
                     .setVersion(CHAIN_CODE_VERSION)
                     .setPath(CHAIN_CODE_PATH).build();
         } catch (Exception e) {
@@ -370,9 +415,69 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         }
     }
 
+    private void initPeerAdmin() throws IOException {
+        peerOrgAdmin = new Customer();
+        peerOrgAdmin.setName("peerAdmin");
+        peerOrgAdmin.setAccount(null);
+        peerOrgAdmin.setAffiliation(null);
+        peerOrgAdmin.setMspID("Org1MSP");
+        peerOrgAdmin.setRoles(null);
+
+        String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem")), "UTF-8");
+
+        //PrivateKey privateKey = getPrivateKeyFromFile(privateKeyFile);
+        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/f1022dfda62d66248343d3af08e7bb94270cda5162eae5ad587d36196054265f_sk";
+        final PEMParser pemParser = new PEMParser(new StringReader(new String(IOUtils.toByteArray(new FileInputStream(privateKeyFile)))));
+
+        PrivateKeyInfo pemPair = (PrivateKeyInfo) pemParser.readObject();
+
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        PrivateKey privateKey = new JcaPEMKeyConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME).getPrivateKey(pemPair);
+
+        peerOrgAdmin.setEnrollment(AdminEnrollment.createInstance(privateKey, certificate));
+    }
+
+    public HFClient getHfClient() {
+        return hfClient;
+    }
+
+    public Orderer getOrderer() {
+        return channel.getOrderers().iterator().next();
+    }
+
+    public Channel getChain() {
+        return channel;
+    }
+
+    private static class AdminEnrollment implements Enrollment {
+        private PrivateKey privateKey;
+
+        private String certificate;
+
+        private AdminEnrollment() {
+        }
+
+        private static AdminEnrollment createInstance(PrivateKey privateKey, String certificate) {
+            AdminEnrollment adminEnrollment = new AdminEnrollment();
+            adminEnrollment.privateKey = privateKey;
+            adminEnrollment.certificate = certificate;
+            return adminEnrollment;
+        }
+
+        @Override
+        public PrivateKey getKey() {
+            return privateKey;
+        }
+
+        @Override
+        public String getCert() {
+            return certificate;
+        }
+    }
+
     @Override
     public void destroy() throws Exception {
-        // chain shutdown
-        chain.shutdown(true);
+        // channel shutdown
+        channel.shutdown(true);
     }
 }

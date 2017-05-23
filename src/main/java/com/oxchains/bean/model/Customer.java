@@ -1,5 +1,6 @@
 package com.oxchains.bean.model;
 
+import lombok.Data;
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.User;
 
@@ -11,6 +12,7 @@ import java.util.Set;
  * @author liuruichao
  * Created on 2017/3/30 14:45
  */
+@Data
 public class Customer implements User {
     private String name;
 
@@ -24,6 +26,9 @@ public class Customer implements User {
 
     private String mspID;
 
+    public Customer() {
+    }
+
     public Customer(String name, Enrollment enrollment, Set<String> roles, String account, String affiliation, String mspID) {
         this.name = name;
         this.enrollment = enrollment;
@@ -31,31 +36,6 @@ public class Customer implements User {
         this.account = account;
         this.affiliation = affiliation;
         this.mspID = mspID;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    @Override
-    public String getAccount() {
-        return account;
-    }
-
-    @Override
-    public String getAffiliation() {
-        return affiliation;
-    }
-
-    @Override
-    public Enrollment getEnrollment() {
-        return enrollment;
     }
 
     @Override
