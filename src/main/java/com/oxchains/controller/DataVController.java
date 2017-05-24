@@ -34,7 +34,7 @@ public class DataVController extends BaseController {
     public String test() {
         try {
             //chaincodeService.queryChain();
-            System.out.println(chaincodeService.getChannels());
+            //System.out.println(chaincodeService.getChannels());
             chaincodeService.getInstalledChaincodes();
         } catch (Exception e) {
             log.error("test error!", e);
