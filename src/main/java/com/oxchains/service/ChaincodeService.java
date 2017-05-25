@@ -1,5 +1,6 @@
 package com.oxchains.service;
 
+import com.google.common.collect.Lists;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.model.Customer;
@@ -225,8 +226,9 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         queryByChaincodeRequest.setChaincodeID(channelCodeID);
 
         Collection<ProposalResponse> queryProposals = null;
+        // TODO random query peer
         try {
-            queryProposals = channel.queryByChaincode(queryByChaincodeRequest, channel.getPeers());
+            queryProposals = channel.queryByChaincode(queryByChaincodeRequest, randomQueryPeer(channel.getPeers()));
         } catch (InvalidArgumentException | ProposalException ignored) {
             return null;
         }
@@ -432,6 +434,15 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         PrivateKey privateKey = new JcaPEMKeyConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME).getPrivateKey(pemPair);
 
         peerOrgAdmin.setEnrollment(AdminEnrollment.createInstance(privateKey, certificate));
+    }
+
+    private Collection<Peer> randomQueryPeer(Collection<Peer> peers) {
+        if (peers != null && peers.size() > 0) {
+            Random random = new Random(System.currentTimeMillis());
+            int index = random.nextInt(peers.size());
+            return Lists.newArrayList((Peer) peers.toArray()[index]);
+        }
+        return null;
     }
 
     public HFClient getHfClient() {
