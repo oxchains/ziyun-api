@@ -32,6 +32,8 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -72,6 +74,11 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     @Value("${channel.name}")
     private String channelName;
 
+    @Value("${grpc.channel.num}")
+    private int grpcChannelNum;
+
+    private ExecutorService executorService = Executors.newCachedThreadPool();
+
     private Channel channel;
 
     private HFClient hfClient;
@@ -83,6 +90,8 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     private Customer peerOrgAdmin;
 
     private Customer customer;
+
+    private int randomPeerIndex = 0;
 
     public void installChaincode() throws InvalidArgumentException, ProposalException {
         InstallProposalRequest installProposalRequest = hfClient.newInstallProposalRequest();
@@ -190,7 +199,9 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         String[] peerAddressList = PEER_LIST.split(",");
         for (String address : peerAddressList) {
             String[] params = address.split("@");
-            peers.add(hfClient.newPeer(params[0], params[1]));
+            Peer peer = hfClient.newPeer(params[0], params[1]);
+            peer.createGrpcChannels(grpcChannelNum);
+            peers.add(peer);
         }
         return peers;
     }
@@ -204,7 +215,11 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         transactionProposalRequest.setArgs(args);
 
         // send Proposal to peers
-        Collection<ProposalResponse> transactionPropResp = channel.sendTransactionProposal(transactionProposalRequest, channel.getPeers());
+        long start = System.currentTimeMillis();
+        ArrayList<Peer> peers = randomPeer(channel.getPeers());
+        Collection<ProposalResponse> transactionPropResp = channel.sendTransactionProposal(transactionProposalRequest, peers);
+        long end = System.currentTimeMillis();
+        log.info("peer time: " + (end - start) + ", " + peers);
 
         // send Proposal to orderers
         Collection<ProposalResponse> successful = new ArrayList<>();
@@ -215,6 +230,8 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             }
         }
         channel.sendTransaction(successful, channel.getOrderers());
+
+        txID = channel.sendTransactionProposal2(transactionProposalRequest, peers.get(0));
 
         return txID;
     }
@@ -228,7 +245,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         Collection<ProposalResponse> queryProposals = null;
         // TODO random query peer
         try {
-            queryProposals = channel.queryByChaincode(queryByChaincodeRequest, randomQueryPeer(channel.getPeers()));
+            queryProposals = channel.queryByChaincode(queryByChaincodeRequest, randomPeer(channel.getPeers()));
         } catch (InvalidArgumentException | ProposalException ignored) {
             return null;
         }
@@ -395,6 +412,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             hfClient.setUserContext(customer);
 
             Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
+            orderer.createGrpcChannels(grpcChannelNum);
                 // 只有第一次需要创建channel
             // IOException, InvalidArgumentException, TransactionException, ProposalException
             try {
@@ -436,11 +454,10 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         peerOrgAdmin.setEnrollment(AdminEnrollment.createInstance(privateKey, certificate));
     }
 
-    private Collection<Peer> randomQueryPeer(Collection<Peer> peers) {
+    private ArrayList<Peer> randomPeer(Collection<Peer> peers) {
         if (peers != null && peers.size() > 0) {
-            Random random = new Random(System.currentTimeMillis());
-            int index = random.nextInt(peers.size());
-            return Lists.newArrayList((Peer) peers.toArray()[index]);
+            ++randomPeerIndex;
+            return Lists.newArrayList((Peer) peers.toArray()[randomPeerIndex % peers.size()]);
         }
         return null;
     }
@@ -487,5 +504,6 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     public void destroy() throws Exception {
         // channel shutdown
         channel.shutdown(true);
+        executorService.shutdown();
     }
 }
