@@ -2,6 +2,12 @@
 <configuration>
     <property name="LOG_DIR" value="/Users/liuruichao/javaSRC/oxchains/ziyundemo" />
 
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <appender name="rollingFileINFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/ziyun.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -24,6 +30,7 @@
     <!--<logger name="com.mljr.carfinance.crm.provider.mapper" level="DEBUG"/>-->
 
     <root level="INFO">
-        <appender-ref ref="rollingFileINFO" />
+        <!--<appender-ref ref="rollingFileINFO" />-->
+        <appender-ref ref="console"/>
     </root>
 </configuration>

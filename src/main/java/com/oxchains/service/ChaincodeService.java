@@ -211,11 +211,41 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
                 txID = response.getTransactionID();
                 successful.add(response);
+                // 拦截签名之后的hash
+                System.out.println(response.getProposalResponse().getResponse().getPayload().toStringUtf8());
             }
         }
         channel.sendTransaction(successful, channel.getOrderers());
 
         return txID;
+    }
+
+    /** 返回->签名文件的hash值又经过签名之后的hash值 */
+    public String invoke(String func, String[] args, String nil) throws InvalidArgumentException, ProposalException, InterruptedException, ExecutionException, TimeoutException {
+        String signHash = null;
+
+        TransactionProposalRequest transactionProposalRequest = hfClient.newTransactionProposalRequest();
+        transactionProposalRequest.setChaincodeID(channelCodeID);
+        transactionProposalRequest.setFcn(func);
+        transactionProposalRequest.setArgs(args);
+
+        // send Proposal to peers
+        Collection<ProposalResponse> transactionPropResp = channel.sendTransactionProposal(transactionProposalRequest, channel.getPeers());
+
+        // send Proposal to orderers
+        Collection<ProposalResponse> successful = new ArrayList<>();
+        for (ProposalResponse response : transactionPropResp) {
+            if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
+                String txID = response.getTransactionID();
+                successful.add(response);
+                signHash = response.getProposalResponse().getResponse().getPayload().toStringUtf8();
+                // 拦截签名之后的hash
+                System.out.println(response.getProposalResponse().getResponse().getPayload().toStringUtf8());
+            }
+        }
+        channel.sendTransaction(successful, channel.getOrderers());
+
+        return signHash;
     }
 
     public String query(String func, String[] args) {
@@ -228,12 +258,15 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         try {
             queryProposals = channel.queryByChaincode(queryByChaincodeRequest, channel.getPeers());
         } catch (InvalidArgumentException | ProposalException ignored) {
-            return null;
         }
         for (ProposalResponse proposalResponse : queryProposals) {
-            if (proposalResponse.isVerified() && proposalResponse.getStatus() == ProposalResponse.Status.SUCCESS) {
+            if (proposalResponse.getStatus() == ProposalResponse.Status.FAILURE) {
+                return "0";
+            } else if (proposalResponse.isVerified() && proposalResponse.getStatus() == ProposalResponse.Status.SUCCESS) {
                 String payload = proposalResponse.getProposalResponse().getResponse().getPayload().toStringUtf8();
                 return payload;
+            } else {
+                return null;
             }
         }
 
@@ -392,13 +425,14 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
             hfClient.setUserContext(customer);
 
-            Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
+            Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL);
                 // 只有第一次需要创建channel
             // IOException, InvalidArgumentException, TransactionException, ProposalException
             try {
                 channel = createChain(configPath, orderer, channelName);
             } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
                 log.warn("createChain error!", e);
+                orderer = hfClient.newOrderer(ordererName, ORDERER_URL);
                 channel = getChain(channelName, orderer);
             } catch (Exception e) {
                 log.error("createChain error!", e);
@@ -423,7 +457,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem")), "UTF-8");
 
         //PrivateKey privateKey = getPrivateKeyFromFile(privateKeyFile);
-        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/57aada3bc63e3c27c551c9aab350db7b3bebbf25b98c3ae29893dcb667883fb1_sk";
+        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/610d9dbebe171c3e4f7939f6076bf33145ce1aedaad899c9ba9de5b4f968430d_sk";
         final PEMParser pemParser = new PEMParser(new StringReader(new String(IOUtils.toByteArray(new FileInputStream(privateKeyFile)))));
 
         PrivateKeyInfo pemPair = (PrivateKeyInfo) pemParser.readObject();
