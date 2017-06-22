@@ -6,7 +6,7 @@ import com.oxchains.bean.dto.datav.SignData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.service.SignDataService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.ModelMap;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -32,22 +32,35 @@ public class SignDataController extends BaseController {
     }
 
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
-    public RespDTO<String> getClientSign(@RequestBody String body) throws Exception {
-        /*SignData data = gson.fromJson(body, SignData.class);
-        String data_hash = data.getDataHash();*/
-        JSONObject jsonObject = JSON.parseObject(body);
-        String data_hash = jsonObject.getString("data_hash");
-        return signDataService.getClientSign(data_hash);
+    public RespDTO<String> getClientSign(@RequestBody String body) {
+        try {
+            JSONObject jsonObject = JSON.parseObject(body);
+            String dataHash = jsonObject.getString("data_hash");
+            if (StringUtils.isBlank(dataHash)) {
+                return RespDTO.fail("参数错误");
+            }
+
+            System.out.println("body: -->" + body);
+            return signDataService.getClientSign(dataHash);
+        } catch (Exception e) {
+            log.error("sign error!", e);
+        }
+        return RespDTO.fail("系统繁忙，请稍后子再试！");
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public RespDTO<String> verifySign(@RequestBody String body) throws Exception {
-        JSONObject jsonObject = JSON.parseObject(body);
-        String dataHash = jsonObject.getString("data_hash");
-        String signature = jsonObject.getString("signature");
-        /*SignData signData = gson.fromJson(body, SignData.class);
-        String dataHash = signData.getDataHash();
-        String signature = signData.getSignature();*/
-        return signDataService.verifySign(dataHash, signature);
+    public RespDTO<Boolean> verifySign(@RequestBody String body) {
+        try {
+            JSONObject jsonObject = JSON.parseObject(body);
+            String dataHash = jsonObject.getString("data_hash");
+            String signature = jsonObject.getString("signature");
+            if (StringUtils.isBlank(dataHash) || StringUtils.isBlank(signature)) {
+                return RespDTO.fail("参数错误");
+            }
+            return signDataService.verifySign(dataHash, signature);
+        } catch (Exception e) {
+            log.error("verify error!", e);
+        }
+        return RespDTO.fail("系统繁忙，请稍后再试！");
     }
 }
