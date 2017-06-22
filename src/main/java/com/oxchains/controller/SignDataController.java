@@ -32,7 +32,6 @@ public class SignDataController extends BaseController {
 
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
     public RespDTO<String> getClientSign(@RequestBody String body) throws Exception {
-        SignData data = gson.fromJson(body, SignData.class);
         JSONObject jsonObject = JSON.parseObject(body);
         String data_hash = jsonObject.getString("data_hash");
 
@@ -45,6 +44,9 @@ public class SignDataController extends BaseController {
         JSONObject jsonObject = JSON.parseObject(body);
         String dataHash = jsonObject.getString("data_hash");
         String signature = jsonObject.getString("signature");
+        /*SignData signData = gson.fromJson(body, SignData.class);
+        String dataHash = signData.getDataHash();
+        String signature = signData.getSignature();*/
         return signDataService.verifySign(dataHash, signature);
     }
 }
