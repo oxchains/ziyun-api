@@ -49,7 +49,7 @@ public class SignDataController extends BaseController {
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public RespDTO<String> verifySign(@RequestBody String body) {
+    public RespDTO<Boolean> verifySign(@RequestBody String body) {
         try {
             JSONObject jsonObject = JSON.parseObject(body);
             String dataHash = jsonObject.getString("data_hash");
@@ -61,6 +61,6 @@ public class SignDataController extends BaseController {
         } catch (Exception e) {
             log.error("verify error!", e);
         }
-        return RespDTO.fail();
+        return RespDTO.fail("系统繁忙，请稍后再试！");
     }
 }
