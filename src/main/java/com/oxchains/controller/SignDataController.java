@@ -45,7 +45,7 @@ public class SignDataController extends BaseController {
         } catch (Exception e) {
             log.error("sign error!", e);
         }
-        return RespDTO.fail("系统繁忙，请稍后子再试！");
+        return RespDTO.fail("系统繁忙，请稍后再试！");
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
