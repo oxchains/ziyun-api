@@ -1,6 +1,8 @@
 package com.oxchains.service;
 
+import com.oxchains.bean.dto.datav.SignData;
 import com.oxchains.common.RespDTO;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.HFClient;
 import org.hyperledger.fabric.sdk.ProposalResponse;
@@ -44,18 +46,19 @@ public class SignDataService extends BaseService {
     }
 
     /** 返回-> 客户端上传的签名文件的hash值的签名之后的hash值 */
-    public RespDTO<String> getClientSign(String dataHash) throws InterruptedException, InvalidArgumentException, TimeoutException, ProposalException, ExecutionException {
+    public RespDTO<String> getClientSign(SignData signData) throws Exception {
+        String dataHash = signData.getDataHash();
         String signature = chaincodeService.invoke("sign", new String[]{dataHash, "sanxi", System.currentTimeMillis()+""},null);
         // response.getProposalResponse().getResponse().getPayload().toStringUtf8()
         return RespDTO.success("操作成功", signature);
     }
 
     /** 将客户端上传的data_hash和签名之后的signature上传给chaincode，然后由chaincode进行验证并返回结果 */
-    public RespDTO<Boolean> verifySign(String dataHash, String signature) {
+    public RespDTO<Boolean> verifySign(SignData signData) throws Exception {
+        String dataHash = signData.getDataHash();
+        String signature = signData.getSignature();
         String  verify = chaincodeService.query("verify", new String[]{dataHash, signature});
-        return RespDTO.success(verify.equals("1"));
+        return RespDTO.success("操作成功", verify.equals("1"));
     }
-
-
 
 }

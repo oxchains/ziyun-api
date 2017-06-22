@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.oxchains.bean.dto.datav.SignData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.service.SignDataService;
+import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -32,16 +33,14 @@ public class SignDataController extends BaseController {
     }
 
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
-    public RespDTO<String> getClientSign(@RequestBody String body) {
+    @ResponseBody
+    public RespDTO<String> getClientSign(@RequestBody SignData signData) {
         try {
-            JSONObject jsonObject = JSON.parseObject(body);
-            String dataHash = jsonObject.getString("data_hash");
-            if (StringUtils.isBlank(dataHash)) {
+            if (StringUtils.isBlank(signData.toString())) {
                 return RespDTO.fail("参数错误");
             }
-
-            System.out.println("body: -->" + body);
-            return signDataService.getClientSign(dataHash);
+            System.out.println("data_hash: -->" + signData.getDataHash() + "\r\n signature: -->" + signData.getSignature());
+            return signDataService.getClientSign(signData);
         } catch (Exception e) {
             log.error("sign error!", e);
         }
@@ -49,15 +48,14 @@ public class SignDataController extends BaseController {
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public RespDTO<Boolean> verifySign(@RequestBody String body) {
+    @ResponseBody
+    public RespDTO<Boolean> verifySign(@RequestBody SignData signData) {
         try {
-            JSONObject jsonObject = JSON.parseObject(body);
-            String dataHash = jsonObject.getString("data_hash");
-            String signature = jsonObject.getString("signature");
-            if (StringUtils.isBlank(dataHash) || StringUtils.isBlank(signature)) {
+            if (StringUtils.isBlank(signData.toString())) {
                 return RespDTO.fail("参数错误");
             }
-            return signDataService.verifySign(dataHash, signature);
+            System.out.println("data_hash: -->" + signData.getDataHash() + "\r\n signature: -->" + signData.getSignature());
+            return signDataService.verifySign(signData);
         } catch (Exception e) {
             log.error("verify error!", e);
         }
