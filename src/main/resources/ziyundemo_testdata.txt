@@ -1,0 +1,22 @@
+curl localhost:8080/healthz
+
+curl localhost:8080/cargo/install
+
+curl -H "Content-Type: application/json" -d '{"username":"c0","password":"c0pwd","realname":"c0"}' http://localhost:8080/user/register
+
+curl -H "Content-Type: application/json" -d '{"username":"c2","password":"c2pwd"}' http://localhost:8080/user/login
+
+curl -H "Content-Type: application/json" -d '{"username":"c0","token":"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjMCIsImlhdCI6MTQ5ODIwMDg0Mywic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5ODIwODA0M30.g2ZnOl0O2t-ab_mfxY8SgJqGdOhDP8-7R-z_y24GqTk"}' http://localhost:8080/user/logout
+
+curl -H "Content-Type: application/json" -d '{"username":"c2","token":"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjMCIsImlhdCI6MTQ5ODIwMDg0Mywic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5ODIwODA0M30.g2ZnOl0O2t-ab_mfxY8SgJqGdOhDP8-7R-z_y24GqTk"}' http://localhost:8080/user/auth/allow
+
+
+curl -H "Content-Type: application/json" -d '{"username":"c2","token":"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjMCIsImlhdCI6MTQ5ODIwMDg0Mywic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5ODIwODA0M30.g2ZnOl0O2t-ab_mfxY8SgJqGdOhDP8-7R-z_y24GqTk"}' http://localhost:8080/user/auth/revoke
+
+curl -H "Content-Type: application/json" -d '{"SensorNumber":"cgq2017033000112","SensorType":"HD-3K1","EquipmentNumber":"sb2017033000012","EquipmentType":"冷藏车","Time":1490155871000,"Temperature":[12.2,12.3],"Humidity":[20.3,20.4],"GPSLongitude":113.653056,"GPSLatitude":34.860076,"Address":"河南省郑州市惠济区英才街","Token":"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjMCIsImlhdCI6MTQ5ODIwMDg0Mywic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5ODIwODA0M30.g2ZnOl0O2t-ab_mfxY8SgJqGdOhDP8-7R-z_y24GqTk"}' localhost:8080/sensor/create
+
+
+curl "http://localhost:8080/sensor/cgq2017033000112/1490155870000/1490155872000/11?token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjMiIsImlhdCI6MTQ5ODIwMDkzMCwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5ODIwODEzMH0.a3sSTmYrVSaGS-WYo3WEvgUtXM2yL2oYZ_UJpCitTxc"
+
+
+
