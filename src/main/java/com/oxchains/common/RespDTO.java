@@ -46,7 +46,7 @@ public class RespDTO<T> implements Serializable {
 
     public static <T> RespDTO<T> success(String message, T data) {
         RespDTO<T> resp = new RespDTO<>();
-        resp.status = 1;
+        resp.status = 0;
         resp.message = message;
         resp.data = data;
         return resp;
@@ -63,15 +63,22 @@ public class RespDTO<T> implements Serializable {
     public static <T> RespDTO<T> success() {
         return success(null);
     }
-
+    
     public static <T> RespDTO<T> fail(String message) {
         RespDTO<T> resp = new RespDTO<>();
-        resp.status = 0;
+        resp.status = 1;
         resp.message = message;
         return resp;
     }
 
     public static <T> RespDTO<T> fail() {
         return fail("操作失败");
+    }
+    
+    public static <T> RespDTO<T> fail(String message,int type) {
+        RespDTO<T> resp = new RespDTO<>();
+        resp.status = type;
+        resp.message = message;
+        return resp;
     }
 }

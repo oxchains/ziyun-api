@@ -1,8 +1,8 @@
 package com.oxchains.bean.model.ziyun;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
-import lombok.Data;
 
 import java.util.List;
 
@@ -42,4 +42,16 @@ public class Sensor extends BaseEntity {
 
     @JsonProperty("Address")
     private String Address; //地址
+    
+    @JsonProperty("Token")
+    private String Token;//token
+    
+    @JsonIgnore
+    public String getToken() {
+		return Token;
+	}
+    
+    public void setToken(String Token) {
+		this.Token = Token;
+	}
 }
