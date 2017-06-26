@@ -1,20 +1,13 @@
 package com.oxchains.service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
-import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
-import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,9 +15,10 @@ import com.oxchains.bean.dto.SensorDTO;
 import com.oxchains.bean.model.ziyun.Auth;
 import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.Sensor;
+import com.oxchains.bean.model.ziyun.TabToken;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.DBHelper;
+import com.oxchains.dao.TabTokenDao;
 import com.oxchains.util.TokenUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +30,15 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@Transactional
 public class SensorService extends BaseService {
 	@Resource
 	private ChaincodeService chaincodeService;
+	
+	@Resource
+	private TabTokenDao tabTokenDao;
 
 	public RespDTO<String> add(Sensor sensor) {
-		PreparedStatement pst = null;
-		ResultSet rs = null;
 		try {
 			String token = sensor.getToken();
 			JwtToken jwt = TokenUtils.parseToken(token);
@@ -52,13 +48,9 @@ public class SensorService extends BaseService {
 				return RespDTO.fail("操作失败", ConstantsData.RTN_LOGIN_EXPIRED);
 			}
 			//unlogin
-			Connection conn = DBHelper.openCon();
-			String sql = "select token from tab_token where username = ?";
-			pst = conn.prepareStatement(sql);
-			pst.setString(1, jwt.getId());
-			rs = pst.executeQuery();
-			if(rs.next()){
-				if(!token.equals(rs.getString("token"))){
+			TabToken tabToken = tabTokenDao.findByUsername(jwt.getId());
+			if(tabToken != null){
+				if(!token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
 				}
 			}
@@ -74,39 +66,10 @@ public class SensorService extends BaseService {
 				return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 			}
 			return RespDTO.success("操作成功", null);
-		} catch (InvalidArgumentException | ProposalException | InterruptedException | ExecutionException
-				| TimeoutException e) {
-			log.error(e.getMessage());
-			return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-		}
-		catch(SQLException e){
-			log.error(e.getMessage());
-			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		catch(Exception e){
 			log.error(e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-		}
-		finally{
-			if(rs != null){
-				try {
-					rs.close();
-					rs = null;
-				} catch (SQLException e) {
-					log.error(e.getMessage());
-					return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-				}
-			}
-			if(pst!=null){
-				try {
-					pst.close();
-					pst = null;
-				} catch (SQLException e) {
-					log.error(e.getMessage());
-					return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-				}
-			}
-			DBHelper.close();
 		}
 	}
 
@@ -132,8 +95,6 @@ public class SensorService extends BaseService {
 
 	public RespDTO<List<Sensor>> getSensorData(String number, Long startTime, Long endTime, int pageIndex,
 			String token) {
-		PreparedStatement pst = null;
-		ResultSet rs = null;
 		try {
 			JwtToken jwt = TokenUtils.parseToken(token);
 			Date expire = jwt.getExpiratioin();
@@ -142,13 +103,9 @@ public class SensorService extends BaseService {
 				return RespDTO.fail("操作失败", ConstantsData.RTN_LOGIN_EXPIRED);
 			}
 			//unlogin
-			Connection conn = DBHelper.openCon();
-			String sql = "select token from tab_token where username = ?";
-			pst = conn.prepareStatement(sql);
-			pst.setString(1, jwt.getId());
-			rs = pst.executeQuery();
-			if(rs.next()){
-				if(!token.equals(rs.getString("token"))){
+			TabToken tabToken = tabTokenDao.findByUsername(jwt.getId());
+			if(tabToken != null){
+				if(!token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
 				}
 			}
@@ -190,27 +147,6 @@ public class SensorService extends BaseService {
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-		}
-		finally{
-			if(rs != null){
-				try {
-					rs.close();
-					rs = null;
-				} catch (SQLException e) {
-					log.error(e.getMessage());
-					return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-				}
-			}
-			if(pst!=null){
-				try {
-					pst.close();
-					pst = null;
-				} catch (SQLException e) {
-					log.error(e.getMessage());
-					return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-				}
-			}
-			DBHelper.close();
 		}
 	}
 }

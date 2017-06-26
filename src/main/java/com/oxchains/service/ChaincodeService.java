@@ -423,7 +423,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem")), "UTF-8");
 
         //PrivateKey privateKey = getPrivateKeyFromFile(privateKeyFile);
-        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/57aada3bc63e3c27c551c9aab350db7b3bebbf25b98c3ae29893dcb667883fb1_sk";
+        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/b4040debb21a4e4d2ad7e27bacb0d7d165afceae650b2d1cfd3dd10306636980_sk";
         final PEMParser pemParser = new PEMParser(new StringReader(new String(IOUtils.toByteArray(new FileInputStream(privateKeyFile)))));
 
         PrivateKeyInfo pemPair = (PrivateKeyInfo) pemParser.readObject();
