@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @EnableAutoConfiguration
 @ComponentScan
 public class Application {
+
     @RequestMapping("/")
     public String hello() {
         return "hello";

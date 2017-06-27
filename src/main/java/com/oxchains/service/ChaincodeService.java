@@ -212,7 +212,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 txID = response.getTransactionID();
                 successful.add(response);
                 // 拦截签名之后的hash
-                System.out.println(response.getProposalResponse().getResponse().getPayload().toStringUtf8());
+                // System.out.println(response.getProposalResponse().getResponse().getPayload().toStringUtf8());
             }
         }
         channel.sendTransaction(successful, channel.getOrderers());

@@ -1,11 +1,8 @@
 package com.oxchains.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.oxchains.bean.dto.datav.SignData;
+import com.oxchains.bean.model.ziyun.SignData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.service.SignDataService;
-import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +51,7 @@ public class SignDataController extends BaseController {
             if (StringUtils.isBlank(signData.toString())) {
                 return RespDTO.fail("参数错误");
             }
-            System.out.println("data_hash: -->" + signData.getDataHash() + "\r\n signature: -->" + signData.getSignature());
+            System.out.println(" data_hash: -->" + signData.getDataHash() + "\r\n signature: -->" + signData.getSignature());
             return signDataService.verifySign(signData);
         } catch (Exception e) {
             log.error("verify error!", e);
