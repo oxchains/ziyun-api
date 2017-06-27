@@ -33,10 +33,10 @@ public class SignDataController extends BaseController {
     @ResponseBody
     public RespDTO<String> getClientSign(@RequestBody SignData signData) {
         try {
-            if (StringUtils.isBlank(signData.toString())) {
+            if (StringUtils.isBlank(signData.getDataHash())) {
                 return RespDTO.fail("参数错误");
             }
-            System.out.println("data_hash: -->" + signData.getDataHash() + "\r\n signature: -->" + signData.getSignature());
+            System.out.println(" data_hash: -->" + signData.getDataHash() + "\r\n signature: -->" + signData.getSignature());
             return signDataService.getClientSign(signData);
         } catch (Exception e) {
             log.error("sign error!", e);
@@ -48,7 +48,7 @@ public class SignDataController extends BaseController {
     @ResponseBody
     public RespDTO<Boolean> verifySign(@RequestBody SignData signData) {
         try {
-            if (StringUtils.isBlank(signData.toString())) {
+            if (StringUtils.isBlank(signData.getDataHash()) || StringUtils.isBlank(signData.getSignature())) {
                 return RespDTO.fail("参数错误");
             }
             System.out.println(" data_hash: -->" + signData.getDataHash() + "\r\n signature: -->" + signData.getSignature());

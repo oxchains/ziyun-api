@@ -48,7 +48,7 @@ public class SignDataService extends BaseService {
         String nonce = System.currentTimeMillis() + "";
 
         SignData sqlOne = verifySignRepository.findByDataHash(dataHash);
-        if(sqlOne != null){
+        if(sqlOne != null && sqlOne.toString().length() != 0){
             String sqlNonce = sqlOne.getNonce();
             String chainSignature = chaincodeService.query("getSignature", new String[]{dataHash, "sanxi", sqlNonce});
 
@@ -71,7 +71,7 @@ public class SignDataService extends BaseService {
         String dataHash = signData.getDataHash();
         String signature = signData.getSignature();
         String verify = chaincodeService.query("verify", new String[]{dataHash, signature});
-        return RespDTO.success(verify.equals("1") ? "操作成功" : "操作失败", verify.equals("1"));
+        return RespDTO.success(verify.equals("1")?"操作成功":"操作失败", verify.equals("1"));
     }
 
 }
