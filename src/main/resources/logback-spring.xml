@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_DIR" value="/Users/liuruichao/javaSRC/oxchains/ziyundemo" />
+    <property name="LOG_DIR" value="/Users/song/IdeaProjects/ziyundemo"/>
 
     <appender name="rollingFileINFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/ziyun.log</file>
@@ -17,6 +17,12 @@
         </filter>
     </appender>
 
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%p] - %msg %n</pattern>
+        </encoder>
+    </appender>
+
     <logger name="org.springframework" level="INFO"/>
     <!--<logger name="com.mljr.carfinance.crm.provider" level="INFO" />-->
     <!--<logger name="com.alibaba.dubbo" level="WARN"/>-->
@@ -24,6 +30,7 @@
     <!--<logger name="com.mljr.carfinance.crm.provider.mapper" level="DEBUG"/>-->
 
     <root level="INFO">
-        <appender-ref ref="rollingFileINFO" />
+        <appender-ref ref="console"/>
+        <appender-ref ref="rollingFileINFO"/>
     </root>
 </configuration>
