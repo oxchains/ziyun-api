@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"strconv"
 	//"strings"
-
+    "sort"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
@@ -33,6 +33,11 @@ import (
 var sp = "*&!"
 
 type myChaincode struct {
+}
+
+type AuthInfo struct {
+	Id       string
+	AuthList []string
 }
 
 //the struct of the product
@@ -73,6 +78,7 @@ type Sensor struct {
 	GPSLongitude    float32
 	GPSLatitude     float32
 	Address         string
+	Token           string
 }
 
 //the struct of the transfer
@@ -205,6 +211,16 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "searchByQuery":
 		return t.searchByQuery(stub, args)
 
+	case "add":
+		return t.add(stub, args)
+	case "auth":
+		return t.auth(stub, args)
+	case "revoke":
+		return t.revoke(stub, args)
+	case "query":
+		return t.query(stub, args)
+
+
 	default:
 		return shim.Error("Unsupported operation")
 	}
@@ -222,6 +238,127 @@ func (t *myChaincode) searchByQuery(stub shim.ChaincodeStubInterface, args []str
 	}
 	return shim.Success(queryResults)
 
+}
+
+func RemoveDuplicatesAndEmpty(a []string) (ret []string) {
+	a_len := len(a)
+	for i := 0; i < a_len; i++ {
+		if (i > 0 && a[i-1] == a[i]) || len(a[i]) == 0 {
+			continue
+		}
+		ret = append(ret, a[i])
+	}
+	return
+}
+func RemoveOne(a []string, b string) (ret []string, flag bool) {
+	a_len := len(a)
+	flag = false
+	for i := 0; i < a_len; i++ {
+		if a[i] == b {
+			flag = true
+			continue
+		}
+		ret = append(ret, a[i])
+	}
+	return
+}
+func (t *myChaincode) add(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 1 {
+		return shim.Error("the new operation must have 1 arg: new user id")
+	}
+	id := args[0]
+	authInfo := &AuthInfo{id, []string{id}}
+	fmt.Println(authInfo)
+	bAuthInfo, err := json.Marshal(authInfo)
+	if err != nil {
+		return shim.Error("err while Marshal authinfo")
+	}
+	fmt.Println(string(bAuthInfo))
+	err = stub.PutState(id, bAuthInfo)
+	if err != nil {
+		return shim.Error("err while putting state")
+	}
+	return shim.Success(nil)
+}
+func (t *myChaincode) auth(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 2 {
+		return shim.Error("the auth operation must have 2 args: id A and id B")
+	}
+	owner := args[0]
+	com := args[1]
+	value, err := stub.GetState(owner)
+	if err != nil {
+		return shim.Error("err while getting the state")
+	}
+	if value == nil {
+		return shim.Error("don't have this user")
+	}
+	authInfo := &AuthInfo{}
+	err = json.Unmarshal(value, &authInfo)
+	if err != nil {
+		return shim.Error("err while Unmarshal the value")
+	}
+	//add the new com
+	authInfo.AuthList = append(authInfo.AuthList, com)
+	sort.Strings(authInfo.AuthList)
+	authInfo.AuthList = RemoveDuplicatesAndEmpty(authInfo.AuthList)
+	bAuthInfo, err := json.Marshal(authInfo)
+	if err != nil {
+		return shim.Error("err while Marshal authinfo")
+	}
+	err = stub.PutState(owner, bAuthInfo)
+	if err != nil {
+		return shim.Error("err while putting state")
+	}
+	return shim.Success(nil)
+}
+func (t *myChaincode) revoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 2 {
+		return shim.Error("the revoke operation must have 2 args: id A and id B")
+	}
+	owner := args[0]
+	com := args[1]
+	value, err := stub.GetState(owner)
+	if err != nil {
+		return shim.Error("err while getting the state")
+	}
+	if value == nil {
+		return shim.Error("don't have this user")
+	}
+	authInfo := &AuthInfo{}
+	err = json.Unmarshal(value, &authInfo)
+	if err != nil {
+		return shim.Error("err while Unmarshal the value")
+	}
+	//remove the new com
+	tmp, ok := RemoveOne(authInfo.AuthList, com)
+	authInfo.AuthList = tmp
+	if !ok {
+		return shim.Error("don't have the user in  authlist")
+	}
+	bAuthInfo, err := json.Marshal(authInfo)
+	if err != nil {
+		return shim.Error("err while Marshal authinfo")
+	}
+	err = stub.PutState(owner, bAuthInfo)
+	if err != nil {
+		return shim.Error("err while putting state")
+	}
+	return shim.Success(nil)
+}
+func (t *myChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 1 {
+		return shim.Error("the query operation must have 1 args: userid")
+	}
+	id := args[0]
+	value, err := stub.GetState(id)
+	if err != nil {
+		return shim.Error("err while getting the state")
+	}
+	if value == nil {
+		return shim.Error("don't have this user")
+	}
+	return shim.Success(value)
 }
 
 // =========================================================================================

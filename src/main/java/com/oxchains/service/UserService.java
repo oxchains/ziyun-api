@@ -67,7 +67,7 @@ public class UserService extends BaseService {
 			
 			if(user != null && user.getId()>0){
 				log.debug("===userid==="+user.getId());
-				String txID = chaincodeService.invoke("new", new String[]{username});
+				String txID = chaincodeService.invoke("add", new String[]{username});
 				log.debug("===txID==="+txID);
 				if(txID == null){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
