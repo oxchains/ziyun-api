@@ -1,22 +1,11 @@
 package com.oxchains;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.oxchains.bean.dto.CargoDTO;
 import com.oxchains.bean.model.ziyun.Cargo;
-import com.oxchains.common.RespDTO;
 import org.apache.commons.io.IOUtils;
 
-import java.io.DataOutputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 
 /**
  * Test
