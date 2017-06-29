@@ -4,6 +4,11 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.service.ChaincodeService;
 import com.oxchains.service.DataVService;
 import com.oxchains.service.influxDB.InfluxService;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.influxdb.dto.Point;
@@ -13,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 public class ScheduledTasks {
@@ -30,13 +37,16 @@ public class ScheduledTasks {
     @Autowired
     private InfluxService influxService;
 
+    @Value("${chaincode.ca.url}")
+    private String CA_URL;
+
     private static int ordererStatus = 1; //1--up 2--down
 
     public static void setOrderStatus(int status) {
         ScheduledTasks.ordererStatus = status;
     }
 
-    @Scheduled(fixedDelayString = "${SCHEDULED_TASKS_DELAY:20000}")
+    @Scheduled(fixedDelayString = "${SCHEDULED_TASKS_DELAY:2000}")
     public void chainHeightAndTxCount() {
         try {
             long height = dataVService.getChainHeight().getValue();
@@ -55,7 +65,7 @@ public class ScheduledTasks {
             influxService.write(Point.measurement("height").addField("value", height).build());
 //            influxService.write(Point.measurement("txCount"));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 
@@ -72,7 +82,7 @@ public class ScheduledTasks {
                 influxService.write(Point.measurement("newBlocks").tag("blockNum", String.valueOf(blocNumBeg)).addField("value", String.valueOf(heightTxCount)).build());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 
@@ -89,12 +99,6 @@ public class ScheduledTasks {
             index++;
         }
         influxService.write(Point.measurement("status").tag("host", "orderer").addField("value", (int)ScheduledTasks.ordererStatus).build());
-
-/*
-        influxService.write(Point.measurement("status").tag("host", "peer0").addField("value", 1).build());
-        influxService.write(Point.measurement("status").tag("host", "peer1").addField("value", 1).build());
-        influxService.write(Point.measurement("status").tag("host", "peer2").addField("value", 1).build());
-        influxService.write(Point.measurement("status").tag("host", "peer3").addField("value", 1).build());*/
     }
 
     @Scheduled(fixedDelayString = "${SCHEDULED_TASKS_DELAY:10000}")
@@ -102,19 +106,29 @@ public class ScheduledTasks {
         try {
             dataVService.getChainTxCountByBlockNum(0);
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (ProposalException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         } catch (InvalidArgumentException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         influxService.write(Point.measurement("status").tag("host", "orderer").addField("value", ScheduledTasks.ordererStatus).build());
-
-/*
-        influxService.write(Point.measurement("status").tag("host", "peer0").addField("value", 1).build());
-        influxService.write(Point.measurement("status").tag("host", "peer1").addField("value", 1).build());
-        influxService.write(Point.measurement("status").tag("host", "peer2").addField("value", 1).build());
-        influxService.write(Point.measurement("status").tag("host", "peer3").addField("value", 1).build());*/
     }
 
+    @Scheduled(fixedDelayString = "${SCHEDULED_TASKS_DELAY:2000}")
+    public void caStatusCheck() {
+        HttpPost httpPost = new HttpPost(CA_URL);
+        HttpResponse response = null;
+        final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        HttpClient client = httpClientBuilder.build();
+        final HttpClientContext context = HttpClientContext.create();
+        try {
+            response = client.execute(httpPost, context);
+            int status = response.getStatusLine().getStatusCode();
+            influxService.write(Point.measurement("status").tag("host", "ca0").addField("value", 1).build());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            influxService.write(Point.measurement("status").tag("host", "ca0").addField("value", 2).build());
+        }
+    }
 }
