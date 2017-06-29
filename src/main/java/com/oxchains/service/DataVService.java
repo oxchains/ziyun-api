@@ -2,14 +2,12 @@ package com.oxchains.service;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.dto.datav.NameValue;
 import com.oxchains.bean.dto.datav.ValueContent;
 import com.oxchains.bean.dto.datav.XY;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
-import org.hyperledger.fabric.protos.common.Common;
 import org.hyperledger.fabric.sdk.BlockInfo;
 import org.hyperledger.fabric.sdk.BlockchainInfo;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +40,12 @@ public class DataVService extends BaseService {
         BlockchainInfo blockchainInfo = getBlockChain();
 
         return new NameValue<>("", blockchainInfo.getHeight());
+    }
+    public NameValue<Long> getChainTxCountByBlockNum(long blockNum) throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException {
+        Long count = 0L;
+        BlockInfo blockInfo = chaincodeService.queryBlock(blockNum);
+        count += blockInfo.getBlock().getData().getDataCount();
+        return new NameValue<>("", count);
     }
 
     public NameValue<Long> getChainTxCount() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {

@@ -3,6 +3,7 @@ package com.oxchains.service;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.model.Customer;
+import com.oxchains.scheduler.ScheduledTasks;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -155,6 +156,16 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         return channelcodeInfos;
     }
 
+    public Boolean checkPeerStatus(int peerIndex){
+        Peer peer = (Peer) channel.getPeers().toArray()[peerIndex];
+        try {
+            hfClient.queryInstalledChaincodes(peer);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
     public Channel getChain(String channelName, Orderer orderer) throws InvalidArgumentException, TransactionException {
         Channel channel = hfClient.newChannel(channelName);
 
@@ -213,7 +224,14 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 successful.add(response);
             }
         }
-        channel.sendTransaction(successful, channel.getOrderers());
+
+        //TODO 通过捕获TransactionException,识别orderer宕机
+        channel.sendTransaction(successful, channel.getOrderers()).exceptionally(throwable -> {
+//            log.error("Unrecoverable error", throwable);
+            System.out.println("+++++++++++++++orderer is down+++++++++++++++++++++++++");
+            ScheduledTasks.setOrderStatus(2);
+            return null;
+        });
 
         return txID;
     }
