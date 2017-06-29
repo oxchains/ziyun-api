@@ -1,52 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_MYDB",
-      "label": "mydb",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "4.3.2"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "influxdb",
-      "name": "InfluxDB",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "singlestat",
-      "name": "Singlestat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": []
   },
@@ -54,7 +6,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "hideControls": false,
-  "id": null,
+  "id": 3,
   "links": [],
   "refresh": false,
   "rows": [
@@ -71,7 +23,7 @@
             "rgba(40, 13, 159, 0.89)",
             "rgba(39, 9, 121, 0.9)"
           ],
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -164,7 +116,7 @@
             "rgba(246, 9, 9, 0.89)",
             "rgba(242, 14, 40, 0.9)"
           ],
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -268,7 +220,7 @@
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "fill": 1,
           "id": 1,
           "interval": ">10h",
@@ -587,7 +539,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(233, 7, 7, 0.9)"
           ],
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -667,6 +619,12 @@
                   "key": "host",
                   "operator": "=",
                   "value": "ca0"
+                },
+                {
+                  "condition": "AND",
+                  "key": "time",
+                  "operator": ">",
+                  "value": "now()-120s"
                 }
               ]
             }
@@ -713,7 +671,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(233, 7, 7, 0.9)"
           ],
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -793,6 +751,12 @@
                   "key": "host",
                   "operator": "=",
                   "value": "orderer"
+                },
+                {
+                  "condition": "AND",
+                  "key": "time",
+                  "operator": ">",
+                  "value": "now()-20s"
                 }
               ]
             }
@@ -839,7 +803,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(233, 7, 7, 0.9)"
           ],
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -919,6 +883,12 @@
                   "key": "host",
                   "operator": "=",
                   "value": "peer0"
+                },
+                {
+                  "condition": "AND",
+                  "key": "time",
+                  "operator": ">",
+                  "value": "now()-120s"
                 }
               ]
             }
@@ -965,7 +935,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(233, 7, 7, 0.9)"
           ],
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -1051,6 +1021,12 @@
                   "key": "host",
                   "operator": "=",
                   "value": "peer1"
+                },
+                {
+                  "condition": "AND",
+                  "key": "time",
+                  "operator": ">",
+                  "value": "now()-120s"
                 }
               ]
             }
@@ -1102,7 +1078,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(233, 7, 7, 0.9)"
           ],
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -1182,6 +1158,12 @@
                   "key": "host",
                   "operator": "=",
                   "value": "peer2"
+                },
+                {
+                  "condition": "AND",
+                  "key": "time",
+                  "operator": ">",
+                  "value": "now()-120s"
                 }
               ]
             }
@@ -1233,7 +1215,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(233, 7, 7, 0.9)"
           ],
-          "datasource": "${DS_MYDB}",
+          "datasource": "mydb",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -1313,6 +1295,12 @@
                   "key": "host",
                   "operator": "=",
                   "value": "peer3"
+                },
+                {
+                  "condition": "AND",
+                  "key": "time",
+                  "operator": ">",
+                  "value": "now()-120s"
                 }
               ]
             }
@@ -1366,8 +1354,8 @@
     "list": []
   },
   "time": {
-    "from": "2017-06-28T04:31:29.538Z",
-    "to": "2017-06-28T05:11:29.546Z"
+    "from": "now-24h",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -1396,5 +1384,5 @@
   },
   "timezone": "browser",
   "title": "monitor-board",
-  "version": 0
+  "version": 7
 }
