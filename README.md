@@ -15,8 +15,12 @@ influxdb
         influxd
     - 进入命令行
         influx
+    - 创建数据库
+        命令行:create database mydb
+        rest:curl -POST http://localhost:8086/query --data-urlencode "q=CREATE DATABASE mydb"
     - 教程
         http://www.linuxdaxue.com/how-to-install-influxdb.html
+
 
 
 grafana
@@ -24,3 +28,5 @@ grafana
         http://docs.grafana.org/
     - 启动
         grafana-server --config=/usr/local/etc/grafana/grafana.ini --homepath /usr/local/share/grafana cfg:default.paths.logs=/usr/local/var/log/grafana cfg:default.paths.data=/usr/local/var/lib/grafana cfg:default.paths.plugins=/usr/local/var/lib/grafana/plugins
+    - import
+        monitor-board.json
