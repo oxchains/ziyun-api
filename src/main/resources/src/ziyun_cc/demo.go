@@ -220,6 +220,8 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "query":
 		return t.query(stub, args)
 
+	case "checkOrderer":
+		return t.checkOrderer(stub, args)
 
 	default:
 		return shim.Error("Unsupported operation")
@@ -684,4 +686,8 @@ func (t *myChaincode) getTransferInfoByBatch(stub shim.ChaincodeStubInterface, a
 	}
 
 	return shim.Success(queryResults)
+}
+
+func (t *myChaincode) checkOrderer(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	return shim.Success(nil)
 }

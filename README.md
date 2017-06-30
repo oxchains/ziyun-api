@@ -30,3 +30,7 @@ grafana
         grafana-server --config=/usr/local/etc/grafana/grafana.ini --homepath /usr/local/share/grafana cfg:default.paths.logs=/usr/local/var/log/grafana cfg:default.paths.data=/usr/local/var/lib/grafana cfg:default.paths.plugins=/usr/local/var/lib/grafana/plugins
     - 管理员登录浏览器,导入json
         monitor-board.json
+
+遗留问题:
+
+    关于orderer的宕机测试,还要结合端口占用情况,测试表示orderer的端口有的时候并没占用.

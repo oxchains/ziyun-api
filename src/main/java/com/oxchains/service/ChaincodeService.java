@@ -3,7 +3,7 @@ package com.oxchains.service;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.model.Customer;
-import com.oxchains.scheduler.ScheduledTasks;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -27,10 +27,14 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -205,16 +209,23 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         return peers;
     }
 
-    public String invoke(String func, String[] args) throws InvalidArgumentException, ProposalException, InterruptedException, ExecutionException, TimeoutException {
+    private ProposalResponseWrapper getProposalResponse(String func, String[] args) throws InvalidArgumentException, ProposalException {
         String txID = null;
 
         TransactionProposalRequest transactionProposalRequest = hfClient.newTransactionProposalRequest();
         transactionProposalRequest.setChaincodeID(channelCodeID);
         transactionProposalRequest.setFcn(func);
         transactionProposalRequest.setArgs(args);
-
+        Collection<ProposalResponse> transactionPropResp;
         // send Proposal to peers
-        Collection<ProposalResponse> transactionPropResp = channel.sendTransactionProposal(transactionProposalRequest, channel.getPeers());
+        transactionPropResp = channel.sendTransactionProposal(transactionProposalRequest, channel.getPeers());
+        // TODO parser Resp msg
+
+        if(transactionPropResp.iterator().hasNext()){
+            ChaincodeResponse chaincodeResponse = transactionPropResp.iterator().next();
+            System.out.println("------------------------------------------");
+            System.out.println(chaincodeResponse.getMessage());
+        }
 
         // send Proposal to orderers
         Collection<ProposalResponse> successful = new ArrayList<>();
@@ -224,16 +235,31 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 successful.add(response);
             }
         }
+        return new ProposalResponseWrapper(successful, txID);
+    }
 
-        //TODO 通过捕获TransactionException,识别orderer宕机
-        channel.sendTransaction(successful, channel.getOrderers()).exceptionally(throwable -> {
-//            log.error("Unrecoverable error", throwable);
-            System.out.println("+++++++++++++++orderer is down+++++++++++++++++++++++++");
-            ScheduledTasks.setOrderStatus(2);
-            return null;
-        });
+    @Data
+    private class ProposalResponseWrapper{
+        Collection<ProposalResponse> successful;
+        String txID;
+        public ProposalResponseWrapper(Collection<ProposalResponse> successful, String txID) {
+            this.successful = successful;
+            this.txID = txID;
+        }
+    }
 
-        return txID;
+    public String invoke(String func, String[] args) throws InvalidArgumentException, ProposalException, InterruptedException, ExecutionException, TimeoutException {
+
+        ProposalResponseWrapper proposalResponseWrapper = null;
+        proposalResponseWrapper = getProposalResponse(func, args);
+        channel.sendTransaction(proposalResponseWrapper.getSuccessful(), channel.getOrderers());
+        return proposalResponseWrapper.getTxID();
+    }
+
+    public CompletableFuture<BlockEvent.TransactionEvent> invokeNonExistFunc() throws ProposalException, InvalidArgumentException {
+        ProposalResponseWrapper proposalResponseWrapper = null;
+        proposalResponseWrapper = getProposalResponse("checkOrderer", new String[]{});
+        return channel.sendTransaction(proposalResponseWrapper.getSuccessful(), channel.getOrderers());
     }
 
     public String query(String func, String[] args) {
@@ -290,7 +316,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 Common.Envelope envelope = Common.Envelope.parseFrom(data);
                 Common.Payload payload = Common.Payload.parseFrom(envelope.getPayload());
                 Common.ChannelHeader channelHeader = Common.ChannelHeader.parseFrom(payload.getHeader().getChannelHeader());
-                System.out.println("txID: " + channelHeader.getTxId());
+//                System.out.println("txID: " + channelHeader.getTxId());
                 //TransactionInfo transactionInfo = queryTransactionInfo(channelHeader.getTxId());
 
                 if (channelHeader.getType() == 1) {
@@ -313,18 +339,15 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                                 .forEach(endorsement -> {
                                     try {
                                         Identities.SerializedIdentity endorser = Identities.SerializedIdentity.parseFrom(endorsement.getEndorser());
-                                        System.out.println(String.format("mspID: %s, idByte: %s.", endorser.getMspid(), endorser.getIdBytes().toStringUtf8()));
+//                                        System.out.println(String.format("mspID: %s, idByte: %s.", endorser.getMspid(), endorser.getIdBytes().toStringUtf8()));
                                     } catch (InvalidProtocolBufferException e) {
                                         e.printStackTrace();
                                     }
-                                    System.out.println();
                                 });
-                        System.out.println();
                     }
                 } else {
                     throw new RuntimeException("Only able to decode ENDORSER_TRANSACTION and CONFIG type blocks");
                 }
-                System.out.println();
             }
             //System.out.println("height: " + i + ", blockData count: " + blockData.getDataCount());
         }
