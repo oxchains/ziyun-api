@@ -7,46 +7,75 @@ import java.util.List;
 
 /**
  * Created by root on 17-7-3.
- * 货物
+ * 销售信息
  */
-public class Goods extends BaseEntity {
+public class SalesInfo extends BaseEntity {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("type")
-    private String type;//food, medicine
+    @JsonProperty("No")
+    private String No;//销售单号
 
-    @JsonProperty("GoodsType")
-    private String GoodsType;//货物类型
+    @JsonProperty("SalesTitle")
+    private String SalesTitle;//销售标题
 
-    @JsonProperty("ParentCode")
-    private String ParentCode;//父编码
+    @JsonProperty("PurchaseId")
+    private String PurchaseId;//进货id
 
-    @JsonProperty("ProduceInfoId")
-    private String ProduceInfoId;//生产过程ID
+    @JsonProperty("ProductAddress")
+    private String ProductAddress;//产地
 
-    @JsonProperty("ProductId")
-    private String ProductId;//产品ID
+    @JsonProperty("ProductionName")
+    private String ProductionName;//产品名称
 
-    @JsonProperty("ProductCode")
-    private String ProductCode;//产品编码
+    @JsonProperty("ProductionSpecification")
+    private String ProductionSpecification;//产品规格
 
-    @JsonProperty("UniqueCode")
-    private String UniqueCode;//唯一编码
+    @JsonProperty("CreateSalesEnterpriseId")
+    private String CreateSalesEnterpriseId;//生产销售企业id
 
-    @JsonProperty("CommodityCode")
-    private String CommodityCode;//商品码
+    @JsonProperty("TranstitSalesEnterpriseId")
+    private String TranstitSalesEnterpriseId;//批发销售企业id
 
-    @JsonProperty("ProductionBatch")
-    private String ProductionBatch;//生产批次
+    @JsonProperty("SalesCount")
+    private int SalesCount;//销售数量
 
-    @JsonProperty("DrugInformation")
-    private List<DrugInformation> DrugInformation;//药品信息
+    @JsonProperty("ProductTime")
+    private long ProductTime;//生产时间 时间戳
 
-    @JsonProperty("FoodInformation")
-    private List<FoodInformation> FoodInformation;//食品信息
+    @JsonProperty("ProductBatch")
+    private String ProductBatch;//生产批次
 
-    @JsonProperty("ProduceInformation")
-    private List<ProduceInformation> ProduceInformation;//生产信息
+    @JsonProperty("ProductDeadline")
+    private int ProductDeadline;//保质期(月)
 
+    @JsonProperty("GoodsOriginalUrl")
+    private String GoodsOriginalUrl;//货物图片路径
+
+    @JsonProperty("SalesDate")
+    private long SalesDate;//销售日期 时间戳
+
+    @JsonProperty("BuyerName")
+    private String BuyerName;//购货人姓名
+
+    @JsonProperty("BuyerAddress")
+    private String BuyerAddress;//购货人地址
+
+    @JsonProperty("BuyerTel")
+    private String BuyerTel;//购货人联系方式
+
+    @JsonProperty("ResponsibilityName")
+    private String ResponsibilityName;//负责人姓名
+
+    @JsonProperty("InspectionCertificateNumber")
+    private String InspectionCertificateNumber;//合格证号
+
+    @JsonProperty("ProductionProcessId")
+    private String ProductionProcessId;//生产过程id
+
+    @JsonProperty("GoodsId")
+    private String GoodsId;//货物id
+
+    @JsonProperty("SalsesId")
+    private String SalsesId;//销售人员id
 }

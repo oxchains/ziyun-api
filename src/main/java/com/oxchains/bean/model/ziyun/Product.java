@@ -5,45 +5,60 @@ import com.oxchains.common.BaseEntity;
 
 /**
  * Created by root on 17-7-3.
- * 仓储单
+ * 产品
  */
-public class StorageBill extends BaseEntity {
+public class Product extends BaseEntity {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("StorageTitle")
-    private String StorageTitle;//贮存标题
+    @JsonProperty("ProductName")
+    private String ProductName;//产品名称
 
-    @JsonProperty("WarehouseName")
-    private String WarehouseName;//仓库名字
+    @JsonProperty("EnterpriseId")
+    private String EnterpriseId;//企业ID
 
-    @JsonProperty("SalesId")
-    private String SalesId;//生产销售id
+    @JsonProperty("ProductOriginalUrl")
+    private String ProductOriginalUrl;//产品图片
 
-    @JsonProperty("TransportId")
-    private String TransportId;//运输id
+    @JsonProperty("ProductAddress")
+    private String ProductAddress;//生产地址
 
-    @JsonProperty("GiverName")
-    private String GiverName;//转交人名字
+    @JsonProperty("ProductTime")
+    private long ProductTime;//生产时间 (时间戳)
 
-    @JsonProperty("GiverPhone")
-    private String GiverPhone;//转交人电话
+    @JsonProperty("ProductType")
+    private String ProductType;//产品类型
 
-    @JsonProperty("RecipientName")
-    private String RecipientName;//接收人名字
+    @JsonProperty("ProductDeadline")
+    private int ProductDeadline;//保质期(月)
 
-    @JsonProperty("RecipientPhone")
-    private String RecipientPhone;//接收人电话
+    @JsonProperty("ProductTags")
+    private String ProductTags;//产品标签
 
-    @JsonProperty("StartTime")
-    private long StartTime;//存储开始时间 时间戳
+    @JsonProperty("ProductWeight")
+    private String ProductWeight;//产品重量
 
-    @JsonProperty("EndTime")
-    private long EndTime;//存储结束时间 时间戳
+    @JsonProperty("ProductVolume")
+    private String ProductVolume;//产品体积
 
-    @JsonProperty("StorageAddress")
-    private String StorageAddress;//存储地址
+    @JsonProperty("ProductCode")
+    private String ProductCode;//产品编码
 
-    @JsonProperty("HandoverInfo")
-    private String HandoverInfo;//双方交接情况
+    @JsonProperty("Remarks")
+    private String Remarks;//备注
+
+    @JsonProperty("Size")
+    private String Size;//规格
+
+    @JsonProperty("Pack")
+    private String Pack;//包装
+
+    @JsonProperty("ApprovalNumber")
+    private String ApprovalNumber;//批准文号
+
+    @JsonProperty("Storage")
+    private String Storage;//贮藏
+
+    @JsonProperty("Describe")
+    private String Describe;//描述
 }

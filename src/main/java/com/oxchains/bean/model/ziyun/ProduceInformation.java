@@ -11,6 +11,9 @@ import lombok.Data;
  * Created on 2017/4/6 13:38
  */
 public class ProduceInformation extends BaseEntity {
+    @JsonProperty("id")
+    private int id;
+
     @JsonProperty("Address")
     private String Address; //生产地址
 

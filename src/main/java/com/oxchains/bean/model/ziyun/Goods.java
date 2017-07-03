@@ -3,60 +3,50 @@ package com.oxchains.bean.model.ziyun;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
 
+import java.util.List;
+
 /**
  * Created by root on 17-7-3.
- * 生产信息
+ * 货物
  */
-public class ProduceInfo extends BaseEntity {
+public class Goods extends BaseEntity {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("ProductionProcessName")
-    private String ProductionProcessName;//产品名称
+    @JsonProperty("type")
+    private String type;//food, medicine
 
-    @JsonProperty("GoodsCount")
-    private int GoodsCount;//生产数量
+    @JsonProperty("GoodsType")
+    private String GoodsType;//货物类型
 
-    @JsonProperty("LastCount")
-    private int LastCount;//剩余数量
+    @JsonProperty("ParentCode")
+    private String ParentCode;//父编码
+
+    @JsonProperty("ProduceInfoId")
+    private String ProduceInfoId;//生产过程ID
 
     @JsonProperty("ProductId")
-    private String ProductId;//产品id
+    private String ProductId;//产品ID
 
-    @JsonProperty("EnterpriseId")
-    private String EnterpriseId;//生产企业id
+    @JsonProperty("ProductCode")
+    private String ProductCode;//产品编码
 
-    @JsonProperty("ProductionTime")
-    private long ProductionTime;//生产时间 时间戳
+    @JsonProperty("UniqueCode")
+    private String UniqueCode;//唯一编码
 
-    @JsonProperty("InStorageTime")
-    private long InStorageTime;//入库时间 时间戳
+    @JsonProperty("CommodityCode")
+    private String CommodityCode;//商品码
 
-    @JsonProperty("OutStorageTime")
-    private long OutStorageTime;//出库时间 时间戳
+    @JsonProperty("ProductionBatch")
+    private String ProductionBatch;//生产批次
 
-    @JsonProperty("EnvironmentalMonitoring")
-    private String EnvironmentalMonitoring;//环境监测
+    @JsonProperty("DrugInformation")
+    private List<DrugInformation> DrugInformation;//药品信息
 
-    @JsonProperty("ProductionParameters")
-    private String ProductionParameters;//生产过程工艺参数
+    @JsonProperty("FoodInformation")
+    private List<FoodInformation> FoodInformation;//食品信息
 
-    @JsonProperty("QualitySafety")
-    private String QualitySafety;//质量安全
-
-    @JsonProperty("BatchNumber")
-    private String BatchNumber;//产品检验批号
-
-    @JsonProperty("CheckDate")
-    private long CheckDate;//检验日期 时间戳
-
-    @JsonProperty("CheckWay")
-    private String CheckWay;//产品检验方法
-
-    @JsonProperty("CheckResult")
-    private String CheckResult;//产品检验结果
-
-    @JsonProperty("InspectorName")
-    private String InspectorName;//检验人名字
+    @JsonProperty("ProduceInformation")
+    private List<ProduceInformation> ProduceInformation;//生产信息
 
 }
