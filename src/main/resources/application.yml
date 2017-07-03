@@ -1,0 +1,12 @@
+spring:
+  mail:
+    host: smtp.exmail.qq.com
+    username: monitor@oxchains.com
+    password: Oxchains+123
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true

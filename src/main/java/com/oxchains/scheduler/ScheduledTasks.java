@@ -4,6 +4,7 @@ import com.oxchains.grpc.HelloClient;
 import com.oxchains.service.ChaincodeService;
 import com.oxchains.service.DataVService;
 import com.oxchains.service.influxDB.InfluxService;
+import com.oxchains.util.EmailUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -35,6 +36,9 @@ public class ScheduledTasks {
     @Autowired
     private InfluxService influxService;
 
+    @Autowired
+    private EmailUtil mailService;
+
     @Value("${chaincode.ca.url}")
     private String CA_URL;
 
@@ -64,7 +68,6 @@ public class ScheduledTasks {
                 influxService.write(Point.measurement("txCount").tag("blockNum", String.valueOf(blocNumBeg)).addField("value", heightTxCount).build());
             }
             influxService.write(Point.measurement("height").addField("value", height).build());
-//            influxService.write(Point.measurement("txCount"));
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -129,4 +132,29 @@ public class ScheduledTasks {
             influxService.write(Point.measurement("status").tag("host", "ca0").addField("value", 2).build());
         }
     }
+
+    @Scheduled(fixedDelayString = "${SCHEDULED_TASKS_DELAY:600000}")
+//    每十分钟扫描下 最近的服务器状态 如果宕机发出邮件
+    public void mailAdvice() {
+        boolean isDown = false;
+        Object status;
+        String[] sqls = {
+                "select last(value) from status where host = 'ca0' and time > now()-600s",
+                "select last(value) from status where host = 'orderer' and time > now()-600s",
+                "select last(value) from status where host = 'peer0' and time > now()-600s",
+                "select last(value) from status where host = 'peer1' and time > now()-600s"
+        };
+        String msg = "";
+        for(String sql : sqls){
+            status = influxService.query(sql).get().getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
+            if(status == null || (int)status == 2){
+                isDown = true;
+                msg += sql.substring(sql.indexOf("'")+1, sql.lastIndexOf("'"))+ " ";
+            }
+        }
+        if(isDown)
+            mailService.sendSimpleMail("monitor@oxchains.com","紫云区块链系统","系统服务器"+msg+"宕机提醒");
+    }
 }
+
+
