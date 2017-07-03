@@ -1,5 +1,6 @@
 package com.oxchains.scheduler;
 
+import com.oxchains.grpc.HelloClient;
 import com.oxchains.service.ChaincodeService;
 import com.oxchains.service.DataVService;
 import com.oxchains.service.influxDB.InfluxService;
@@ -8,9 +9,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.hyperledger.fabric.sdk.BlockEvent;
-import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
-import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.influxdb.dto.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +18,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.concurrent.CompletableFuture;
 
 @Component
 public class ScheduledTasks {
@@ -107,42 +103,13 @@ public class ScheduledTasks {
 
     @Scheduled(fixedDelayString = "${SCHEDULED_TASKS_DELAY:10000}")
     public void orderStatusCheck() {
-        try {
-            final int[] status = {1};
-            int port = Integer.parseInt(ORDERER_URL.substring(ORDERER_URL.lastIndexOf(":")+1));
-            CompletableFuture<BlockEvent.TransactionEvent> completableFuture = chaincodeService.invokeNonExistFunc();
-            completableFuture.exceptionally(throwable -> {
-                        System.out.println(throwable.getMessage());
-                        if (throwable.getMessage().contains("failed to place transaction")){
-                            log.info("----------2 failed to place transaction");
-                            influxService.write(Point.measurement("status").tag("host", "orderer").addField("value", 2).build());
-                        }
-                        else {
-                            //如果peer宕机会导致背书失效 不会提交orderer从而无法检验orderer是否宕机,由此结合端口占用情况判断,如果没有占用 证明系统宕机
-                            try {
-                                //TODO 有时候端口会available ...
-                                ServerSocket server = new ServerSocket(port);
-                                log.info("-------------2 The port is available.");
-                                status[0] = 2;
-                            } catch (IOException e) {
-                                log.info("-------------1 The port is occupied.");
-                                status[0] = 1;
-                            } finally {
-                                influxService.write(Point.measurement("status").tag("host", "orderer").addField("value", status[0]).build());
-                            }
-                        }
-                        return null;
-                    });
-            if (!completableFuture.isCompletedExceptionally()){
-                //如果正常结束 状态1
-                influxService.write(Point.measurement("status").tag("host", "orderer").addField("value", 1).build());
-                log.info("----------1 is not CompletedExceptionally");
-            }
-        } catch (ProposalException e) {
-            e.printStackTrace();
-        } catch (InvalidArgumentException e) {
-            e.printStackTrace();
-        }
+        int port = Integer.parseInt(ORDERER_URL.substring(ORDERER_URL.lastIndexOf(":")+1));
+        String host = ORDERER_URL.substring(7,ORDERER_URL.lastIndexOf(":"));
+        boolean status = new HelloClient(host, port).greet("");
+        if(status)
+            influxService.write(Point.measurement("status").tag("host", "orderer").addField("value", 1).build());
+        else
+            influxService.write(Point.measurement("status").tag("host", "orderer").addField("value", 2).build());
     }
 
     @Scheduled(fixedDelayString = "${SCHEDULED_TASKS_DELAY:2000}")
