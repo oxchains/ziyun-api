@@ -5,13 +5,12 @@ import com.oxchains.bean.model.ziyun.PurchaseInfo;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.service.ChaincodeService;
+import com.oxchains.service.PurchaseInfoService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by root on 17-7-3.
@@ -22,23 +21,30 @@ import javax.annotation.Resource;
 public class PurchaseInfoController extends BaseController  {
 
     @Resource
-    private ChaincodeService chaincodeService;
+    private PurchaseInfoService purchaseInfoService;
 
     @PostMapping
     public RespDTO<String> addPurchaseInfo(@RequestBody String body){
         try {
             log.debug("===addPurchaseInfo==="+body);
             PurchaseInfo purchaseInfo = gson.fromJson(body, PurchaseInfo.class);
-            String txID = chaincodeService.invoke("addPurchaseInfo", new String[] { gson.toJson(purchaseInfo) });
-            log.debug("===txID==="+txID);
-            if(txID == null){
-                return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-            }
-            return RespDTO.success("操作成功");
+            return purchaseInfoService.addPurchaseInfo(purchaseInfo);
         }
         catch(JsonSyntaxException e){
             log.error(e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
+        }
+    }
+
+    @GetMapping(value="/{GoodsId}")
+    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByGoodsId(@PathVariable String GoodsId){
+        try {
+            log.debug("===queryPurchaseInfoByGoodsId==="+GoodsId);
+            return purchaseInfoService.queryPurchaseInfoByGoodsId(GoodsId);
         }
         catch (Exception e) {
             log.error(e.getMessage());

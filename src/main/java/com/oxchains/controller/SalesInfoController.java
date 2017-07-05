@@ -1,17 +1,17 @@
 package com.oxchains.controller;
 
 import com.google.gson.JsonSyntaxException;
+import com.oxchains.bean.model.ziyun.Goods;
 import com.oxchains.bean.model.ziyun.SalesInfo;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.service.ChaincodeService;
+import com.oxchains.service.SalesInfoService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by root on 17-7-3.
@@ -21,23 +21,30 @@ import javax.annotation.Resource;
 @RequestMapping("/salesinfo")
 public class SalesInfoController extends BaseController {
     @Resource
-    private ChaincodeService chaincodeService;
+    private SalesInfoService salesInfoService;
 
     @PostMapping
     public RespDTO<String> addSalesInfo(@RequestBody String body){
         try {
             log.debug("===addSalesInfo==="+body);
             SalesInfo salesInfo = gson.fromJson(body, SalesInfo.class);
-            String txID = chaincodeService.invoke("addSalesInfo", new String[] { gson.toJson(salesInfo) });
-            log.debug("===txID==="+txID);
-            if(txID == null){
-                return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
-            }
-            return RespDTO.success("操作成功");
+            return salesInfoService.addSalesInfo(salesInfo);
         }
         catch(JsonSyntaxException e){
             log.error(e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{No}/{PurchaseId}/{GoodsId}/{ProductionBatch}")
+    public RespDTO<List<SalesInfo>> querySalesInfoList(@PathVariable String No,@PathVariable String PurchaseId,@PathVariable String GoodsId,@PathVariable String ProductionBatch){
+        try {
+            log.debug("===querySalesInfoList===");
+            return salesInfoService.querySalesInfoList(No,PurchaseId,GoodsId,ProductionBatch);
         }
         catch (Exception e) {
             log.error(e.getMessage());
