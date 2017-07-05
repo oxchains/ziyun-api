@@ -33,7 +33,7 @@ public class ProduceInfoController extends BaseController{
             if(txID == null){
                 return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
             }
-            return RespDTO.success("操作成功", gson.toJson(produceInfo));
+            return RespDTO.success("操作成功");
         }
         catch(JsonSyntaxException e){
             log.error(e.getMessage());
