@@ -9,6 +9,7 @@ import com.oxchains.service.ChaincodeService;
 import com.oxchains.service.ProductService;
 import com.sun.org.apache.regexp.internal.RESyntaxException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,8 +23,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/product")
 public class ProductController extends BaseController {
-    @Resource
-    private ChaincodeService chaincodeService;
 
     @Resource
     private ProductService productService;
@@ -32,19 +31,15 @@ public class ProductController extends BaseController {
     public RespDTO<String> addProduct(@RequestBody String body){
         try {
             log.debug("===addProduct==="+body);
-            Product product = gson.fromJson(body, Product.class);
-            String txID = chaincodeService.invoke("addProduct", new String[] { gson.toJson(product) });
-            log.debug("===txID==="+txID);
-            if(txID == null){
-                return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
+            if (StringUtils.isBlank(body)) {
+                return RespDTO.fail("参数错误");
             }
-            return RespDTO.success("操作成功");
-        }
-        catch(JsonSyntaxException e){
+            Product product = gson.fromJson(body, Product.class);
+            return productService.addProduct(product);
+        } catch(JsonSyntaxException e){
             log.error(e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
