@@ -228,11 +228,13 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         try {
             queryProposals = channel.queryByChaincode(queryByChaincodeRequest, channel.getPeers());
         } catch (InvalidArgumentException | ProposalException ignored) {
+            log.error(ignored.getMessage());
             return null;
         }
         for (ProposalResponse proposalResponse : queryProposals) {
             if (proposalResponse.isVerified() && proposalResponse.getStatus() == ProposalResponse.Status.SUCCESS) {
                 String payload = proposalResponse.getProposalResponse().getResponse().getPayload().toStringUtf8();
+                log.debug("===payload==="+payload);
                 return payload;
             }
         }

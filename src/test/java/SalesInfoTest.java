@@ -41,7 +41,7 @@ public class SalesInfoTest {
 
     @Test
     public void queryGoodsList(){
-        String url = "http://localhost:8080/salesinfo/No/PurchaseId/GoodsId/ProductionBatch";
+        String url = "http://localhost:8080/salesinfo/No/PurchaseId/GoodsId/ProductBatch";
 
         HttpGet get = new HttpGet(url);
         HttpClient httpClient = HttpClientBuilder.create().build();

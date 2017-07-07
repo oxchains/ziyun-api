@@ -22,7 +22,7 @@ public class PurchaseInfoService extends BaseService  {
     private ChaincodeService chaincodeService;
 
     public RespDTO<String> addPurchaseInfo(PurchaseInfo purchaseInfo) throws Exception{
-        String txID = chaincodeService.invoke("addPurchaseInfo", new String[] { gson.toJson(purchaseInfo) });
+        String txID = chaincodeService.invoke("savePurchaseInfo", new String[] { gson.toJson(purchaseInfo) });
         log.debug("===txID==="+txID);
         if(txID == null){
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -31,7 +31,7 @@ public class PurchaseInfoService extends BaseService  {
     }
 
     public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByGoodsId(String GoodsId){
-        String jsonStr = chaincodeService.query("queryPurchaseInfoByGoodsId", new String[]{GoodsId});
+        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"GoodsId\" : \""+GoodsId+"\"}}"});
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
             return RespDTO.fail("没有数据");
         }

@@ -23,7 +23,7 @@ public class GoodsService extends BaseService {
     private ChaincodeService chaincodeService;
 
     public RespDTO<String> addGoods(Goods goods) throws Exception{
-        String txID = chaincodeService.invoke("addGoods", new String[] { gson.toJson(goods) });
+        String txID = chaincodeService.invoke("saveGoods", new String[] { gson.toJson(goods) });
         log.debug("===txID==="+txID);
         if(txID == null){
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -32,7 +32,12 @@ public class GoodsService extends BaseService {
     }
 
     public RespDTO<List<Goods>> getGoodsList(String ProductCode, String UniqueCode, String CommodityCode, String ProductionBatch) throws Exception{
-        String jsonStr = chaincodeService.query("getGoodsList", new String[]{ProductCode, UniqueCode,CommodityCode,ProductionBatch});
+        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\n" +
+                "    \"CommodityCode\": \""+CommodityCode+"\",\n" +
+                "    \"ProductCode\": \""+ProductCode+"\",\n" +
+                "    \"ProductionBatch\": \""+ProductionBatch+"\",\n" +
+                "    \"UniqueCode\": \""+UniqueCode+"\"\n" +
+                "}}"});
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
             return RespDTO.fail("没有数据");
         }

@@ -14,13 +14,13 @@ import java.io.IOException;
  * Created by root on 17-7-5.
  */
 public class PurchaseInfoTest {
-    //@Test
+    @Test
     public void addPurchaseInfo() {
         String url = "http://localhost:8080/purchaseinfo";
         HttpPost post = new HttpPost(url);
 
-        String json = "{'PurchaseTitle':'PurchaseTitle','Count':'1','TransportId':'TransportId','EnterpriseId':'EnterpriseId','ProductionAddress':'ProductionAddress'," +
-                "'GoodsId':'GoodsId','ProductionSpecification':'ProductionSpecification','ProductionTime':'12','ProductionBatch':'ProductionBatch'," +
+        String json = "{'PurchaseTitle':'PurchaseTitle1','Count':'1','TransportId':'TransportId3','EnterpriseId':'EnterpriseId','ProductionAddress':'ProductionAddress'," +
+                "'GoodsId':'123456','ProductionSpecification':'ProductionSpecification','ProductionTime':'12','ProductionBatch':'ProductionBatch'," +
                 "'ExpirationDate':'1','StockDate':'1234567','SupperName':'SupperName','SupperAddress':'SupperAddress','SupplyName':'SupplyName','SupplyPhone':'SupplyPhone'}";
         System.out.println("json==="+json);
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -39,13 +39,14 @@ public class PurchaseInfoTest {
 
     @Test
     public void queryGoodsList(){
-        String url = "http://localhost:8080/purchaseinfo/GoodsId";
+        String url = "http://localhost:8080/purchaseinfo/123456";
 
         HttpGet get = new HttpGet(url);
         HttpClient httpClient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpClient.execute(get);
+            System.out.println("===response===\n" + response);
             if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
                 String result = EntityUtils.toString(response.getEntity(), "utf-8");
                 System.out.println("===result===\n" + result);
