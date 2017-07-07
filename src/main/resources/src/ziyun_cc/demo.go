@@ -155,6 +155,69 @@ type Transfer struct {
 	GoodsTraceList                []GoodsTrace
 }
 
+type PurchaseInfo struct {
+	PurchaseTitle					string
+	Count							int64
+	TransportId						string
+	EnterpriseId					string
+	ProductionAddress 				string
+	GoodsId							string
+	ProductionSpecification			string
+	ProductionTime					int64
+	ProductionBatch					string
+	ExpirationDate					int64
+	StockDate						int64
+	SupperName						string
+	SupperAddress					string
+	SupplyName						string
+	SupplyPhone						string
+}
+
+type FoodInformation struct{
+	FoodName						string
+	Manufacturer					string
+}
+
+type Goods struct{
+	Type 							string
+	GoodsType						string
+	ParentCode						string
+	ProduceInfoId					string
+	ProductId						string
+	ProductCode						string
+	UniqueCode						string
+	CommodityCode					string
+	ProductionBatch					string
+	DrugInformationList				[]DrugInformation
+	FoodInformationList				[]FoodInformation
+	ProduceInformationList			[]ProduceInformation
+}
+
+type SalesInfo struct{
+	No								string
+	SalesTitle						string
+	PurchaseId						string
+	ProductAddress					string
+	ProductionName					string
+	ProductionSpecification			string
+	CreateSalesEnterpriseId			string
+	TranstitSalesEnterpriseId		string
+	SalesCount						int64
+	ProductTime						int64
+	ProductBatch					string
+	ProductDeadline					int64
+	GoodsOriginalUrl				string
+	SalesDate						int64
+	BuyerName						string
+	BuyerAddress					string
+	BuyerTel						string
+	ResponsibilityName				string
+	InspectionCertificateNumber		string
+	ProductionProcessId				string
+	GoodsId							string
+	SalsesId						string
+}
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -174,6 +237,15 @@ func (t *myChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	switch function {
+
+	case "saveSalesInfo":
+		return t.saveSalesInfo(stub, args)
+
+	case "savePurchaseInfo":
+		return t.savePurchaseInfo(stub, args)
+
+	case "saveGoods":
+		return t.saveGoods(stub, args)
 
 	case "saveProductInfo":
 		return t.saveProductInfo(stub, args)
@@ -266,6 +338,7 @@ func (t *myChaincode) add(stub shim.ChaincodeStubInterface, args []string) pb.Re
 	if len(args) < 1 {
 		return shim.Error("the new operation must have 1 arg: new user id")
 	}
+	fmt.Println("===add user===")
 	id := args[0]
 	authInfo := &AuthInfo{id, []string{id}}
 	fmt.Println(authInfo)
@@ -431,6 +504,78 @@ func getQueryResultForQueryString(stub shim.ChaincodeStubInterface, queryString 
 	fmt.Printf("getQueryResultForQueryString queryResult:\n%s\n", string(ret))
 
 	return ret, nil
+}
+
+func (t *myChaincode) saveSalesInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveSalesInfo===")
+	if len(args) < 1 {
+		return shim.Error("saveGoods operation must have 1 arg")
+	}
+	// get the args
+	bSalesInfo := []byte(args[0])
+	//get some info
+	salesInfo := &SalesInfo{}
+	err := json.Unmarshal(bSalesInfo, &salesInfo)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	//FIXME check key exists
+	err = stub.PutState(salesInfo.No,bSalesInfo)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
+
+func (t *myChaincode) saveGoods(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveGoods===")
+	if len(args) < 1 {
+		return shim.Error("saveGoods operation must have 1 arg")
+	}
+	// get the args
+	bGoods := []byte(args[0])
+	//get some info
+	goods := &Goods{}
+	err := json.Unmarshal(bGoods, &goods)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	//FIXME check key exists
+	err = stub.PutState(goods.UniqueCode,bGoods)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
+
+func (t *myChaincode) savePurchaseInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===savePurchaseInfo===")
+	if len(args) < 1 {
+		return shim.Error("addPurchaseInfo operation must have 1 arg")
+	}
+	// get the args
+	bPurchaseInfo := []byte(args[0])
+	//get some info
+	purchaseInfo := &PurchaseInfo{}
+	err := json.Unmarshal(bPurchaseInfo, &purchaseInfo)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	//FIXME check key exists
+	err = stub.PutState(purchaseInfo.PurchaseTitle, bPurchaseInfo)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
 }
 
 func (t *myChaincode) saveProductInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {

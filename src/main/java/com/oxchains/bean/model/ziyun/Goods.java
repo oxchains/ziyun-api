@@ -13,8 +13,8 @@ public class Goods extends BaseEntity {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("type")
-    private String type;//food, medicine
+    @JsonProperty("Type")
+    private String Type;//food, medicine
 
     @JsonProperty("GoodsType")
     private String GoodsType;//货物类型
@@ -40,13 +40,13 @@ public class Goods extends BaseEntity {
     @JsonProperty("ProductionBatch")
     private String ProductionBatch;//生产批次
 
-    @JsonProperty("DrugInformation")
-    private List<DrugInformation> DrugInformation;//药品信息
+    @JsonProperty("DrugInformationList")
+    private List<DrugInformation> DrugInformationList;//药品信息
 
-    @JsonProperty("FoodInformation")
-    private List<FoodInformation> FoodInformation;//食品信息
+    @JsonProperty("FoodInformationList")
+    private List<FoodInformation> FoodInformationList;//食品信息
 
-    @JsonProperty("ProduceInformation")
-    private List<ProduceInformation> ProduceInformation;//生产信息
+    @JsonProperty("ProduceInformationList")
+    private List<ProduceInformation> ProduceInformationList;//生产信息
 
 }

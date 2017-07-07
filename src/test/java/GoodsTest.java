@@ -26,16 +26,16 @@ import java.util.List;
  * Created by root on 17-7-5.
  */
 public class GoodsTest {
-    //@Test
+    @Test
     public void addGoods(){
         String urlNameString = "http://localhost:8080/goods";
         String result = "";
         try {
-           String json = "{\"type\":\"type\",\"GoodsType\": \"GoodsType\",\"ParentCode\":\"ParentCode\",\"ProduceInfoId\":\"ProduceInfoId\"," +
+           String json = "{\"Type\":\"Type\",\"GoodsType\": \"GoodsType\",\"ParentCode\":\"ParentCode\",\"ProduceInfoId\":\"ProduceInfoId\"," +
                     "\"ProductCode\":\"ProductCode\",\"UniqueCode\":\"UniqueCode\",\"CommodityCode\":\"CommodityCode\",\"ProductionBatch\":\"ProductionBatch\"," +
-                    "\"DrugInformation\": [{\"DrugName\":\"DrugName\",\"ApprovalNumber\":\"ApprovalNumber\",\"Size\":\"Size\",\"Form\":\"Form\",\"Manufacturer\":\"Manufacturer\",\"NDCNumber\":\"NDCNumber\",\"NDCNumberRemark\":\"NDCNumberRemark\",\"MedicineInstruction\":\"MedicineInstruction\"}]," +
-                    "\"FoodInformation\": [{\"FoodName\":\"FoodName\",\"Manufacturer\":\"Manufacturer\"}]," +
-                    "\"ProduceInformation\":[{\"Address\":\"Address\",\"ProductionBatch\":\"ProductionBatch\",\"ProductionTime\":\"12345678\",\"ValidDate\":\"12345678\"}]}";
+                    "\"DrugInformationList\": [{\"DrugName\":\"DrugName\",\"ApprovalNumber\":\"ApprovalNumber\",\"Size\":\"Size\",\"Form\":\"Form\",\"Manufacturer\":\"Manufacturer\",\"NDCNumber\":\"NDCNumber\",\"NDCNumberRemark\":\"NDCNumberRemark\",\"MedicineInstruction\":\"MedicineInstruction\"}]," +
+                    "\"FoodInformationList\": [{\"FoodName\":\"FoodName\",\"Manufacturer\":\"Manufacturer\"}]," +
+                    "\"ProduceInformationList\":[{\"Address\":\"Address\",\"ProductionBatch\":\"ProductionBatch\",\"ProductionTime\":\"12345678\",\"ValidDate\":\"12345678\"}]}";
 
             System.out.println("json==="+json);
             StringEntity stringentity = new StringEntity(json);
