@@ -28,7 +28,7 @@ public class ProduceInfoService extends BaseService {
     private ChaincodeService chaincodeService;
 
     public RespDTO<String> addProduceInfo(ProduceInfo produceInfo) throws Exception {
-        String txID = chaincodeService.invoke("addProduceInfo", new String[] { gson.toJson(produceInfo) });
+        String txID = chaincodeService.invoke("saveProduceInfo", new String[] { gson.toJson(produceInfo) });
         log.debug("===txID==="+txID);
         if(txID == null){
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -38,7 +38,7 @@ public class ProduceInfoService extends BaseService {
 
 
     public RespDTO<List<ProduceInfo>> getProduceInfoList(String id) {
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{" {\"selector\":{\"ProduceInfo.id\" : \"%s\"}}"});
+        String jsonStr = chaincodeService.query("searchByQuery", new String[]{" {\"selector\":{\"Id\" : \""+id+"\"}}"});
         System.err.println("-->生产信息JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)){
             return RespDTO.fail("没有数据");

@@ -66,6 +66,48 @@ type Product struct {
 	ProduceInformation            ProduceInformation
 }
 
+//生产信息 Product
+type ProductOther struct {
+	ProductName                     string
+	EnterpriseId                    string
+	ProductOriginalUrl              string
+	ProductAddress                  string
+	ProductTime                     int64
+	ProductType                     string
+	ProductDeadline                 int
+	ProductTags                     string
+	ProductWeight                   string
+	ProductVolume                   string
+	ProductCode                     string
+	Remarks                         string
+	Size                            string
+	Pack                            string
+	ApprovalNumber                  string
+	Storage                         string
+	Describe                        string
+}
+
+//产品信息 ProduceInfo
+type ProduceInfo struct {
+	Id                              string
+	ProductionProcessName           string
+	GoodsCount                      int
+	LastCount                       int
+	ProductId                       string
+	EnterpriseId                    string
+	ProductionTime                  int64
+	InStorageTime                   int64
+	OutStorageTime                  int64
+	EnvironmentalMonitoring         string
+	ProductionParameters            string
+	QualitySafety                   string
+	BatchNumber                     string
+	CheckDate                       int64
+	CheckWay                        string
+	CheckResult                     string
+	InspectorName                   string
+}
+
 //the struct of th e sensor
 type Sensor struct {
 	SensorNumber    string
@@ -183,6 +225,12 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 	case "saveTransferInfo":
 		return t.saveTransferInfo(stub, args)
+
+	case "saveProduct":
+    		return t.saveProduct(stub, args)
+
+    case "saveProduceInfo":
+        	return t.saveProduceInfo(stub, args)
 
 	case "getProductInfo":
 		return t.getProductInfo(stub, args)
@@ -462,6 +510,56 @@ func (t *myChaincode) saveProductInfo(stub shim.ChaincodeStubInterface, args []s
 		return shim.Error("putting state err: " + err.Error())
 	}
 	return shim.Success(nil)
+}
+
+//保存product 产品信息的数据
+func (t *myChaincode) saveProduct(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+   if len(args) < 1 {
+      return shim.Error("saveProduct operation must have 1 arg")
+   }
+   // get the args
+   bApprovalNumber := []byte(args[0])
+   //get some info
+   product := &ProductOther{}
+   err := json.Unmarshal(bApprovalNumber, &product)
+   if err != nil {
+      return shim.Error(err.Error())
+   }
+   //save the json info
+   //bProduct = json.Marshal(product)
+   err = stub.PutState("product"+sp+product.ProductCode, bApprovalNumber)
+
+   if err != nil {
+      return shim.Error(err.Error())
+   }
+   return shim.Success(nil)
+}
+
+//保存ProduceInfo 生成信息的数据
+func (t *myChaincode) saveProduceInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+   if len(args) < 1 {
+      return shim.Error("saveProductInfo operation must have 1 arg")
+   }
+   // get the args
+   bProduceInfo := []byte(args[0])
+   //get some info
+   produceInfo := &ProduceInfo{}
+   err := json.Unmarshal(bProduceInfo, &produceInfo)
+   if err != nil {
+      return shim.Error(err.Error())
+   }
+
+   if produceInfo.Id == "" {
+      return shim.Error("produceInfo.Id is null")
+   }
+
+   //save the json info
+   //bProduceInfo = json.Marshal(produceInfo)
+   err = stub.PutState("produceInfo"+sp+produceInfo.Id, bProduceInfo)
+   if err != nil {
+      return shim.Error(err.Error())
+   }
+   return shim.Success(nil)
 }
 
 func (t *myChaincode) saveSensorData(stub shim.ChaincodeStubInterface, args []string) pb.Response {

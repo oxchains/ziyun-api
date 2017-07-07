@@ -25,7 +25,7 @@ public class ProductService extends BaseService {
     private ChaincodeService chaincodeService;
 
     public RespDTO<String> addProduct(Product product) throws Exception {
-        String txID = chaincodeService.invoke("addProduct", new String[] { gson.toJson(product) });
+        String txID = chaincodeService.invoke("saveProduct", new String[] { gson.toJson(product) });
         log.debug("===txID==="+txID);
         if(txID == null){
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -35,7 +35,7 @@ public class ProductService extends BaseService {
 
     public RespDTO<List<Product>> getProductList(String approvalNumber, String productCode) {
         System.err.println("-->产品批准文号：" + approvalNumber + "\r\n -->产品编码：" + productCode);
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"Product.ApprovalNumber\" : \"%s\", \"Product.ProductCode\" : \"%s\"}}"});
+        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"ApprovalNumber\" : \""+ approvalNumber +"\", \"ProductCode\" : \""+ productCode +"\"}}"});
 
         System.err.println("-->产品JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {

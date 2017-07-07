@@ -1,10 +1,15 @@
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * 生产信息test
@@ -17,24 +22,7 @@ public class ProduceInfoTest {
         String urlNameString = "http://localhost:8080/produceinfo";
         String result = null;
         try {
-            String json = "{\n" +
-                    "\"BatchNumber\": \"BatchNumber\",\n" +
-                    "\"CheckDate\": \"CheckDate\",\n" +
-                    "\"CheckResult\": \"CheckResult\",\n" +
-                    "\"CheckWay\": \"CheckWay\",\n" +
-                    "\"EnterpriseId\": \"EnterpriseId\",\n" +
-                    "\"EnvironmentalMonitoring\": \"EnvironmentalMonitoring\",\n" +
-                    "\"GoodsCount\": \"GoodsCount\",\n" +
-                    "\"InStorageTime\": \"InStorageTime\",\n" +
-                    "\"InspectorName\": \"InspectorName\",\n" +
-                    "\"LastCount\": \"LastCount\",\n" +
-                    "\"OutStorageTime\": \"OutStorageTime\",\n" +
-                    "\"ProductId\": \"ProductId\",\n" +
-                    "\"ProductionParameters\": \"ProductionParameters\",\n" +
-                    "\"ProductionProcessName\": \"ProductionProcessName\",\n" +
-                    "\"ProductionTime\": \"ProductionTime\",\n" +
-                    "\"QualitySafety\": \"QualitySafety\"\n" +
-                    "}";
+            String json = "{\"Id\": \"id3\",\"BatchNumber\": \"BatchNumber\",\"CheckDate\": 6534321,\"CheckResult\": \"CheckResult\",\"CheckWay\": \"CheckWay\",\"EnterpriseId\": \"EnterpriseId\",\"EnvironmentalMonitoring\": \"EnvironmentalMonitoring\",\"GoodsCount\": 123,\"InStorageTime\": 45643,\"InspectorName\": \"InspectorName\",\"LastCount\": 234,\"OutStorageTime\": 123435,\"ProductId\": \"ProductId\",\"ProductionParameters\": \"ProductionParameters\",\"ProductionProcessName\": \"ProductionProcessName\",\"ProductionTime\": 65454454,\"QualitySafety\": \"QualitySafety\"}";
             StringEntity stringEntity = new StringEntity(json);
             HttpPost post = new HttpPost(urlNameString);
             post.setEntity(stringEntity);
@@ -47,5 +35,22 @@ public class ProduceInfoTest {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void queryProduceInfo(){
+        String url = "http://localhost:8080/produceinfo/id3";
+        HttpGet get = new HttpGet(url);
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            HttpResponse response = httpClient.execute(get);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                System.err.println("-->result:" + result);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 }

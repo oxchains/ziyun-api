@@ -8,8 +8,8 @@ import com.oxchains.common.BaseEntity;
  * 生产信息
  */
 public class ProduceInfo extends BaseEntity {
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("Id")
+    private String Id;
 
     @JsonProperty("ProductionProcessName")
     private String ProductionProcessName;//产品名称

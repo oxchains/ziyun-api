@@ -1,7 +1,9 @@
+import com.google.api.Http;
 import com.oxchains.bean.dto.datav.NameValue;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -11,6 +13,7 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.omg.CORBA.NameValuePair;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,25 +28,7 @@ public class ProductTest {
         String urlNameString = "http://localhost:8080/product";
         String result = null;
         try {
-            String json = "{\n" +
-                    "\"ApprovalNumber\": \"ApprovalNumber\",\n" +
-                    "\"Describe\": \"Describe\",\n" +
-                    "\"EnterpriseId\": \"110\",\n" +
-                    "\"Pack\": \"Pack\",\n" +
-                    "\"ProductAddress\": \"中关村SOHO\",\n" +
-                    "\"ProductCode\": \"ProductCode\",\n" +
-                    "\"ProductDeadline\": \"12\",\n" +
-                    "\"ProductName\": \"阿拉丁神油\",\n" +
-                    "\"ProductOriginalUrl\": \"屌的不行\",\n" +
-                    "\"ProductTags\": \"ProductTags\",\n" +
-                    "\"ProductTime\": \"1234566\",\n" +
-                    "\"ProductType\": \"ProductType\",\n" +
-                    "\"ProductVolume\": \"ProductVolume\",\n" +
-                    "\"ProductWeight\": \"ProductWeight\",\n" +
-                    "\"Remarks\": \"Remarks\",\n" +
-                    "\"Size\": \"Size\",\n" +
-                    "\"Storage\": \"Storage\"\n" +
-                    "}";
+            String json = "{\"ApprovalNumber\": \"ApprovalNumber\",\"Describe\": \"Describe\",\"Pack\": \"Pack\",\"ProductAddress\": \"中关村SOHO\",\"ProductCode\": \"ProductCode\",\"ProductDeadline\": 12,\"ProductName\": \"阿拉丁神油\",\"ProductOriginalUrl\": \"屌的不行\",\"ProductTags\": \"ProductTags\",\"ProductTime\": 1234566,\"ProductType\": \"ProductType\",\"ProductVolume\": \"ProductVolume\",\"ProductWeight\": \"ProductWeight\",\"Remarks\": \"Remarks\",\"Size\": \"Size\",\"Storage\": \"Storage\"}";
             StringEntity stringEntity = new StringEntity(json);
             HttpPost post = new HttpPost(urlNameString);
             post.setEntity(stringEntity);
@@ -56,5 +41,22 @@ public class ProductTest {
         }catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void queryProduct(){
+        String url = "http://localhost:8080/product/ApprovalNumber/ProductCode";
+        HttpGet get = new HttpGet(url);
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        try {
+            HttpResponse response = httpClient.execute(get);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                System.err.println("-->result:" + result);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 }
