@@ -398,9 +398,11 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 // 只有第一次需要创建channel
             // IOException, InvalidArgumentException, TransactionException, ProposalException
             try {
+                if (channel != null)
                 channel = createChain(configPath, orderer, channelName);
             } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
                 log.warn("createChain error!", e);
+                orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
                 channel = getChain(channelName, orderer);
             } catch (Exception e) {
                 log.error("createChain error!", e);
@@ -425,7 +427,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem")), "UTF-8");
 
         //PrivateKey privateKey = getPrivateKeyFromFile(privateKeyFile);
-        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/5a28c6889246308c6af831a772ff2ed5ca177de8660f1d12819198f51b4cd1ac_sk";
+        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/0880f9de3e22993623203af9c3045c891318b02fbf81225f0ece4bb77a34076c_sk";
         final PEMParser pemParser = new PEMParser(new StringReader(new String(IOUtils.toByteArray(new FileInputStream(privateKeyFile)))));
 
         PrivateKeyInfo pemPair = (PrivateKeyInfo) pemParser.readObject();
