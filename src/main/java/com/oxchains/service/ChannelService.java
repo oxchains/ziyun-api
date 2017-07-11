@@ -117,7 +117,7 @@ public class ChannelService extends BaseService {
         channelPoliciesMap.put("Writers","threshold");
         channelPoliciesMap.put("Admins","threshold");
         channelPoliciesMap.put("AcceptAllPolicy","signature");
-        buildPolicies(channelPoliciesMap, configGroupWBuilder);
+        //buildPolicies(channelPoliciesMap, configGroupWBuilder);
         //Build configUpdate
         Configtx.ConfigUpdate configUpdate = Configtx.ConfigUpdate.newBuilder().
                 setChannelId(channelName).setReadSet(configGroupR).setWriteSet(configGroupWBuilder.build()).build();
@@ -197,7 +197,7 @@ public class ChannelService extends BaseService {
         peersPoliciesMap.put("Readers","threshold");//:ANY identities: [] 空数组,principals也是空数组
         peersPoliciesMap.put("Writers","threshold");
         peersPoliciesMap.put("Admins","threshold");
-        buildPolicies(peersPoliciesMap, peersGroupBuilder);
+        //buildPolicies(peersPoliciesMap, peersGroupBuilder);
 
         return peersGroupBuilder.build();
     }
@@ -234,12 +234,12 @@ public class ChannelService extends BaseService {
         };*/
 
         //policies build
-        buildPolicies(policiesMap, configGroupBuilder);
+        //buildPolicies(policiesMap, configGroupBuilder);
 
         return configGroupBuilder.build();
     }
     //只针对 signature : ACCEPT_ALL 和 threshold : ANY进行处理
-    private void buildPolicies(Map<String, String> policiesStringMap, Configtx.ConfigGroup.Builder configGroupBuilder) {
+    /*private void buildPolicies(Map<String, String> policiesStringMap, Configtx.ConfigGroup.Builder configGroupBuilder) {
 
         for(String key : policiesStringMap.keySet()){
             Policies.Policy.Builder policyBuilder = Policies.Policy.newBuilder();
@@ -278,7 +278,7 @@ public class ChannelService extends BaseService {
             configGroupBuilder.putPolicies(key,configPolicy );
         }
 
-    }
+    }*/
 
 
     private MSP loadMSPConfig(String name, String type, String org) throws IOException {
