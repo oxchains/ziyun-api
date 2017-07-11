@@ -25,7 +25,7 @@ public class ProductTest {
 
     @Test
     public void addProduct(){
-        String urlNameString = "http://localhost:8080/product";
+        String urlNameString = "http://localhost:8080/product?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
         String result = null;
         try {
             String json = "{\"ApprovalNumber\": \"ApprovalNumber\",\"Describe\": \"Describe\",\"Pack\": \"Pack\",\"ProductAddress\": \"中关村SOHO\",\"ProductCode\": \"ProductCode\",\"ProductDeadline\": 12,\"ProductName\": \"阿拉丁神油\",\"ProductOriginalUrl\": \"屌的不行\",\"ProductTags\": \"ProductTags\",\"ProductTime\": 1234566,\"ProductType\": \"ProductType\",\"ProductVolume\": \"ProductVolume\",\"ProductWeight\": \"ProductWeight\",\"Remarks\": \"Remarks\",\"Size\": \"Size\",\"Storage\": \"Storage\"}";
@@ -45,7 +45,7 @@ public class ProductTest {
 
     @Test
     public void queryProduct(){
-        String url = "http://localhost:8080/product/ApprovalNumber/ProductCode";
+        String url = "http://localhost:8080/product/ApprovalNumber/ProductCode?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
         HttpGet get = new HttpGet(url);
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         try {

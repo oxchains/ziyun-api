@@ -28,7 +28,7 @@ import java.util.List;
 public class GoodsTest {
     @Test
     public void addGoods(){
-        String urlNameString = "http://localhost:8080/goods";
+        String urlNameString = "http://localhost:8080/goods?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
         String result = "";
         try {
            String json = "{\"Type\":\"Type\",\"GoodsType\": \"GoodsType\",\"ParentCode\":\"ParentCode\",\"ProduceInfoId\":\"ProduceInfoId\"," +
@@ -58,7 +58,7 @@ public class GoodsTest {
 
     @Test
     public void queryGoodsList(){
-        String url = "http://localhost:8080/goods/ProductCode/UniqueCode/CommodityCode/ProductionBatch";
+        String url = "http://localhost:8080/goods/ProductCode/UniqueCode/CommodityCode/ProductionBatch?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
 
         HttpGet get = new HttpGet(url);
         HttpClient httpClient = HttpClientBuilder.create().build();

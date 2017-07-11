@@ -26,10 +26,11 @@ public class GoodsController extends BaseController {
     private GoodsService goodsService;
 
     @PostMapping
-    public RespDTO<String> addGoods(@RequestBody String body){
+    public RespDTO<String> addGoods(@RequestBody String body,@RequestParam String Token){
         try {
             log.debug("===addGoods==="+body);
             Goods goods = gson.fromJson(body, Goods.class);
+            goods.setToken(Token);
             return goodsService.addGoods(goods);
         }
         catch(JsonSyntaxException e){
@@ -43,10 +44,11 @@ public class GoodsController extends BaseController {
     }
 
     @GetMapping(value = "/{ProductCode}/{UniqueCode}/{CommodityCode}/{ProductionBatch}")
-    public RespDTO<List<Goods>> queryGoodsList(@PathVariable String ProductCode, @PathVariable String UniqueCode, @PathVariable String CommodityCode, @PathVariable String ProductionBatch){
+    public RespDTO<List<Goods>> queryGoodsList(@PathVariable String ProductCode, @PathVariable String UniqueCode,
+                                               @PathVariable String CommodityCode, @PathVariable String ProductionBatch, @RequestParam String Token){
         try {
             log.debug("===queryGoods===");
-            return goodsService.getGoodsList(ProductCode,UniqueCode,CommodityCode,ProductionBatch);
+            return goodsService.getGoodsList(ProductCode,UniqueCode,CommodityCode,ProductionBatch,Token);
         }
         catch (Exception e) {
             log.error(e.getMessage());

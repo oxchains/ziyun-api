@@ -16,10 +16,10 @@ import java.io.IOException;
 public class PurchaseInfoTest {
     @Test
     public void addPurchaseInfo() {
-        String url = "http://localhost:8080/purchaseinfo";
+        String url = "http://localhost:8080/purchaseinfo?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
         HttpPost post = new HttpPost(url);
 
-        String json = "{'PurchaseTitle':'PurchaseTitle1','Count':'1','TransportId':'TransportId3','EnterpriseId':'EnterpriseId','ProductionAddress':'ProductionAddress'," +
+        String json = "{'Id':'12','PurchaseTitle':'PurchaseTitle1','Count':'1','TransportId':'TransportId3','EnterpriseId':'EnterpriseId','ProductionAddress':'ProductionAddress'," +
                 "'GoodsId':'123456','ProductionSpecification':'ProductionSpecification','ProductionTime':'12','ProductionBatch':'ProductionBatch'," +
                 "'ExpirationDate':'1','StockDate':'1234567','SupperName':'SupperName','SupperAddress':'SupperAddress','SupplyName':'SupplyName','SupplyPhone':'SupplyPhone'}";
         System.out.println("json==="+json);
@@ -38,8 +38,8 @@ public class PurchaseInfoTest {
     }
 
     @Test
-    public void queryGoodsList(){
-        String url = "http://localhost:8080/purchaseinfo/123456";
+    public void queryPurchaseList(){
+        String url = "http://localhost:8080/purchaseinfo/123456?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
 
         HttpGet get = new HttpGet(url);
         HttpClient httpClient = HttpClientBuilder.create().build();

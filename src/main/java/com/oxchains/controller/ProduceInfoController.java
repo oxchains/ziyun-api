@@ -32,13 +32,14 @@ public class ProduceInfoController extends BaseController{
     private ProduceInfoService produceInfoService;
 
     @PostMapping
-    public RespDTO<String> addProduceInfo(@RequestBody String body){
+    public RespDTO<String> addProduceInfo(@RequestBody String body,@RequestParam String Token){
         try {
             log.debug("===addProduceInfo==="+body);
             if (StringUtils.isBlank(body)) {
                 return RespDTO.fail("参数错误");
             }
             ProduceInfo produceInfo = produceInfo = gson.fromJson(body, ProduceInfo.class);
+            produceInfo.setToken(Token);
             return produceInfoService.addProduceInfo(produceInfo);
         } catch(JsonSyntaxException e){
             log.error(e.getMessage());
@@ -50,10 +51,10 @@ public class ProduceInfoController extends BaseController{
     }
 
     @GetMapping("/{id}")
-    public RespDTO<List<ProduceInfo>> getProduceInfo(@PathVariable String id) {
+    public RespDTO<List<ProduceInfo>> getProduceInfo(@PathVariable String id, @RequestParam String Token) {
         System.err.println("-->生产ID：" + id);
         try {
-            return produceInfoService.getProduceInfoList(id);
+            return produceInfoService.getProduceInfoList(id,Token);
         } catch (Exception e) {
             log.error("getProduceInfo error!", e);
             return RespDTO.fail("操作失败");

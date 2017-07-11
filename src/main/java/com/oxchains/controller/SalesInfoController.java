@@ -24,10 +24,11 @@ public class SalesInfoController extends BaseController {
     private SalesInfoService salesInfoService;
 
     @PostMapping
-    public RespDTO<String> addSalesInfo(@RequestBody String body){
+    public RespDTO<String> addSalesInfo(@RequestBody String body,@RequestParam String Token){
         try {
             log.debug("===addSalesInfo==="+body);
             SalesInfo salesInfo = gson.fromJson(body, SalesInfo.class);
+            salesInfo.setToken(Token);
             return salesInfoService.addSalesInfo(salesInfo);
         }
         catch(JsonSyntaxException e){
@@ -41,10 +42,10 @@ public class SalesInfoController extends BaseController {
     }
 
     @GetMapping(value = "/{No}/{PurchaseId}/{GoodsId}/{ProductionBatch}")
-    public RespDTO<List<SalesInfo>> querySalesInfoList(@PathVariable String No,@PathVariable String PurchaseId,@PathVariable String GoodsId,@PathVariable String ProductionBatch){
+    public RespDTO<List<SalesInfo>> querySalesInfoList(@PathVariable String No,@PathVariable String PurchaseId,@PathVariable String GoodsId,@PathVariable String ProductionBatch, @RequestParam String Token){
         try {
             log.debug("===querySalesInfoList===");
-            return salesInfoService.querySalesInfoList(No,PurchaseId,GoodsId,ProductionBatch);
+            return salesInfoService.querySalesInfoList(No,PurchaseId,GoodsId,ProductionBatch,Token);
         }
         catch (Exception e) {
             log.error(e.getMessage());

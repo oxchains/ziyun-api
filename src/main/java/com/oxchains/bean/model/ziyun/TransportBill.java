@@ -1,5 +1,6 @@
 package com.oxchains.bean.model.ziyun;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
 import lombok.Data;
@@ -12,8 +13,8 @@ import java.util.List;
  * 货运单
  */
 public class TransportBill extends BaseEntity {
-    @JsonProperty("id")
-    private long id; // 用户唯一ID
+    @JsonProperty("Id")
+    private long Id; // 用户唯一ID
 
     @JsonProperty("PermitNumber")
     private String PermitNumber;//无车承运人的道路运输经营许可证编号
@@ -62,5 +63,17 @@ public class TransportBill extends BaseEntity {
 
     @JsonProperty("GoodsTraceList")
     private List<GoodsTrace> GoodsTraceList;//货物追溯信息，数组形式
+
+    @JsonProperty("Token")
+    private String Token;//token
+
+    @JsonIgnore
+    public String getToken() {
+        return Token;
+    }
+
+    public void setToken(String Token) {
+        this.Token = Token;
+    }
 
 }

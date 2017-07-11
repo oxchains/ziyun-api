@@ -16,10 +16,10 @@ import java.io.IOException;
 public class SalesInfoTest {
     @Test
     public void addPurchaseInfo() {
-        String url = "http://localhost:8080/salesinfo";
+        String url = "http://localhost:8080/salesinfo?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
         HttpPost post = new HttpPost(url);
 
-        String json = "{'No':'No','SalesTitle':'SalesTitle','PurchaseId':'PurchaseId','ProductAddress':'ProductAddress','ProductionName':'ProductionName'," +
+        String json = "{'Id':'12','No':'No','SalesTitle':'SalesTitle','PurchaseId':'PurchaseId','ProductAddress':'ProductAddress','ProductionName':'ProductionName'," +
                 "'ProductionSpecification':'ProductionSpecification','CreateSalesEnterpriseId':'CreateSalesEnterpriseId','TranstitSalesEnterpriseId':'TranstitSalesEnterpriseId','SalesCount':'12'," +
                 "'ProductTime':'1','ProductBatch':'ProductBatch','ProductDeadline':'123','GoodsOriginalUrl':'GoodsOriginalUrl','SalesDate':'123','BuyerName':'BuyerName'," +
                 "'BuyerAddress':'BuyerAddress','BuyerTel':'BuyerTel','ResponsibilityName':'ResponsibilityName','InspectionCertificateNumber':'InspectionCertificateNumber'," +
@@ -41,7 +41,7 @@ public class SalesInfoTest {
 
     @Test
     public void queryGoodsList(){
-        String url = "http://localhost:8080/salesinfo/No/PurchaseId/GoodsId/ProductBatch";
+        String url = "http://localhost:8080/salesinfo/No/PurchaseId/GoodsId/ProductBatch?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
 
         HttpGet get = new HttpGet(url);
         HttpClient httpClient = HttpClientBuilder.create().build();

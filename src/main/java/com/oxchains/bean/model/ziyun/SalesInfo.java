@@ -1,5 +1,6 @@
 package com.oxchains.bean.model.ziyun;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
 
@@ -10,8 +11,8 @@ import java.util.List;
  * 销售信息
  */
 public class SalesInfo extends BaseEntity {
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("Id")
+    private String Id;
 
     @JsonProperty("No")
     private String No;//销售单号
@@ -78,4 +79,16 @@ public class SalesInfo extends BaseEntity {
 
     @JsonProperty("SalsesId")
     private String SalsesId;//销售人员id
+
+    @JsonProperty("Token")
+    private String Token;//token
+
+    @JsonIgnore
+    public String getToken() {
+        return Token;
+    }
+
+    public void setToken(String Token) {
+        this.Token = Token;
+    }
 }

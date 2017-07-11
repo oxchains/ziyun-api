@@ -24,10 +24,11 @@ public class PurchaseInfoController extends BaseController  {
     private PurchaseInfoService purchaseInfoService;
 
     @PostMapping
-    public RespDTO<String> addPurchaseInfo(@RequestBody String body){
+    public RespDTO<String> addPurchaseInfo(@RequestBody String body,@RequestParam String Token){
         try {
             log.debug("===addPurchaseInfo==="+body);
             PurchaseInfo purchaseInfo = gson.fromJson(body, PurchaseInfo.class);
+            purchaseInfo.setToken(Token);
             return purchaseInfoService.addPurchaseInfo(purchaseInfo);
         }
         catch(JsonSyntaxException e){
@@ -41,10 +42,10 @@ public class PurchaseInfoController extends BaseController  {
     }
 
     @GetMapping(value="/{GoodsId}")
-    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByGoodsId(@PathVariable String GoodsId){
+    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByGoodsId(@PathVariable String GoodsId, @RequestParam String Token){
         try {
             log.debug("===queryPurchaseInfoByGoodsId==="+GoodsId);
-            return purchaseInfoService.queryPurchaseInfoByGoodsId(GoodsId);
+            return purchaseInfoService.queryPurchaseInfoByGoodsId(GoodsId,Token);
         }
         catch (Exception e) {
             log.error(e.getMessage());

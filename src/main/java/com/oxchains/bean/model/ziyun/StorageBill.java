@@ -1,5 +1,6 @@
 package com.oxchains.bean.model.ziyun;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
 
@@ -46,4 +47,16 @@ public class StorageBill extends BaseEntity {
 
     @JsonProperty("HandoverInfo")
     private String HandoverInfo;//双方交接情况
+
+    @JsonProperty("Token")
+    private String Token;//token
+
+    @JsonIgnore
+    public String getToken() {
+        return Token;
+    }
+
+    public void setToken(String Token) {
+        this.Token = Token;
+    }
 }

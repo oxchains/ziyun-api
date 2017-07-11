@@ -1,15 +1,14 @@
 package com.oxchains.controller;
 
 import com.google.gson.JsonSyntaxException;
+import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.StorageBill;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.service.ChaincodeService;
+import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -24,10 +23,12 @@ public class StorageBillController extends BaseController{
     private ChaincodeService chaincodeService;
 
     @PostMapping
-    public RespDTO<String> addStorageBill(@RequestBody String body){
+    public RespDTO<String> addStorageBill(@RequestBody String body,@RequestParam String Token){
         try {
             log.debug("===addStorageBill==="+body);
             StorageBill storageBill = gson.fromJson(body, StorageBill.class);
+            JwtToken jwt = TokenUtils.parseToken(Token);
+            storageBill.setToken(jwt.getId());// store username ,not token
             String txID = chaincodeService.invoke("addStorageBill", new String[] { gson.toJson(storageBill) });
             log.debug("===txID==="+txID);
             if(txID == null){

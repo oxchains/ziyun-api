@@ -1,5 +1,6 @@
 package com.oxchains.bean.model.ziyun;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
 
@@ -10,8 +11,8 @@ import java.util.List;
  * 货物
  */
 public class Goods extends BaseEntity {
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("Id")
+    private String Id;
 
     @JsonProperty("Type")
     private String Type;//food, medicine
@@ -49,4 +50,15 @@ public class Goods extends BaseEntity {
     @JsonProperty("ProduceInformationList")
     private List<ProduceInformation> ProduceInformationList;//生产信息
 
+    @JsonProperty("Token")
+    private String Token;//token
+
+    @JsonIgnore
+    public String getToken() {
+        return Token;
+    }
+
+    public void setToken(String Token) {
+        this.Token = Token;
+    }
 }

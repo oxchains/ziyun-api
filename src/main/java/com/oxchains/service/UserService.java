@@ -49,9 +49,9 @@ public class UserService extends BaseService {
 		TabUser user = new TabUser();
 		try{
 			JsonObject obj = gson.fromJson(body, JsonObject.class);
-			user.setUsername(obj.get("username").getAsString());
-			user.setPassword(Md5Utils.getMD5(obj.get("password").getAsString()));
-			user.setRealname(obj.get("realname").getAsString());
+			user.setUsername(obj.get("Username").getAsString());
+			user.setPassword(Md5Utils.getMD5(obj.get("Password").getAsString()));
+			user.setRealname(obj.get("Realname").getAsString());
 			user.setStatus("1");
 			
 			String username = user.getUsername();
@@ -93,8 +93,8 @@ public class UserService extends BaseService {
 		TabUser user = new TabUser();
 		try{
 			JsonObject obj = gson.fromJson(body, JsonObject.class);
-			user.setUsername(obj.get("username").getAsString());
-			user.setPassword(obj.get("password").getAsString());
+			user.setUsername(obj.get("Username").getAsString());
+			user.setPassword(obj.get("Password").getAsString());
 		}catch(JsonSyntaxException | NullPointerException e){
 			log.error(e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
@@ -154,16 +154,15 @@ public class UserService extends BaseService {
 		}
 	}
 	
-	public RespDTO<String> logout(String body){
+	public RespDTO<String> logout(String body,String Token){
 		try{
 			JsonObject obj = gson.fromJson(body, JsonObject.class);
-			String username = obj.get("username").getAsString();
-			String token = obj.get("token").getAsString();
-			
+			String username = obj.get("Username").getAsString();
+
 			//compare token with db
 			TabToken tabToken = tabTokenDao.findByUsername(username);
 			if(tabToken != null){
-				if(!token.equals(tabToken.getToken())){
+				if(!Token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
 				}
 			}
@@ -173,7 +172,7 @@ public class UserService extends BaseService {
 			
 			//verify token
 			//FIXME add other verify ???
-			JwtToken jwt = TokenUtils.parseToken(token);
+			JwtToken jwt = TokenUtils.parseToken(Token);
 			if(!username.equals(jwt.getId())){
 				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
 			}
@@ -182,7 +181,7 @@ public class UserService extends BaseService {
 			tabTokenDao.delete(tabToken.getId());
 			
 			//update logouttime
-			TabLog tabLog = tabLogDao.findByToken(token);
+			TabLog tabLog = tabLogDao.findByToken(Token);
 			tabLog.setLogouttime(getCurrentTimeStamp());
 			tabLogDao.save(tabLog);
 			
@@ -197,12 +196,11 @@ public class UserService extends BaseService {
 		return RespDTO.success("操作成功", null);
 	}
 	
-	public RespDTO<String> allow(String body){
+	public RespDTO<String> allow(String body,String Token){
 		try{
 			JsonObject obj = gson.fromJson(body, JsonObject.class);
-			String username = obj.get("username").getAsString();
-			String token = obj.get("token").getAsString();
-			JwtToken jwt = TokenUtils.parseToken(token);
+			String username = obj.get("Username").getAsString();
+			JwtToken jwt = TokenUtils.parseToken(Token);
 			Date expire = jwt.getExpiratioin();
 			String authUser = jwt.getId();
 			Date now = new Date();
@@ -212,7 +210,7 @@ public class UserService extends BaseService {
 			//unlogin
 			TabToken tabToken = tabTokenDao.findByUsername(authUser);
 			if(tabToken != null){
-				if(!token.equals(tabToken.getToken())){
+				if(!Token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
 				}
 			}
@@ -236,12 +234,11 @@ public class UserService extends BaseService {
 		return RespDTO.success("操作成功");
 	}
 	
-	public RespDTO<String> revoke(String body){
+	public RespDTO<String> revoke(String body,String Token){
 		try{
 			JsonObject obj = gson.fromJson(body, JsonObject.class);
-			String username = obj.get("username").getAsString();
-			String token = obj.get("token").getAsString();
-			JwtToken jwt = TokenUtils.parseToken(token);
+			String username = obj.get("Username").getAsString();
+			JwtToken jwt = TokenUtils.parseToken(Token);
 			Date expire = jwt.getExpiratioin();
 			String authUser = jwt.getId();
 			Date now = new Date();
@@ -251,7 +248,7 @@ public class UserService extends BaseService {
 			//unlogin
 			TabToken tabToken = tabTokenDao.findByUsername(authUser);
 			if(tabToken != null){
-				if(!token.equals(tabToken.getToken())){
+				if(!Token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
 				}
 			}
