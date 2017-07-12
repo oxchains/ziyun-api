@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class TransportBill extends BaseEntity {
     @JsonProperty("Id")
-    private long Id; // 用户唯一ID
+    private String Id; // 用户唯一ID
 
     @JsonProperty("PermitNumber")
     private String PermitNumber;//无车承运人的道路运输经营许可证编号
