@@ -24,7 +24,7 @@ public class ConstantsData {
 		/**
 		 * token info
 		 */
-		public static final int TOKEN_EXPIRES = 7200;//TOKEN过期时间，单位秒
+		public static final int TOKEN_EXPIRES = 604800;//TOKEN过期时间，单位秒
 		public static final String TOKEN_SECRET = "tokensecret";//token secret , to be replaced later
 		public static final String TOKEN_SUBJECT = "token";
 		public static final String TOKEN_ISSUER = "oxchains";
