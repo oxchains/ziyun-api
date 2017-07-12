@@ -9,8 +9,8 @@ import com.oxchains.common.BaseEntity;
  * 仓储单
  */
 public class StorageBill extends BaseEntity {
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("Id")
+    private String Id;
 
     @JsonProperty("StorageTitle")
     private String StorageTitle;//贮存标题
