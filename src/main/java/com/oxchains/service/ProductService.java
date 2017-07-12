@@ -55,7 +55,6 @@ public class ProductService extends BaseService {
         String username = jwt.getId();
         for (Iterator<Product> it = productDTO.getList().iterator(); it.hasNext();) {
             Product Product = it.next();
-            Product.setToken(username);
             log.debug("===Product.getToken()==="+Product.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { Product.getToken() });
             log.debug("===jsonAuth==="+jsonAuth);

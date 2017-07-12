@@ -58,7 +58,6 @@ public class ProduceInfoService extends BaseService {
         String username = jwt.getId();
         for (Iterator<ProduceInfo> it = produceInfoDTO.getList().iterator(); it.hasNext();) {
             ProduceInfo ProduceInfo = it.next();
-            ProduceInfo.setToken(username);
             log.debug("===ProduceInfo.getToken()==="+ProduceInfo.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { ProduceInfo.getToken() });
             log.debug("===jsonAuth==="+jsonAuth);
