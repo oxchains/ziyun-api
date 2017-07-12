@@ -29,7 +29,7 @@ public class StorageBillController extends BaseController{
             StorageBill storageBill = gson.fromJson(body, StorageBill.class);
             JwtToken jwt = TokenUtils.parseToken(Token);
             storageBill.setToken(jwt.getId());// store username ,not token
-            String txID = chaincodeService.invoke("addStorageBill", new String[] { gson.toJson(storageBill) });
+            String txID = chaincodeService.invoke("saveStorageBill", new String[] { gson.toJson(storageBill) });
             log.debug("===txID==="+txID);
             if(txID == null){
                 return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);

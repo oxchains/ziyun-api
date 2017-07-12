@@ -260,6 +260,49 @@ type SalesInfo struct{
 	SalsesId						string
 }
 
+type Trace struct{
+	TraceName						string
+	TraceTime						int64
+}
+
+type TransportBill struct{
+	Id								string
+	PermitNumber 					string
+	UnifiedSocialCreditIdentifier	string
+	Carrier						    string
+	BusinessTypeCode				string
+	OriginalDocumentNumber			string
+	ShippingNoteNumber				string
+	ConsignmentDateTime				int64
+	DespatchActualDateTime			int64
+	GoodsReceiptDateTime			int64
+	FreeText				        string
+	Token							string
+	ConsignorInfo					ConsignorInfo
+	ConsigneeInfo					ConsigneeInfo
+	PriceInfo						PriceInfo
+	VehicleInfo						VehicleInfo
+	LogisticsTraceList				[]Trace
+	GoodsTraceList					[]GoodsTrace
+}
+
+type StorageBill struct{
+	Id								string
+	StorageTitle					string
+	WarehouseName					string
+	SalesId							string
+	TransportId						string
+	GiverName						string
+	GiverPhone						string
+	RecipientName					string
+	RecipientPhone					string
+	StartTime						int64
+	EndTime							int64
+	StorageAddress					string
+	HandoverInfo					string
+	Token							string
+}
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -279,6 +322,12 @@ func (t *myChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	switch function {
+
+	case "saveStorageBill":
+		return t.saveStorageBill(stub, args)
+
+	case "saveTransportBill":
+		return t.saveTransportBill(stub, args)
 
 	case "saveSalesInfo":
 		return t.saveSalesInfo(stub, args)
@@ -552,6 +601,56 @@ func getQueryResultForQueryString(stub shim.ChaincodeStubInterface, queryString 
 	fmt.Printf("getQueryResultForQueryString queryResult:\n%s\n", string(ret))
 
 	return ret, nil
+}
+
+
+
+func (t *myChaincode) saveStorageBill(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveStorageBill===")
+	if len(args) < 1 {
+		return shim.Error("saveStorageBill operation must have 1 arg")
+	}
+	// get the args
+	bStorageBill := []byte(args[0])
+	//get some info
+	storageBill := &StorageBill{}
+	err := json.Unmarshal(bStorageBill, &storageBill)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	//FIXME check key exists
+	err = stub.PutState(storageBill.Id,bStorageBill)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
+
+func (t *myChaincode) saveTransportBill(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveTransportBill===")
+	if len(args) < 1 {
+		return shim.Error("saveTransportBill operation must have 1 arg")
+	}
+	// get the args
+	bTransportBill := []byte(args[0])
+	//get some info
+	transportBill := &TransportBill{}
+	err := json.Unmarshal(bTransportBill, &transportBill)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	//FIXME check key exists
+	err = stub.PutState(transportBill.Id,bTransportBill)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
 }
 
 func (t *myChaincode) saveSalesInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {

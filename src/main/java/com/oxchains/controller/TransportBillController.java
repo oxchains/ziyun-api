@@ -29,7 +29,7 @@ public class TransportBillController extends BaseController{
             TransportBill transportBill = gson.fromJson(body, TransportBill.class);
             JwtToken jwt = TokenUtils.parseToken(Token);
             transportBill.setToken(jwt.getId());// store username ,not token
-            String txID = chaincodeService.invoke("addTransportBill", new String[] { gson.toJson(transportBill) });
+            String txID = chaincodeService.invoke("saveTransportBill", new String[] { gson.toJson(transportBill) });
             log.debug("===txID==="+txID);
             if(txID == null){
                 return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
