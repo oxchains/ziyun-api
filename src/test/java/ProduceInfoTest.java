@@ -19,7 +19,7 @@ public class ProduceInfoTest {
 
     @Test
     public void addProduceInfo() {
-        String urlNameString = "http://localhost:8080/produceinfo?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
+        String urlNameString = "http://localhost:8080/produceinfo?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmOSIsImlhdCI6MTQ5OTgyODYzMSwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTgzNTgzMX0.wbOUJCwIAKS7GSdHaGr8TgBN1S92UWCQAXtDk1-qzQY";
         String result = null;
         try {
             String json = "{\"Id\": \"id3\",\"BatchNumber\": \"BatchNumber\",\"CheckDate\": 6534321,\"CheckResult\": \"CheckResult\",\"CheckWay\": \"CheckWay\",\"EnterpriseId\": \"EnterpriseId\",\"EnvironmentalMonitoring\": \"EnvironmentalMonitoring\",\"GoodsCount\": 123,\"InStorageTime\": 45643,\"InspectorName\": \"InspectorName\",\"LastCount\": 234,\"OutStorageTime\": 123435,\"ProductId\": \"ProductId\",\"ProductionParameters\": \"ProductionParameters\",\"ProductionProcessName\": \"ProductionProcessName\",\"ProductionTime\": 65454454,\"QualitySafety\": \"QualitySafety\"}";
@@ -39,7 +39,7 @@ public class ProduceInfoTest {
 
     @Test
     public void queryProduceInfo(){
-        String url = "http://localhost:8080/produceinfo/id3?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
+        String url = "http://localhost:8080/produceinfo/id3?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmOSIsImlhdCI6MTQ5OTgyODYzMSwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTgzNTgzMX0.wbOUJCwIAKS7GSdHaGr8TgBN1S92UWCQAXtDk1-qzQY";
         HttpGet get = new HttpGet(url);
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         try {

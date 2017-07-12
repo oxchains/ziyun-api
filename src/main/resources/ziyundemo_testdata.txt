@@ -4,7 +4,7 @@ curl localhost:8080/cargo/install
 
 curl -X POST -H "Content-Type: application/json" -d '{"Username":"f4","Password":"f4pwd","Realname":"f4"}' http://localhost:8080/user/register
 
-curl -X POST -H "Content-Type: application/json" -d '{"Username":"f2","Password":"f2pwd"}' http://localhost:8080/user/login
+curl -X POST -H "Content-Type: application/json" -d '{"Username":"f2","Password":"f4pwd"}' http://localhost:8080/user/login
 
 curl -X POST -H "Content-Type: application/json" -d '{"Username":"f3"}' http://localhost:8080/user/logout?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmMyIsImlhdCI6MTQ5OTc2NzAwNywic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDIwN30.aJaCjgSPirDciBq1-EM30-0XlPPanjfpfj8VkpUm5nI
 

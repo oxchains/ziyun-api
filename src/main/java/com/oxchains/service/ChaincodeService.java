@@ -398,7 +398,6 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 // 只有第一次需要创建channel
             // IOException, InvalidArgumentException, TransactionException, ProposalException
             try {
-                if (channel != null)
                 channel = createChain(configPath, orderer, channelName);
             } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
                 log.warn("createChain error!", e);
