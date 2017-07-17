@@ -31,6 +31,8 @@ grafana
     - 管理员登录浏览器,导入json
         monitor-board.json
 
-遗留问题:
+监控方式
 
-    关于orderer的宕机测试,还要结合端口占用情况,测试表示orderer的端口有的时候并没占用.
+    ca:通过rest接口,post查看状态
+    orderer:通过grpc,查看返回状态
+    peer:通过查询peer上的installedChaincode
