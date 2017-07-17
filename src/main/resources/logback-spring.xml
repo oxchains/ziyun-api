@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_DIR" value="/Users/song/IdeaProjects/ziyundemo"/>
+    <!--<property name="LOG_DIR" value="/Users/song/IdeaProjects/ziyundemo"/>-->
 
     <appender name="rollingFileINFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/ziyun.log</file>
@@ -31,6 +31,6 @@
 
     <root level="INFO">
         <appender-ref ref="console"/>
-        <appender-ref ref="rollingFileINFO"/>
+        <!--<appender-ref ref="rollingFileINFO"/>-->
     </root>
 </configuration>

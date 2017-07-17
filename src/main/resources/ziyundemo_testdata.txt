@@ -6,7 +6,7 @@ curl -H "Content-Type: application/json" -d '{"username":"c0","password":"c0pwd"
 
 curl -H "Content-Type: application/json" -d '{"username":"c2","password":"c2pwd"}' http://localhost:8080/user/login
 
-curl -H "Content-Type: application/json" -d '{"username":"c0","token":"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjMCIsImlhdCI6MTQ5ODIwMDg0Mywic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5ODIwODA0M30.g2ZnOl0O2t-ab_mfxY8SgJqGdOhDP8-7R-z_y24GqTk"}' http://localhost:8080/user/logout
+curl -H "Content-Type: application/json" -d '{"username":"c0","token":"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjMCIsImlhdCI6MTUwMDI3MjE3OCwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTUwMDI3OTM3OH0.fuVa1jgCe66NHoUt05X2s8L9jjZtsrP274WehGp1CdY"}' http://localhost:8080/user/logout
 
 curl -H "Content-Type: application/json" -d '{"username":"c2","token":"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJjMCIsImlhdCI6MTQ5ODIwMDg0Mywic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5ODIwODA0M30.g2ZnOl0O2t-ab_mfxY8SgJqGdOhDP8-7R-z_y24GqTk"}' http://localhost:8080/user/auth/allow
 

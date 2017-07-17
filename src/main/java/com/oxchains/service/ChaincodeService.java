@@ -293,7 +293,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         System.out.println("currentHash: " + channelCurrentHash);
         System.out.println("previousHash: " + channelPreviousHash);*/
 
-        System.out.println("size: " + blockchannelInfo.getBlockchainInfo().getSerializedSize());
+        //System.out.println("size: " + blockchannelInfo.getBlockchainInfo().getSerializedSize());
        // TODO test
         for (int i = 0; i < blockchannelInfo.getHeight(); i++) {
             BlockInfo blockInfo = queryBlock(i);
@@ -440,6 +440,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 channel = createChain(configPath, orderer, channelName);
             } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
                 log.warn("createChain error!", e);
+                orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
                 channel = getChain(channelName, orderer);
             } catch (Exception e) {
                 log.error("createChain error!", e);
@@ -464,7 +465,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem")), "UTF-8");
 
         //PrivateKey privateKey = getPrivateKeyFromFile(privateKeyFile);
-        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/f1022dfda62d66248343d3af08e7bb94270cda5162eae5ad587d36196054265f_sk";
+        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/6b32e59640c594cf633ad8c64b5958ef7e5ba2a205cfeefd44a9e982ce624d93_sk";
         final PEMParser pemParser = new PEMParser(new StringReader(new String(IOUtils.toByteArray(new FileInputStream(privateKeyFile)))));
 
         PrivateKeyInfo pemPair = (PrivateKeyInfo) pemParser.readObject();

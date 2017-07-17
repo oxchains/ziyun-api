@@ -147,7 +147,7 @@ public class ScheduledTasks {
         String msg = "";
         for(String sql : sqls){
             status = influxService.query(sql).get().getResults().get(0).getSeries().get(0).getValues().get(0).get(1);
-            if(status == null || (int)status == 2){
+            if(status == null || (double) status == 2){
                 isDown = true;
                 msg += sql.substring(sql.indexOf("'")+1, sql.lastIndexOf("'"))+ " ";
             }
