@@ -1,5 +1,7 @@
 package com.oxchains.service;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.model.Customer;
@@ -31,6 +33,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -82,6 +85,10 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     private Customer peerOrgAdmin;
 
     private Customer customer;
+
+    private Cache<String, BlockInfo> cache = CacheBuilder.newBuilder()
+            .maximumSize(10)
+            .expireAfterWrite(600, TimeUnit.SECONDS).build();
 
     public void installChaincode() throws InvalidArgumentException, ProposalException {
         InstallProposalRequest installProposalRequest = hfClient.newInstallProposalRequest();
@@ -242,7 +249,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         return null;
     }
 
-    public BlockchainInfo queryChain() throws InvalidArgumentException, ProposalException, InvalidProtocolBufferException {
+    public BlockchainInfo queryChain() throws InvalidArgumentException, ProposalException, InvalidProtocolBufferException, ExecutionException {
         BlockchainInfo blockchannelInfo = channel.queryBlockchainInfo();
         /*String channelCurrentHash = Hex.encodeHexString(blockchannelInfo.getCurrentBlockHash());
         String channelPreviousHash = Hex.encodeHexString(blockchannelInfo.getPreviousBlockHash());*/
@@ -251,7 +258,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         System.out.println("currentHash: " + channelCurrentHash);
         System.out.println("previousHash: " + channelPreviousHash);*/
 
-        System.out.println("size: " + blockchannelInfo.getBlockchainInfo().getSerializedSize());
+        log.info("size: {}.", blockchannelInfo.getBlockchainInfo().getSerializedSize());
        // TODO test
         for (int i = 0; i < blockchannelInfo.getHeight(); i++) {
             BlockInfo blockInfo = queryBlock(i);
@@ -342,8 +349,13 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         Map map = new HashMap();
     }
 
-    public BlockInfo queryBlock(long blockNumber) throws ProposalException, InvalidArgumentException {
-        BlockInfo blockInfo = channel.queryBlockByNumber(blockNumber);
+    public BlockInfo queryBlock(long blockNumber) throws ProposalException, InvalidArgumentException, ExecutionException {
+        String key = "queryBlock_" + blockNumber;
+        BlockInfo blockInfo = cache.get(key, () -> {
+            BlockInfo blockInfo1 = channel.queryBlockByNumber(blockNumber);
+            cache.put(key, blockInfo1);
+            return blockInfo1;
+        });
         /*String previousHash = Hex.encodeHexString(blockInfo.getPreviousHash());
         System.out.println("queryBlockByNumber returned correct block with blockNumber " + blockInfo.getBlockNumber()
                 + " \n previous_hash: " + previousHash);*/

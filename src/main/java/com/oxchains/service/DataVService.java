@@ -35,11 +35,15 @@ public class DataVService extends BaseService {
     @Resource
     private ChaincodeService chaincodeService;
 
-    private Cache<String, Long> cache = CacheBuilder.newBuilder()
-            .maximumSize(100)
-            .expireAfterWrite(60, TimeUnit.SECONDS).build();
+    private Cache<String, BlockchainInfo> cache = CacheBuilder.newBuilder()
+            .maximumSize(10)
+            .expireAfterWrite(600, TimeUnit.SECONDS).build();
 
-    public NameValue<Long> getChainHeight() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException {
+    private Cache<String, Long> cache2 = CacheBuilder.newBuilder()
+            .maximumSize(10)
+            .expireAfterWrite(600, TimeUnit.SECONDS).build();
+
+    public NameValue<Long> getChainHeight() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
         BlockchainInfo blockchainInfo = getBlockChain();
 
         return new NameValue<>("", blockchainInfo.getHeight());
@@ -49,13 +53,13 @@ public class DataVService extends BaseService {
         BlockchainInfo blockchainInfo = getBlockChain();
 
         String key = "getChainTxCount";
-        Long result = cache.get(key, () -> {
-            Long count = 0L;
+        Long result = cache2.get(key, () -> {
+            long count = 0L;
             for (int i = 1; i < blockchainInfo.getHeight(); i++) {
                 BlockInfo blockInfo = chaincodeService.queryBlock(i);
                 count += blockInfo.getBlock().getData().getDataCount();
             }
-            cache.put(key, count);
+            cache2.put(key, count);
             return count;
         });
 
@@ -66,7 +70,7 @@ public class DataVService extends BaseService {
      * 查询最近十天的交易量
      * @return
      */
-    public List<XY> getChainTxNum() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException {
+    public List<XY> getChainTxNum() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
         int num = 10;
         List<XY> list = new ArrayList<>(num);
 
@@ -83,7 +87,7 @@ public class DataVService extends BaseService {
         return list;
     }
 
-    public List<ValueContent> getChainNewBlock() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException {
+    public List<ValueContent> getChainNewBlock() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
         int num = 25;
         List<ValueContent> list = new ArrayList<>(num);
 
@@ -105,8 +109,12 @@ public class DataVService extends BaseService {
         return list;
     }
 
-    private BlockchainInfo getBlockChain() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException {
-        // TODO cache
-        return chaincodeService.queryChain();
+    private BlockchainInfo getBlockChain() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
+        String key = "getBlockChain";
+        return cache.get(key, () -> {
+            BlockchainInfo blockchainInfo = chaincodeService.queryChain();
+            cache.put(key, blockchainInfo);
+            return blockchainInfo;
+        });
     }
 }
