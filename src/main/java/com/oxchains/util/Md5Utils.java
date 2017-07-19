@@ -29,7 +29,7 @@ public class Md5Utils {
 		String passwd = "123abc";
 		try {
 			String md5 = getMD5(passwd);
-			System.out.println(md5);
+			log.debug(md5);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

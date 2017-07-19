@@ -10,7 +10,9 @@ import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.common.ConstantsData;
 
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class TokenUtils {
 
 	public static String createToken(String username) {
@@ -56,7 +58,7 @@ public class TokenUtils {
 	public static void main(String[] args) {
 		String username = "tom";
 		String jwt = createToken(username);
-		System.out.println("jwt="+jwt);
+		log.debug("jwt=" + jwt);
 		parseToken(jwt);
 		
 	}

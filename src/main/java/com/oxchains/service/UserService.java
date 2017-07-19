@@ -275,8 +275,8 @@ public class UserService extends BaseService {
 	
 	private static java.sql.Timestamp getCurrentTimeStamp() {  
 		   
-	    java.util.Date today = new java.util.Date();  
-	    System.out.println(""+today.getTime());
+	    java.util.Date today = new java.util.Date();
+	    log.debug("" + today.getTime());
 	    return new java.sql.Timestamp(today.getTime());  
 	   
 	} 

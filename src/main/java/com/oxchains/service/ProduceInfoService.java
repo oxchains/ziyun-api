@@ -48,7 +48,7 @@ public class ProduceInfoService extends BaseService {
 
     public RespDTO<List<ProduceInfo>> getProduceInfoList(String id,String Token) {
         String jsonStr = chaincodeService.query("searchByQuery", new String[]{" {\"selector\":{\"Id\" : \""+id+"\"}}"});
-        System.err.println("-->生产信息JSON：" + jsonStr);
+        log.debug("-->生产信息JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)){
             return RespDTO.fail("没有数据");
         }
@@ -74,7 +74,7 @@ public class ProduceInfoService extends BaseService {
         }
 
 
-        System.err.println("-->生产信息集合：" + produceInfoDTO.getList());
+        log.debug("-->生产信息集合：" + produceInfoDTO.getList());
         return RespDTO.success(produceInfoDTO.getList());
     }
 }

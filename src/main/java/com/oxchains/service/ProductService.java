@@ -42,10 +42,10 @@ public class ProductService extends BaseService {
     }
 
     public RespDTO<List<Product>> getProductList(String approvalNumber, String productCode,String Token) {
-        System.err.println("-->产品批准文号：" + approvalNumber + "\r\n -->产品编码：" + productCode);
+        log.debug("-->产品批准文号：" + approvalNumber + "\r\n -->产品编码：" + productCode);
         String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"ApprovalNumber\" : \""+ approvalNumber +"\", \"ProductCode\" : \""+ productCode +"\"}}"});
 
-        System.err.println("-->产品JSON：" + jsonStr);
+        log.debug("-->产品JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -70,7 +70,7 @@ public class ProductService extends BaseService {
             return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
         }
 
-        System.err.println("-->产品集合：" + productDTO.getList());
+        log.debug("-->产品集合：" + productDTO.getList());
         return RespDTO.success(productDTO.getList());
     }
 

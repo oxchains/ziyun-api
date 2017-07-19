@@ -21,7 +21,7 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/register", method = RequestMethod.POST)
 	 public RespDTO<String> register(@RequestBody String body ) {
         try {
-        	System.out.println("body==="+body);
+        	log.debug("body===" + body);
             return userService.addUser(body);
         } catch (Exception e) {
             log.error("user register error!", e);
@@ -32,7 +32,7 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/login", method = RequestMethod.POST)
 	 public RespDTO<String> login(@RequestBody String body) {
         try {
-        	System.out.println("body==="+body);
+        	log.debug("body===" + body);
             return userService.login(body);
         } catch (Exception e) {
             log.error("user login error!", e);
@@ -43,7 +43,7 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/logout", method = RequestMethod.POST)
 	 public RespDTO<String> logout(@RequestBody String body,@RequestParam String Token) {
         try {
-        	System.out.println("body==="+body);
+        	log.debug("body===" + body);
             return userService.logout(body,Token);
         } catch (Exception e) {
             log.error("user logout error!", e);
@@ -54,7 +54,7 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/auth/allow", method = RequestMethod.POST)
 	 public RespDTO<String> allow(@RequestBody String body,@RequestParam String Token) {
         try {
-        	System.out.println("body==="+body);
+            log.debug("body===" + body);
             return userService.allow(body,Token);
         } catch (Exception e) {
             log.error("user auth allow error!", e);
@@ -65,7 +65,7 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/auth/revoke", method = RequestMethod.POST)
 	 public RespDTO<String> revoke(@RequestBody String body,@RequestParam String Token) {
         try {
-        	System.out.println("body==="+body);
+            log.debug("body===" + body);
             return userService.revoke(body,Token);
         } catch (Exception e) {
             log.error("user auth revoke error!", e);
