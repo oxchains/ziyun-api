@@ -1,25 +1,19 @@
 package com.oxchains.controller;
 
 import com.google.gson.JsonSyntaxException;
-import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.ProduceInfo;
-import com.oxchains.bean.model.ziyun.TabUser;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.dao.ChaincodeData;
 import com.oxchains.service.ProduceInfoService;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Optional;
 
 import static com.oxchains.common.RespDTO.fail;
 import static com.oxchains.common.RespDTO.success;
-import static org.springframework.security.core.context.SecurityContextHolder.getContext;
 
 /**
  * 生产信息Controller
