@@ -41,11 +41,13 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration addInterceptor = registry.addInterceptor(getSecurityInterceptor());
 
+        // 拦截配置
+        addInterceptor.addPathPatterns("/**");
+
         // 排除配置
         addInterceptor.excludePathPatterns("/user/register").excludePathPatterns("/user/login").excludePathPatterns("/cargo/install").excludePathPatterns("/healthz");
 
-        // 拦截配置
-        addInterceptor.addPathPatterns("/**");
+
     }
 
     private class SecurityInterceptor extends HandlerInterceptorAdapter {

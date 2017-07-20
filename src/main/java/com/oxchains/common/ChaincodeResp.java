@@ -1,6 +1,6 @@
-package oxchains.invoice.rest.domain;
+package com.oxchains.common;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * @author aiet

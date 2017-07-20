@@ -3,9 +3,10 @@ package com.oxchains.controller;
 import com.google.gson.JsonSyntaxException;
 import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.StorageBill;
+import com.oxchains.common.ChaincodeResp;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.service.ChaincodeService;
+import com.oxchains.dao.ChaincodeData;
 import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ import javax.annotation.Resource;
 @RequestMapping("/storagebill")
 public class StorageBillController extends BaseController{
     @Resource
-    private ChaincodeService chaincodeService;
+    private ChaincodeData chaincodeData;
 
     @PostMapping
     public RespDTO<String> addStorageBill(@RequestBody String body,@RequestParam String Token){
@@ -29,7 +30,10 @@ public class StorageBillController extends BaseController{
             StorageBill storageBill = gson.fromJson(body, StorageBill.class);
             JwtToken jwt = TokenUtils.parseToken(Token);
             storageBill.setToken(jwt.getId());// store username ,not token
-            String txID = chaincodeService.invoke("saveStorageBill", new String[] { gson.toJson(storageBill) });
+            String txID = chaincodeData.invoke("saveStorageBill", new String[] { gson.toJson(storageBill) })
+                    .filter(ChaincodeResp::succeeded)
+                    .map(ChaincodeResp::getPayload)
+                    .orElse(null);
             log.debug("===txID==="+txID);
             if(txID == null){
                 return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);

@@ -6,6 +6,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import com.oxchains.common.ChaincodeResp;
+import com.oxchains.dao.ChaincodeData;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -34,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService extends BaseService {
 	
 	@Resource
-	private ChaincodeService chaincodeService;
+	private ChaincodeData chaincodeData;
 	
 	@Resource
 	private TabUserDao tabUserDao;
@@ -67,7 +69,11 @@ public class UserService extends BaseService {
 			
 			if(user != null && user.getId()>0){
 				log.debug("===userid==="+user.getId());
-				String txID = chaincodeService.invoke("add", new String[]{username});
+				log.debug("===username===" + username);
+				String txID = chaincodeData.invoke("add", new String[]{username})
+						.filter(ChaincodeResp::succeeded)
+						.map(ChaincodeResp::getTxid)
+						.orElse(null);
 				log.debug("===txID==="+txID);
 				if(txID == null){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -75,15 +81,16 @@ public class UserService extends BaseService {
 				return RespDTO.success("操作成功", gson.toJson(user));
 			}
 		}catch(JsonSyntaxException e){
-			log.error(e.getMessage());
+			e.printStackTrace();
+			log.error("注册操作的JSON异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
-		}
-		catch(NullPointerException e){
-			log.error(e.getMessage());
+		}catch(NullPointerException e){
+			e.printStackTrace();
+			log.error("注册操作的空指针异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
-		}
-		catch(Exception e){
-			log.error(e.getMessage());
+		}catch(Exception e){
+			e.printStackTrace();
+			log.error("注册异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功", gson.toJson(user));
@@ -96,7 +103,7 @@ public class UserService extends BaseService {
 			user.setUsername(obj.get("Username").getAsString());
 			user.setPassword(obj.get("Password").getAsString());
 		}catch(JsonSyntaxException | NullPointerException e){
-			log.error(e.getMessage());
+			log.error("登录操作的JSON异常或者空指针异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		String username = user.getUsername();
@@ -149,7 +156,7 @@ public class UserService extends BaseService {
 			return RespDTO.success("操作成功", gson.toJson(tokenEn));
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("登录异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 	}
@@ -186,11 +193,11 @@ public class UserService extends BaseService {
 			tabLogDao.save(tabLog);
 			
 		}catch(JsonSyntaxException |NullPointerException e){
-			log.error(e.getMessage());
+			log.error("登出操作的JSON异常或空指针异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("登出异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功", null);
@@ -217,18 +224,21 @@ public class UserService extends BaseService {
 			else{
 				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
 			}
-			String txId = chaincodeService.invoke("auth", new String[]{authUser,username});
+			String txId = chaincodeData.invoke("auth", new String[]{authUser,username})
+					.filter(ChaincodeResp::succeeded)
+					.map(ChaincodeResp::getPayload)
+					.orElse(null);
 			log.debug("===txID==="+txId);
 			if(txId == null){
 				return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 			}
 		}
 		catch(JsonSyntaxException |NullPointerException e){
-			log.error(e.getMessage());
+			log.error("授权操作的JSON异常或空指针异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("授权异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功");
@@ -256,18 +266,21 @@ public class UserService extends BaseService {
 				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
 			}
 			
-			String txId = chaincodeService.invoke("revoke", new String[]{authUser,username});
+			String txId = chaincodeData.invoke("revoke", new String[]{authUser,username})
+					.filter(ChaincodeResp::succeeded)
+					.map(ChaincodeResp::getPayload)
+					.orElse(null);
 			log.debug("===txID==="+txId);
 			if(txId == null){
 				return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 			}
 		}
 		catch(JsonSyntaxException | NullPointerException e){
-			log.error(e.getMessage());
+			log.error("取消授权操作的JSON异常或空指针异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("取消授权异常" ,e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功");

@@ -1,14 +1,18 @@
 package com.oxchains.service;
 
+import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import com.oxchains.bean.dto.GoodsDTO;
 import com.oxchains.bean.dto.PurchaseInfoDTO;
 import com.oxchains.bean.model.ziyun.Auth;
 import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.Product;
 import com.oxchains.bean.model.ziyun.PurchaseInfo;
+import com.oxchains.common.ChaincodeResp;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
+import com.oxchains.dao.ChaincodeData;
 import com.oxchains.util.TokenUtils;
+import com.sun.net.httpserver.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -25,13 +29,16 @@ import java.util.List;
 @Slf4j
 public class PurchaseInfoService extends BaseService  {
     @Resource
-    private ChaincodeService chaincodeService;
+    private ChaincodeData chaincodeData;
 
     public RespDTO<String> addPurchaseInfo(PurchaseInfo purchaseInfo) throws Exception{
         String token = purchaseInfo.getToken();
         JwtToken jwt = TokenUtils.parseToken(token);
         purchaseInfo.setToken(jwt.getId());// store username ,not token
-        String txID = chaincodeService.invoke("savePurchaseInfo", new String[] { gson.toJson(purchaseInfo) });
+        String txID = chaincodeData.invoke("savePurchaseInfo", new String[] { gson.toJson(purchaseInfo) })
+                .filter(ChaincodeResp::succeeded)
+                .map(ChaincodeResp::getPayload)
+                .orElse(null);
         log.debug("===txID==="+txID);
         if(txID == null){
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -40,7 +47,10 @@ public class PurchaseInfoService extends BaseService  {
     }
 
     public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByGoodsId(String GoodsId,String Token){
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"GoodsId\" : \""+GoodsId+"\"}}"});
+        String jsonStr = chaincodeData.query("searchByQuery", new String[]{"{\"selector\":{\"GoodsId\" : \""+GoodsId+"\"}}"})
+                .filter(ChaincodeResp::succeeded)
+                .map(ChaincodeResp::getPayload)
+                .orElse(null);
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -51,7 +61,13 @@ public class PurchaseInfoService extends BaseService  {
         for (Iterator<PurchaseInfo> it = purchaseInfoDTO.getList().iterator(); it.hasNext();) {
             PurchaseInfo PurchaseInfo = it.next();
             log.debug("===PurchaseInfo.getToken()==="+PurchaseInfo.getToken());
-            String jsonAuth = chaincodeService.query("query", new String[] { PurchaseInfo.getToken() });
+            String jsonAuth = chaincodeData.query("query", new String[] { PurchaseInfo.getToken() })
+                    .filter(ChaincodeResp::succeeded)
+                    .map(ChaincodeResp::getPayload)
+                    .orElse(null);
+            if (StringUtils.isEmpty(jsonAuth) || "null".equals(jsonAuth)) {
+                return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
+            }
             log.debug("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();

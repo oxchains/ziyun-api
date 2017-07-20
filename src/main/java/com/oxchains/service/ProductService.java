@@ -5,8 +5,10 @@ import com.oxchains.bean.model.ziyun.Auth;
 import com.oxchains.bean.model.ziyun.Goods;
 import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.Product;
+import com.oxchains.common.ChaincodeResp;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
+import com.oxchains.dao.ChaincodeData;
 import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,13 +29,16 @@ import java.util.List;
 public class ProductService extends BaseService {
 
     @Resource
-    private ChaincodeService chaincodeService;
+    private ChaincodeData chaincodeData;
 
     public RespDTO<String> addProduct(Product product) throws Exception {
         String token = product.getToken();
         JwtToken jwt = TokenUtils.parseToken(token);
         product.setToken(jwt.getId());// store username ,not token
-        String txID = chaincodeService.invoke("saveProduct", new String[] { gson.toJson(product) });
+        String txID = chaincodeData.invoke("saveProduct", new String[] { gson.toJson(product) })
+                .filter(ChaincodeResp::succeeded)
+                .map(ChaincodeResp::getPayload)
+                .orElse(null);
         log.debug("===txID==="+txID);
         if(txID == null){
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -42,10 +47,17 @@ public class ProductService extends BaseService {
     }
 
     public RespDTO<List<Product>> getProductList(String approvalNumber, String productCode,String Token) {
-        log.debug("-->产品批准文号：" + approvalNumber + "\r\n -->产品编码：" + productCode);
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"ApprovalNumber\" : \""+ approvalNumber +"\", \"ProductCode\" : \""+ productCode +"\"}}"});
+        log.debug("===产品批准文号===" + approvalNumber + "\r\n ===产品编码===" + productCode);
+        String jsonStr = chaincodeData.query("searchByQuery", new String[]{"{\"selector\":{\"ApprovalNumber\" : \""+ approvalNumber +"\", \"ProductCode\" : \""+ productCode +"\"}}"})
+                .filter(ChaincodeResp::succeeded)
+                .map(ChaincodeResp::getPayload)
+                .orElse(null);
 
-        log.debug("-->产品JSON：" + jsonStr);
+        if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
+            return RespDTO.fail("没有数据");
+        }
+
+        log.debug("===产品JSON===" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -56,7 +68,13 @@ public class ProductService extends BaseService {
         for (Iterator<Product> it = productDTO.getList().iterator(); it.hasNext();) {
             Product Product = it.next();
             log.debug("===Product.getToken()==="+Product.getToken());
-            String jsonAuth = chaincodeService.query("query", new String[] { Product.getToken() });
+            String jsonAuth = chaincodeData.query("query", new String[] { Product.getToken() })
+                    .filter(ChaincodeResp::succeeded)
+                    .map(ChaincodeResp::getPayload)
+                    .orElse(null);
+            if (StringUtils.isEmpty(jsonAuth) || "null".equals(jsonAuth)) {
+                return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
+            }
             log.debug("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
@@ -70,7 +88,7 @@ public class ProductService extends BaseService {
             return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
         }
 
-        log.debug("-->产品集合：" + productDTO.getList());
+        log.debug("===产品集合===" + productDTO.getList());
         return RespDTO.success(productDTO.getList());
     }
 

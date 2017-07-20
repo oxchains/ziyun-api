@@ -1,19 +1,19 @@
-package oxchains.invoice.util;
+package com.oxchains.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import oxchains.invoice.domain.Invoice;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static oxchains.invoice.domain.Invoice.fromPayload;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * @author aiet
@@ -25,6 +25,7 @@ public class ResponseUtil {
 
     public static Optional<String> extract(String json, String path) {
         try {
+            LOG.info("json: " + json);
             JsonNode root = OBJECT_MAPPER.readTree(json);
             JsonNode data = root.at(path);
             return Optional.ofNullable(data.isObject() ? data.toString() : data.textValue());
@@ -41,16 +42,6 @@ public class ResponseUtil {
             LOG.error("failed to resolve data to {}: {}, cause: {}", tClass, json, e.getMessage());
         }
         return null;
-    }
-
-    public static List<String> parseInvoicePayload(String payload){
-        if(isBlank(payload)) return emptyList();
-        String[] invoiceStrs = payload.split(";");
-        return Arrays.stream(invoiceStrs).map(attrs -> attrs.split(",")[2]).collect(toList());
-    }
-
-    public static String txidTail(String content, String txid) {
-        return String.format("%s (%s)", content, txid);
     }
 
 }

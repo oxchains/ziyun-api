@@ -6,8 +6,10 @@ import com.oxchains.bean.model.ziyun.Auth;
 import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.PurchaseInfo;
 import com.oxchains.bean.model.ziyun.SalesInfo;
+import com.oxchains.common.ChaincodeResp;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
+import com.oxchains.dao.ChaincodeData;
 import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,13 +27,13 @@ import java.util.List;
 @Slf4j
 public class SalesInfoService extends BaseService  {
     @Resource
-    private ChaincodeService chaincodeService;
+    private ChaincodeData chaincodeData;
 
     public RespDTO<String> addSalesInfo(SalesInfo salesInfo) throws Exception{
         String token = salesInfo.getToken();
         JwtToken jwt = TokenUtils.parseToken(token);
         salesInfo.setToken(jwt.getId());// store username ,not token
-        String txID = chaincodeService.invoke("saveSalesInfo", new String[] { gson.toJson(salesInfo) });
+        String txID = chaincodeData.invoke("saveSalesInfo", new String[] { gson.toJson(salesInfo) }).filter(ChaincodeResp::succeeded).map(ChaincodeResp::getPayload).orElse(null);
         log.debug("===txID==="+txID);
         if(txID == null){
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -40,9 +42,12 @@ public class SalesInfoService extends BaseService  {
     }
 
     public RespDTO<List<SalesInfo>> querySalesInfoList(String No,String PurchaseId,String GoodsId,String ProductionBatch,String Token ){
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{
+        String jsonStr = chaincodeData.query("searchByQuery", new String[]{
                 "{\"selector\":{\"No\" : \""+No+"\",\"PurchaseId\" : \"" + PurchaseId + "\"," +
-                        "\"GoodsId\" : \"" + GoodsId + "\",\"ProductBatch\" : \"" + ProductionBatch + "\"}}"});
+                        "\"GoodsId\" : \"" + GoodsId + "\",\"ProductBatch\" : \"" + ProductionBatch + "\"}}"})
+                .filter(ChaincodeResp::succeeded)
+                .map(ChaincodeResp::getPayload)
+                .orElse(null);
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -53,7 +58,13 @@ public class SalesInfoService extends BaseService  {
         for (Iterator<SalesInfo> it = salesInfoDTO.getList().iterator(); it.hasNext();) {
             SalesInfo SalesInfo = it.next();
             log.debug("===SalesInfo.getToken()==="+SalesInfo.getToken());
-            String jsonAuth = chaincodeService.query("query", new String[] { SalesInfo.getToken() });
+            String jsonAuth = chaincodeData.query("query", new String[] { SalesInfo.getToken() })
+                    .filter(ChaincodeResp::succeeded)
+                    .map(ChaincodeResp::getPayload)
+                    .orElse(null);
+            if (StringUtils.isEmpty(jsonAuth) || "null".equals(jsonAuth)) {
+                return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
+            }
             log.debug("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();

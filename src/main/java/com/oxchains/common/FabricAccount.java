@@ -1,4 +1,4 @@
-package oxchains.invoice.rest.domain;
+package com.oxchains.common;
 
 /**
  * @author aiet

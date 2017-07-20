@@ -4,7 +4,6 @@ import com.oxchains.common.RespDTO;
 import com.oxchains.bean.model.ziyun.Waybill;
 import com.oxchains.service.WaybillService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

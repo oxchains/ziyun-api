@@ -5,8 +5,10 @@ import com.oxchains.bean.model.ziyun.Auth;
 import com.oxchains.bean.model.ziyun.Goods;
 import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.ProduceInfo;
+import com.oxchains.common.ChaincodeResp;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
+import com.oxchains.dao.ChaincodeData;
 import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
@@ -31,13 +33,16 @@ import java.util.concurrent.TimeoutException;
 public class ProduceInfoService extends BaseService {
 
     @Resource
-    private ChaincodeService chaincodeService;
+    private ChaincodeData chaincodeData;
 
     public RespDTO<String> addProduceInfo(ProduceInfo produceInfo) throws Exception {
         String token = produceInfo.getToken();
         JwtToken jwt = TokenUtils.parseToken(token);
         produceInfo.setToken(jwt.getId());// store username ,not token
-        String txID = chaincodeService.invoke("saveProduceInfo", new String[] { gson.toJson(produceInfo) });
+        String txID = chaincodeData.invoke("saveProduceInfo", new String[] { gson.toJson(produceInfo) })
+                .filter(ChaincodeResp::succeeded)
+                .map(ChaincodeResp::getTxid)
+                .orElse(null);
         log.debug("===txID==="+txID);
         if(txID == null){
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
@@ -47,9 +52,12 @@ public class ProduceInfoService extends BaseService {
 
 
     public RespDTO<List<ProduceInfo>> getProduceInfoList(String id,String Token) {
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{" {\"selector\":{\"Id\" : \""+id+"\"}}"});
-        log.debug("-->生产信息JSON：" + jsonStr);
-        if (StringUtils.isEmpty(jsonStr)){
+        String jsonStr = chaincodeData.query("searchByQuery", new String[]{" {\"selector\":{\"Id\" : \""+id+"\"}}"})
+                .filter(ChaincodeResp::succeeded)
+                .map(ChaincodeResp::getPayload)
+                .orElse(null);
+        log.debug("===生产信息JSON===" + jsonStr);
+        if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)){
             return RespDTO.fail("没有数据");
         }
         ProduceInfoDTO produceInfoDTO = simpleGson.fromJson(jsonStr, ProduceInfoDTO.class);
@@ -59,7 +67,13 @@ public class ProduceInfoService extends BaseService {
         for (Iterator<ProduceInfo> it = produceInfoDTO.getList().iterator(); it.hasNext();) {
             ProduceInfo ProduceInfo = it.next();
             log.debug("===ProduceInfo.getToken()==="+ProduceInfo.getToken());
-            String jsonAuth = chaincodeService.query("query", new String[] { ProduceInfo.getToken() });
+            String jsonAuth = chaincodeData.query("query", new String[] { ProduceInfo.getToken() })
+                    .filter(ChaincodeResp::succeeded)
+                    .map(ChaincodeResp::getPayload)
+                    .orElse(null);
+            if (StringUtils.isEmpty(jsonAuth) || "null".equals(jsonAuth)) {
+                return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
+            }
             log.debug("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
@@ -74,7 +88,7 @@ public class ProduceInfoService extends BaseService {
         }
 
 
-        log.debug("-->生产信息集合：" + produceInfoDTO.getList());
+        log.debug("===生产信息集合===" + produceInfoDTO.getList());
         return RespDTO.success(produceInfoDTO.getList());
     }
 }

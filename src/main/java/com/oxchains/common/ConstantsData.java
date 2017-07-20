@@ -28,4 +28,5 @@ public class ConstantsData {
 		public static final String TOKEN_SECRET = "tokensecret";//token secret , to be replaced later
 		public static final String TOKEN_SUBJECT = "token";
 		public static final String TOKEN_ISSUER = "oxchains";
+
 }

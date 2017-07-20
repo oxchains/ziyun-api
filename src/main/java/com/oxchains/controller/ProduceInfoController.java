@@ -1,13 +1,18 @@
 package com.oxchains.controller;
 
 import com.google.gson.JsonSyntaxException;
+import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.ProduceInfo;
+import com.oxchains.common.ChaincodeResp;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
+import com.oxchains.dao.ChaincodeData;
 import com.oxchains.service.ProduceInfoService;
+import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import sun.security.util.Resources_de;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -28,7 +33,7 @@ public class ProduceInfoController extends BaseController{
     private ProduceInfoService produceInfoService;
 
     @PostMapping
-    public RespDTO addProduceInfo(@RequestBody String body, @RequestParam String Token){
+    public RespDTO<String> addProduceInfo(@RequestBody String body, @RequestParam String Token){
         try {
             log.debug("===addProduceInfo==="+body);
             if (StringUtils.isBlank(body)) {

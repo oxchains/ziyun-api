@@ -1,13 +1,10 @@
 package com.oxchains.controller;
 
 import com.google.gson.JsonSyntaxException;
-import com.oxchains.bean.model.ziyun.Goods;
 import com.oxchains.bean.model.ziyun.Product;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.service.ChaincodeService;
 import com.oxchains.service.ProductService;
-import com.sun.org.apache.regexp.internal.RESyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
