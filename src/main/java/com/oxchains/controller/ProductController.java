@@ -35,10 +35,10 @@ public class ProductController extends BaseController {
             product.setToken(Token);
             return productService.addProduct(product);
         } catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addProduct json error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addProduct error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

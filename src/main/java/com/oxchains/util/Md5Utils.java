@@ -20,7 +20,7 @@ public class Md5Utils {
 	        log.debug("===md5==="+md5);
 	        return md5;
 	    } catch (NoSuchAlgorithmException e) {
-	    	log.error(e.getMessage());
+	    	log.error("MD5 algorithm error", e.getMessage());
 	        throw new NoSuchAlgorithmException("MD5加密出现错误:"+e.getMessage());
 	    }
 	}

@@ -30,11 +30,11 @@ public class SalesInfoController extends BaseController {
             return salesInfoService.addSalesInfo(salesInfo);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addSalesInfo json error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addSalesInfo error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -46,7 +46,7 @@ public class SalesInfoController extends BaseController {
             return salesInfoService.querySalesInfoList(No,PurchaseId,GoodsId,ProductionBatch,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("querySalesInfoList error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

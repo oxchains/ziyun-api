@@ -40,10 +40,10 @@ public class TransportBillController extends BaseController{
             }
             return RespDTO.success("操作成功");
         }catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addTransportBill json error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addTransportBill error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

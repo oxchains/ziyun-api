@@ -31,11 +31,11 @@ public class PurchaseInfoController extends BaseController  {
             return purchaseInfoService.addPurchaseInfo(purchaseInfo);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addPurchaseInfo json error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addPurchaseInfo error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -47,7 +47,7 @@ public class PurchaseInfoController extends BaseController  {
             return purchaseInfoService.queryPurchaseInfoByGoodsId(GoodsId,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("queryPurchaseInfoByGoodsId error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

@@ -43,10 +43,10 @@ public class ProduceInfoController extends BaseController{
             produceInfo.setToken(Token);
             return produceInfoService.addProduceInfo(produceInfo);
         } catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addProduceInfo json error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addProduceInfo error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

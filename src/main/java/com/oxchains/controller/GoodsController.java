@@ -30,11 +30,11 @@ public class GoodsController extends BaseController {
             return goodsService.addGoods(goods);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addGoods json error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addGoods error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -47,7 +47,7 @@ public class GoodsController extends BaseController {
             return goodsService.getGoodsList(ProductCode,UniqueCode,CommodityCode,ProductionBatch,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("queryGoodsList error", e.getMessage());
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

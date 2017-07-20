@@ -57,7 +57,7 @@ public class SensorService extends BaseService {
 			return RespDTO.success("操作成功", null);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("addSensor error", e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 	}
@@ -108,7 +108,7 @@ public class SensorService extends BaseService {
 
 			return RespDTO.success(sensorDTO.getList());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("getSensorData error", e.getMessage());
 			return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 	}
@@ -162,7 +162,7 @@ public class SensorService extends BaseService {
 			}
 			return RespDTO.success(sensorDTO.getList());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("getSensorData error", e.getMessage());
 			return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 	}
