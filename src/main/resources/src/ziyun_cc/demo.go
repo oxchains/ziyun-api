@@ -230,9 +230,9 @@ type Goods struct{
 	UniqueCode						string
 	CommodityCode					string
 	ProductionBatch					string
-	DrugInformationList				[]DrugInformation
-	FoodInformationList				[]FoodInformation
-	ProduceInformationList			[]ProduceInformation
+	DrugInformation				    []DrugInformation
+	FoodInformation				    []FoodInformation
+	ProduceInformation			    []ProduceInformation
 }
 
 type SalesInfo struct{
