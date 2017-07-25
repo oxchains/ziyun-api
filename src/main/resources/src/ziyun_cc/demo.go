@@ -237,6 +237,7 @@ type Goods struct{
 }
 
 type SalesInfo struct{
+	Id								string
 	No								string
 	SalesTitle						string
 	PurchaseId						string
@@ -259,6 +260,8 @@ type SalesInfo struct{
 	ProductionProcessId				string
 	GoodsId							string
 	SalsesId						string
+	UniqueCodes						[]string
+	EnterpriseId					string
 }
 
 type Trace struct{

@@ -39,10 +39,9 @@ public class SalesInfoService extends BaseService  {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<SalesInfo>> querySalesInfoList(String No,String PurchaseId,String GoodsId,String ProductionBatch,String Token ){
+    public RespDTO<List<SalesInfo>> querySalesInfoList(String Id,String Token ){
         String jsonStr = chaincodeService.query("searchByQuery", new String[]{
-                "{\"selector\":{\"No\" : \""+No+"\",\"PurchaseId\" : \"" + PurchaseId + "\"," +
-                        "\"GoodsId\" : \"" + GoodsId + "\",\"ProductBatch\" : \"" + ProductionBatch + "\"}}"});
+                "{\"selector\":{\"Id\" : \""+Id + "\"}}"});
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
             return RespDTO.fail("没有数据");
         }

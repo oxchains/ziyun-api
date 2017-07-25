@@ -80,6 +80,12 @@ public class SalesInfo extends BaseEntity {
     @JsonProperty("SalsesId")
     private String SalsesId;//销售人员id
 
+    @JsonProperty("UniqueCodes")
+    private List<String> UniqueCodes;//货物唯一码List集合
+
+    @JsonProperty("EnterpriseId")
+    private String EnterpriseId;//销售企业id
+
     @JsonProperty("Token")
     private String Token;//token
 

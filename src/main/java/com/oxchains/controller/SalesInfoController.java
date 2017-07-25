@@ -41,11 +41,11 @@ public class SalesInfoController extends BaseController {
         }
     }
 
-    @GetMapping(value = "/{No}/{PurchaseId}/{GoodsId}/{ProductionBatch}")
-    public RespDTO<List<SalesInfo>> querySalesInfoList(@PathVariable String No,@PathVariable String PurchaseId,@PathVariable String GoodsId,@PathVariable String ProductionBatch, @RequestParam String Token){
+    @GetMapping(value = "/{Id}")
+    public RespDTO<List<SalesInfo>> querySalesInfoList(@PathVariable String Id, @RequestParam String Token){
         try {
             log.debug("===querySalesInfoList===");
-            return salesInfoService.querySalesInfoList(No,PurchaseId,GoodsId,ProductionBatch,Token);
+            return salesInfoService.querySalesInfoList(Id,Token);
         }
         catch (Exception e) {
             log.error(e.getMessage());
