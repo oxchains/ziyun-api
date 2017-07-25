@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
 
         // 排除配置
         addInterceptor.excludePathPatterns("/user/login")
-                .excludePathPatterns("/datav/*")
+                .excludePathPatterns("/datav/**")
                 .excludePathPatterns("/healthz");
 
         // 拦截配置
