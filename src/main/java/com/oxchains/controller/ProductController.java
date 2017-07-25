@@ -46,10 +46,10 @@ public class ProductController extends BaseController {
         }
     }
 
-    @GetMapping("/{ApprovalNumber}/{ProductCode}")
-    public RespDTO<List<Product>> queryProductInfo(@PathVariable String ApprovalNumber, @PathVariable String ProductCode, @RequestParam String Token) {
+    @GetMapping("/{Id}")
+    public RespDTO<List<Product>> queryProductInfo(@PathVariable String Id, @RequestParam String Token) {
         try {
-            return productService.getProductList(ApprovalNumber, ProductCode,Token);
+            return productService.getProductList(Id,Token);
         }catch (Exception e) {
             log.error("query error!", e);
         }

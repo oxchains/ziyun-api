@@ -50,6 +50,9 @@ public class Goods extends BaseEntity {
     @JsonProperty("ProduceInformation")
     private List<ProduceInformation> ProduceInformation;//生产信息
 
+    @JsonProperty("SalesId")
+    private String SalesId;//生产销售ID
+
     @JsonProperty("Token")
     private String Token;//token
 

@@ -43,12 +43,11 @@ public class GoodsController extends BaseController {
         }
     }
 
-    @GetMapping(value = "/{ProductCode}/{UniqueCode}/{CommodityCode}/{ProductionBatch}")
-    public RespDTO<List<Goods>> queryGoodsList(@PathVariable String ProductCode, @PathVariable String UniqueCode,
-                                               @PathVariable String CommodityCode, @PathVariable String ProductionBatch, @RequestParam String Token){
+    @GetMapping(value = "/{UniqueCode}")
+    public RespDTO<List<Goods>> queryGoodsList(@PathVariable String UniqueCode,@RequestParam String Token){
         try {
             log.debug("===queryGoods===");
-            return goodsService.getGoodsList(ProductCode,UniqueCode,CommodityCode,ProductionBatch,Token);
+            return goodsService.getGoodsList(UniqueCode,Token);
         }
         catch (Exception e) {
             log.error(e.getMessage());

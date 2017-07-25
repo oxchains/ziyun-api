@@ -230,6 +230,7 @@ type Goods struct{
 	UniqueCode						string
 	CommodityCode					string
 	ProductionBatch					string
+	SalesId							string
 	DrugInformation				    []DrugInformation
 	FoodInformation				    []FoodInformation
 	ProduceInformation			    []ProduceInformation
@@ -303,6 +304,21 @@ type StorageBill struct{
 	Token							string
 }
 
+type TransitSalesInfo struct{
+	Id								string
+	TransitSalesName				string
+	EnterpriseId					string
+	Type							string
+	TransitSalesType				string
+	SalesDate						int64
+	CreateTime						int64
+	BuyerName					    string
+	BuyerAddress					int64
+	BuyerTel						string
+	UniqueCodes						[]string
+	Token							string
+}
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -322,6 +338,9 @@ func (t *myChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	switch function {
+
+	case "saveTransitSalesInfo":
+		return t.saveTransitSalesInfo(stub, args)
 
 	case "saveStorageBill":
 		return t.saveStorageBill(stub, args)
@@ -603,7 +622,29 @@ func getQueryResultForQueryString(stub shim.ChaincodeStubInterface, queryString 
 	return ret, nil
 }
 
+func (t *myChaincode) saveTransitSalesInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveTransitSalesInfo===")
+	if len(args) < 1 {
+		return shim.Error("saveTransitSalesInfo operation must have 1 arg")
+	}
+	// get the args
+	bTransitSalesInfo := []byte(args[0])
+	//get some info
+	transitSalesInfo := &TransitSalesInfo{}
+	err := json.Unmarshal(bTransitSalesInfo, &transitSalesInfo)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
 
+	//save the json info
+	//FIXME check key exists
+	err = stub.PutState(transitSalesInfo.Id,bTransitSalesInfo)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
 
 func (t *myChaincode) saveStorageBill(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("===saveStorageBill===")

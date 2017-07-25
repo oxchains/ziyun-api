@@ -41,11 +41,9 @@ public class ProductService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<Product>> getProductList(String approvalNumber, String productCode,String Token) {
-        System.err.println("-->产品批准文号：" + approvalNumber + "\r\n -->产品编码：" + productCode);
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"ApprovalNumber\" : \""+ approvalNumber +"\", \"ProductCode\" : \""+ productCode +"\"}}"});
-
-        System.err.println("-->产品JSON：" + jsonStr);
+    public RespDTO<List<Product>> getProductList(String Id, String Token) {
+        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"Id\" : \""+ Id +"\"}}"});
+       log.debug("-->产品JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }

@@ -50,11 +50,11 @@ public class ProduceInfoController extends BaseController{
         }
     }
 
-    @GetMapping("/{id}")
-    public RespDTO<List<ProduceInfo>> getProduceInfo(@PathVariable String id, @RequestParam String Token) {
-        System.err.println("-->生产ID：" + id);
+    @GetMapping("/{Id}")
+    public RespDTO<List<ProduceInfo>> getProduceInfo(@PathVariable String Id, @RequestParam String Token) {
+        log.debug("-->生产ID：" + Id);
         try {
-            return produceInfoService.getProduceInfoList(id,Token);
+            return produceInfoService.getProduceInfoList(Id,Token);
         } catch (Exception e) {
             log.error("getProduceInfo error!", e);
             return RespDTO.fail("操作失败");

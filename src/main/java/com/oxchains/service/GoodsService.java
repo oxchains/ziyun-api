@@ -36,11 +36,8 @@ public class GoodsService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<Goods>> getGoodsList(String ProductCode, String UniqueCode, String CommodityCode, String ProductionBatch,String Token) throws Exception{
+    public RespDTO<List<Goods>> getGoodsList(String UniqueCode,String Token) throws Exception{
         String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\n" +
-                "    \"CommodityCode\": \""+CommodityCode+"\",\n" +
-                "    \"ProductCode\": \""+ProductCode+"\",\n" +
-                "    \"ProductionBatch\": \""+ProductionBatch+"\",\n" +
                 "    \"UniqueCode\": \""+UniqueCode+"\"\n" +
                 "}}"});
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
