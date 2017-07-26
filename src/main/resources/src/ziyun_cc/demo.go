@@ -200,19 +200,17 @@ type Transfer struct {
 type PurchaseInfo struct {
 	PurchaseTitle					string
 	Count							int64
-	TransportId						string
 	EnterpriseId					string
-	ProductionAddress 				string
-	GoodsId							string
-	ProductionSpecification			string
-	ProductionTime					int64
-	ProductionBatch					string
-	ExpirationDate					int64
 	StockDate						int64
 	SupperName						string
 	SupperAddress					string
-	SupplyName						string
 	SupplyPhone						string
+	SupplyName						string
+	Id								string
+	Type						    string
+	UniqueCodes						[]string
+	CreateTime						int64
+	Token							string
 }
 
 type FoodInformation struct{
@@ -234,6 +232,7 @@ type Goods struct{
 	DrugInformation				    []DrugInformation
 	FoodInformation				    []FoodInformation
 	ProduceInformation			    []ProduceInformation
+	Token							string
 }
 
 type SalesInfo struct{
@@ -262,6 +261,7 @@ type SalesInfo struct{
 	SalsesId						string
 	UniqueCodes						[]string
 	EnterpriseId					string
+	Token							string
 }
 
 type Trace struct{
@@ -304,9 +304,14 @@ type StorageBill struct{
 	EndTime							int64
 	StorageAddress					string
 	HandoverInfo					string
+	Type						    string
+	UniqueCodes						[]string
+	CreateTime						int64
+	EnterpriseId					string
 	Token							string
 }
 
+//批发零售信息
 type TransitSalesInfo struct{
 	Id								string
 	TransitSalesName				string

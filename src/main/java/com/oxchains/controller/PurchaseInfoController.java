@@ -41,11 +41,11 @@ public class PurchaseInfoController extends BaseController  {
         }
     }
 
-    @GetMapping(value="/{GoodsId}")
-    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByGoodsId(@PathVariable String GoodsId, @RequestParam String Token){
+    @GetMapping(value="/{UniqueCode}")
+    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByUniqueCode(@PathVariable String UniqueCode, @RequestParam String Token){
         try {
-            log.debug("===queryPurchaseInfoByGoodsId==="+GoodsId);
-            return purchaseInfoService.queryPurchaseInfoByGoodsId(GoodsId,Token);
+            log.debug("===queryPurchaseInfoByGoodsId==="+UniqueCode);
+            return purchaseInfoService.queryPurchaseInfoByUniqueCode(UniqueCode,Token);
         }
         catch (Exception e) {
             log.error(e.getMessage());

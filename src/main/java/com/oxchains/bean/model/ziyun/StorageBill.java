@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
 
+import java.util.List;
+
 /**
  * Created by root on 17-7-3.
  * 仓储单
@@ -47,6 +49,18 @@ public class StorageBill extends BaseEntity {
 
     @JsonProperty("HandoverInfo")
     private String HandoverInfo;//双方交接情况
+
+    @JsonProperty("Type")
+    private String Type;
+
+    @JsonProperty("UniqueCodes")
+    private List<String> UniqueCodes;
+
+    @JsonProperty("CreateTime")
+    private long CreateTime;
+
+    @JsonProperty("EnterpriseId")
+    private String EnterpriseId;//批发零售企业ID
 
     @JsonProperty("Token")
     private String Token;//token

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
 
+import java.util.List;
+
 /**
  * Created by root on 17-7-3.
  * 采购信息
@@ -18,29 +20,8 @@ public class PurchaseInfo extends BaseEntity {
     @JsonProperty("Count")
     private int Count;//采购数量
 
-    @JsonProperty("TransportId")
-    private String TransportId;//运输id
-
     @JsonProperty("EnterpriseId")
     private String EnterpriseId;//所属企业id
-
-    @JsonProperty("ProductionAddress")
-    private String ProductionAddress;//产地
-
-    @JsonProperty("GoodsId")
-    private String GoodsId;//货物id
-
-    @JsonProperty("ProductionSpecification")
-    private String ProductionSpecification;//规格
-
-    @JsonProperty("ProductionTime")
-    private long ProductionTime;//生产时间 时间戳
-
-    @JsonProperty("ProductionBatch")
-    private String ProductionBatch;//生产批次
-
-    @JsonProperty("ExpirationDate")
-    private int ExpirationDate;//保质期
 
     @JsonProperty("StockDate")
     private long StockDate;//进货日期 时间戳
@@ -56,6 +37,16 @@ public class PurchaseInfo extends BaseEntity {
 
     @JsonProperty("SupplyPhone")
     private String SupplyPhone;//负责人联系方式
+
+
+    @JsonProperty("Type")
+    private String Type;
+
+    @JsonProperty("UniqueCodes")
+    private List<String> UniqueCodes;
+
+    @JsonProperty("CreateTime")
+    private long CreateTime;
 
     @JsonProperty("Token")
     private String Token;//token

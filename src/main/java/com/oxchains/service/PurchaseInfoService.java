@@ -39,8 +39,8 @@ public class PurchaseInfoService extends BaseService  {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByGoodsId(String GoodsId,String Token){
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"GoodsId\" : \""+GoodsId+"\"}}"});
+    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByUniqueCode(String UniqueCode,String Token){
+        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : \""+UniqueCode+"\"}}"});
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
