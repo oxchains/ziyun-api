@@ -64,4 +64,8 @@ public class Goods extends BaseEntity {
     public void setToken(String Token) {
         this.Token = Token;
     }
+
+    public String getParentCode() {
+        return ParentCode;
+    }
 }

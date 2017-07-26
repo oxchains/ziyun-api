@@ -219,6 +219,7 @@ type FoodInformation struct{
 }
 
 type Goods struct{
+	Id								string
 	Type 							string
 	GoodsType						string
 	ParentCode						string
@@ -294,8 +295,6 @@ type StorageBill struct{
 	Id								string
 	StorageTitle					string
 	WarehouseName					string
-	SalesId							string
-	TransportId						string
 	GiverName						string
 	GiverPhone						string
 	RecipientName					string
@@ -719,7 +718,7 @@ func (t *myChaincode) saveSalesInfo(stub shim.ChaincodeStubInterface, args []str
 
 	//save the json info
 	//FIXME check key exists
-	err = stub.PutState(salesInfo.No,bSalesInfo)
+	err = stub.PutState(salesInfo.Id,bSalesInfo)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -743,7 +742,7 @@ func (t *myChaincode) saveGoods(stub shim.ChaincodeStubInterface, args []string)
 
 	//save the json info
 	//FIXME check key exists
-	err = stub.PutState(goods.UniqueCode,bGoods)
+	err = stub.PutState(goods.Id,bGoods)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -767,7 +766,7 @@ func (t *myChaincode) savePurchaseInfo(stub shim.ChaincodeStubInterface, args []
 
 	//save the json info
 	//FIXME check key exists
-	err = stub.PutState(purchaseInfo.PurchaseTitle, bPurchaseInfo)
+	err = stub.PutState(purchaseInfo.Id, bPurchaseInfo)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}

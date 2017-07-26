@@ -40,11 +40,36 @@ public class PurchaseInfoService extends BaseService  {
     }
 
     public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByUniqueCode(String UniqueCode,String Token){
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : \""+UniqueCode+"\"}}"});
-        if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
-            return RespDTO.fail("没有数据");
-        }
+        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+UniqueCode+"\"]},\"Type\" :\"purchase\"}}"});
+        log.debug("===jsonStr1==="+jsonStr);
         PurchaseInfoDTO purchaseInfoDTO = simpleGson.fromJson(jsonStr, PurchaseInfoDTO.class);
+        if (purchaseInfoDTO.getList().isEmpty()) {
+            jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+UniqueCode+"\"}}"});
+            log.debug("===jsonStr2==="+jsonStr);//parentcode
+            GoodsDTO goodsDTO = simpleGson.fromJson(jsonStr, GoodsDTO.class);
+            if(goodsDTO!=null && goodsDTO.getList().size()>0){
+                String parentCode = goodsDTO.getList().get(0).getParentCode();
+                if(!StringUtils.isEmpty(parentCode)){
+                    jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+parentCode+"\"]},\"Type\" :\"purchase\"}}"});
+                    log.debug("===jsonStr3==="+jsonStr);
+                    purchaseInfoDTO = simpleGson.fromJson(jsonStr, PurchaseInfoDTO.class);
+                    if (purchaseInfoDTO.getList().isEmpty()) {
+                        jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+parentCode+"\"}}"});
+                        log.debug("===jsonStr4==="+jsonStr);//parent_parentcode
+                        goodsDTO = simpleGson.fromJson(jsonStr, GoodsDTO.class);
+                        if(goodsDTO!=null && goodsDTO.getList().size()>0){
+                            String pparentCode = goodsDTO.getList().get(0).getParentCode();
+                            if(!StringUtils.isEmpty(pparentCode)){
+                                jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+pparentCode+"\"]},\"Type\" :\"purchase\"}}"});
+                                log.debug("===jsonStr5==="+jsonStr);
+                                purchaseInfoDTO = simpleGson.fromJson(jsonStr, PurchaseInfoDTO.class);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         JwtToken jwt = TokenUtils.parseToken(Token);
         String username = jwt.getId();

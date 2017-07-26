@@ -1,5 +1,6 @@
 package com.oxchains.service;
 
+import com.oxchains.bean.dto.GoodsDTO;
 import com.oxchains.bean.dto.StorageBillDTO;
 import com.oxchains.bean.dto.TransitSalesInfoDTO;
 import com.oxchains.bean.model.ziyun.Auth;
@@ -37,12 +38,36 @@ public class StorageBillService extends BaseService {
     }
 
     public RespDTO<List<StorageBill>> getStorageBillList(String uniqueCode, String Token) {
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+ uniqueCode +"\"}}"});
-        log.debug("===jsonStr==="+jsonStr);
-        if (StringUtils.isEmpty(jsonStr)) {
-            return RespDTO.fail("没有数据");
-        }
+        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+uniqueCode+"\"]},\"Type\" :\"storage\"}}"});
+        log.debug("===jsonStr1==="+jsonStr);
         StorageBillDTO storageBillDTO = simpleGson.fromJson(jsonStr, StorageBillDTO.class);
+        if (storageBillDTO.getList().isEmpty()) {
+            jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+uniqueCode+"\"}}"});
+            log.debug("===jsonStr2==="+jsonStr);//parentcode
+            GoodsDTO goodsDTO = simpleGson.fromJson(jsonStr, GoodsDTO.class);
+            if(goodsDTO!=null && goodsDTO.getList().size()>0){
+                String parentCode = goodsDTO.getList().get(0).getParentCode();
+                if(!StringUtils.isEmpty(parentCode)){
+                    jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+parentCode+"\"]},\"Type\" :\"storage\"}}"});
+                    log.debug("===jsonStr3==="+jsonStr);
+                    storageBillDTO = simpleGson.fromJson(jsonStr, StorageBillDTO.class);
+                    if (storageBillDTO.getList().isEmpty()) {
+                        jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+parentCode+"\"}}"});
+                        log.debug("===jsonStr4==="+jsonStr);//parent_parentcode
+                        goodsDTO = simpleGson.fromJson(jsonStr, GoodsDTO.class);
+                        if(goodsDTO!=null && goodsDTO.getList().size()>0){
+                            String pparentCode = goodsDTO.getList().get(0).getParentCode();
+                            if(!StringUtils.isEmpty(pparentCode)){
+                                jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+pparentCode+"\"]},\"Type\" :\"storage\"}}"});
+                                log.debug("===jsonStr5==="+jsonStr);
+                                storageBillDTO = simpleGson.fromJson(jsonStr, StorageBillDTO.class);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         JwtToken jwt = TokenUtils.parseToken(Token);
         String username = jwt.getId();
