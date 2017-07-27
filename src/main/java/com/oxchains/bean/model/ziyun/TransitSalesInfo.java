@@ -36,7 +36,7 @@ public class TransitSalesInfo extends BaseEntity {
     private String BuyerName;//购货人姓名
 
     @JsonProperty("BuyerAddress")
-    private long BuyerAddress;//购货人地址
+    private String BuyerAddress;//购货人地址
 
     @JsonProperty("BuyerTel")
     private String BuyerTel;//购货人联系方式

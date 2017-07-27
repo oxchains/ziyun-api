@@ -320,7 +320,7 @@ type TransitSalesInfo struct{
 	SalesDate						int64
 	CreateTime						int64
 	BuyerName					    string
-	BuyerAddress					int64
+	BuyerAddress					string
 	BuyerTel						string
 	UniqueCodes						[]string
 	Token							string
