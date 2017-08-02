@@ -23,6 +23,9 @@ public class PurchaseInfo extends BaseEntity {
     @JsonProperty("EnterpriseId")
     private String EnterpriseId;//所属企业id
 
+    @JsonProperty("EnterpriseName")
+    private String EnterpriseName;//企业名字
+
     @JsonProperty("StockDate")
     private long StockDate;//进货日期 时间戳
 

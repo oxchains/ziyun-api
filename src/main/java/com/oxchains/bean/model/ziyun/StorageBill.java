@@ -62,6 +62,9 @@ public class StorageBill extends BaseEntity {
     @JsonProperty("EnterpriseId")
     private String EnterpriseId;//批发零售企业ID
 
+    @JsonProperty("EnterpriseName")
+    private String EnterpriseName;//企业名字
+
     @JsonProperty("Token")
     private String Token;//token
 

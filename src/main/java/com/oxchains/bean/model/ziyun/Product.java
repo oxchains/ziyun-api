@@ -18,6 +18,9 @@ public class Product extends BaseEntity {
     @JsonProperty("EnterpriseId")
     private String EnterpriseId;//企业ID
 
+    @JsonProperty("EnterpriseName")
+    private String EnterpriseName;//企业名字
+
     @JsonProperty("ProductOriginalUrl")
     private String ProductOriginalUrl;//产品图片
 

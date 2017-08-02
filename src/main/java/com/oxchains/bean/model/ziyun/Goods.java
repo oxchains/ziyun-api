@@ -20,6 +20,42 @@ public class Goods extends BaseEntity {
     @JsonProperty("GoodsType")
     private String GoodsType;//货物类型
 
+    @JsonProperty("GoodsName")
+    private String GoodsName;//货物名字
+
+    @JsonProperty("EnterpriseId")
+    private String EnterpriseId;//企业Id
+
+    @JsonProperty("EnterpriseName")
+    private String EnterpriseName;//企业名字
+
+    @JsonProperty("GoodsSize")
+    private String GoodsSize;//货物规格
+
+    @JsonProperty("ApprovalNumber")
+    private String ApprovalNumber;//批准文号
+
+    @JsonProperty("ProductAddress")
+    private String ProductAddress;//生产地址
+
+    @JsonProperty("ProductDeadline")
+    private long ProductDeadline;//有效期
+
+    @JsonProperty("ProductTags")
+    private String ProductTags;//标签
+
+    @JsonProperty("Pack")
+    private String Pack;//包装
+
+    @JsonProperty("Storage")
+    private String Storage;//贮存
+
+    @JsonProperty("Describe")
+    private String Describe;//描述
+
+    @JsonProperty("ProductionTime")
+    private long ProductionTime;//生产时间 时间戳
+
     @JsonProperty("ParentCode")
     private String ParentCode;//父编码
 
@@ -65,6 +101,7 @@ public class Goods extends BaseEntity {
         this.Token = Token;
     }
 
+    @JsonIgnore
     public String getParentCode() {
         return ParentCode;
     }

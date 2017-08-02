@@ -27,6 +27,9 @@ public class ProduceInfo extends BaseEntity {
     @JsonProperty("EnterpriseId")
     private String EnterpriseId;//生产企业id
 
+    @JsonProperty("EnterpriseName")
+    private String EnterpriseName;//企业名字
+
     @JsonProperty("ProductionTime")
     private long ProductionTime;//生产时间 时间戳
 

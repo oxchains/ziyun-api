@@ -70,6 +70,7 @@ type Product struct {
 type ProductOther struct {
 	ProductName                     string
 	EnterpriseId                    string
+	EnterpriseName					string
 	ProductOriginalUrl              string
 	ProductAddress                  string
 	ProductTime                     int64
@@ -95,6 +96,7 @@ type ProduceInfo struct {
 	LastCount                       int
 	ProductId                       string
 	EnterpriseId                    string
+	EnterpriseName					string
 	ProductionTime                  int64
 	InStorageTime                   int64
 	OutStorageTime                  int64
@@ -201,6 +203,7 @@ type PurchaseInfo struct {
 	PurchaseTitle					string
 	Count							int64
 	EnterpriseId					string
+	EnterpriseName					string
 	StockDate						int64
 	SupperName						string
 	SupperAddress					string
@@ -222,6 +225,18 @@ type Goods struct{
 	Id								string
 	Type 							string
 	GoodsType						string
+	GoodsName						string
+	EnterpriseId					string
+	EnterpriseName					string
+	GoodsSize                       string
+	ApprovalNumber					string
+	ProductAddress					string
+	ProductDeadline					int64
+	ProductTags						string
+	Pack							string
+	Storage							string
+	Describe						string
+	ProductionTime 					int64
 	ParentCode						string
 	ProduceInfoId					string
 	ProductId						string
@@ -262,6 +277,7 @@ type SalesInfo struct{
 	SalsesId						string
 	UniqueCodes						[]string
 	EnterpriseId					string
+	EnterpriseName					string
 	Token							string
 }
 
@@ -307,6 +323,7 @@ type StorageBill struct{
 	UniqueCodes						[]string
 	CreateTime						int64
 	EnterpriseId					string
+	EnterpriseName					string
 	Token							string
 }
 
@@ -315,6 +332,7 @@ type TransitSalesInfo struct{
 	Id								string
 	TransitSalesName				string
 	EnterpriseId					string
+	EnterpriseName					string
 	Type							string
 	TransitSalesType				string
 	SalesDate						int64
