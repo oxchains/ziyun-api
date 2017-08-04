@@ -24,7 +24,8 @@ import (
 	"fmt"
 	"strconv"
 	//"strings"
-    "sort"
+	"sort"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
@@ -68,46 +69,46 @@ type Product struct {
 
 //生产信息 Product
 type ProductOther struct {
-	ProductName                     string
-	EnterpriseId                    string
-	EnterpriseName					string
-	ProductOriginalUrl              string
-	ProductAddress                  string
-	ProductTime                     int64
-	ProductType                     string
-	ProductDeadline                 int
-	ProductTags                     string
-	ProductWeight                   string
-	ProductVolume                   string
-	ProductCode                     string
-	Remarks                         string
-	Size                            string
-	Pack                            string
-	ApprovalNumber                  string
-	Storage                         string
-	Describe                        string
+	ProductName        string
+	EnterpriseId       string
+	EnterpriseName     string
+	ProductOriginalUrl string
+	ProductAddress     string
+	ProductTime        int64
+	ProductType        string
+	ProductDeadline    int
+	ProductTags        string
+	ProductWeight      string
+	ProductVolume      string
+	ProductCode        string
+	Remarks            string
+	Size               string
+	Pack               string
+	ApprovalNumber     string
+	Storage            string
+	Describe           string
 }
 
 //产品信息 ProduceInfo
 type ProduceInfo struct {
-	Id                              string
-	ProductionProcessName           string
-	GoodsCount                      int
-	LastCount                       int
-	ProductId                       string
-	EnterpriseId                    string
-	EnterpriseName					string
-	ProductionTime                  int64
-	InStorageTime                   int64
-	OutStorageTime                  int64
-	EnvironmentalMonitoring         string
-	ProductionParameters            string
-	QualitySafety                   string
-	BatchNumber                     string
-	CheckDate                       int64
-	CheckWay                        string
-	CheckResult                     string
-	InspectorName                   string
+	Id                      string
+	ProductionProcessName   string
+	GoodsCount              int
+	LastCount               int
+	ProductId               string
+	EnterpriseId            string
+	EnterpriseName          string
+	ProductionTime          int64
+	InStorageTime           int64
+	OutStorageTime          int64
+	EnvironmentalMonitoring string
+	ProductionParameters    string
+	QualitySafety           string
+	BatchNumber             string
+	CheckDate               int64
+	CheckWay                string
+	CheckResult             string
+	InspectorName           string
 }
 
 //the struct of th e sensor
@@ -200,148 +201,148 @@ type Transfer struct {
 }
 
 type PurchaseInfo struct {
-	PurchaseTitle					string
-	Count							int64
-	EnterpriseId					string
-	EnterpriseName					string
-	StockDate						int64
-	SupperName						string
-	SupperAddress					string
-	SupplyPhone						string
-	SupplyName						string
-	Id								string
-	Type						    string
-	UniqueCodes						[]string
-	CreateTime						int64
-	Token							string
+	PurchaseTitle  string
+	Count          int64
+	EnterpriseId   string
+	EnterpriseName string
+	StockDate      int64
+	SupperName     string
+	SupperAddress  string
+	SupplyPhone    string
+	SupplyName     string
+	Id             string
+	Type           string
+	UniqueCodes    []string
+	CreateTime     int64
+	Token          string
 }
 
-type FoodInformation struct{
-	FoodName						string
-	Manufacturer					string
+type FoodInformation struct {
+	FoodName     string
+	Manufacturer string
 }
 
-type Goods struct{
-	Id								string
-	Type 							string
-	GoodsType						string
-	GoodsName						string
-	EnterpriseId					string
-	EnterpriseName					string
-	GoodsSize                       string
-	ApprovalNumber					string
-	ProductAddress					string
-	ProductDeadline					int64
-	ProductTags						string
-	Pack							string
-	Storage							string
-	Describe						string
-	ProductionTime 					int64
-	ParentCode						string
-	ProduceInfoId					string
-	ProductId						string
-	ProductCode						string
-	UniqueCode						string
-	CommodityCode					string
-	ProductionBatch					string
-	SalesId							string
-	DrugInformation				    []DrugInformation
-	FoodInformation				    []FoodInformation
-	ProduceInformation			    []ProduceInformation
-	Token							string
+type Goods struct {
+	Id                 string
+	Type               string
+	GoodsType          string
+	GoodsName          string
+	EnterpriseId       string
+	EnterpriseName     string
+	GoodsSize          string
+	ApprovalNumber     string
+	ProductAddress     string
+	ProductDeadline    int64
+	ProductTags        string
+	Pack               string
+	Storage            string
+	Describe           string
+	ProductionTime     int64
+	ParentCode         string
+	ProduceInfoId      string
+	ProductId          string
+	ProductCode        string
+	UniqueCode         string
+	CommodityCode      string
+	ProductionBatch    string
+	SalesId            string
+	DrugInformation    []DrugInformation
+	FoodInformation    []FoodInformation
+	ProduceInformation []ProduceInformation
+	Token              string
 }
 
-type SalesInfo struct{
-	Id								string
-	No								string
-	SalesTitle						string
-	PurchaseId						string
-	ProductAddress					string
-	ProductionName					string
-	ProductionSpecification			string
-	CreateSalesEnterpriseId			string
-	TranstitSalesEnterpriseId		string
-	SalesCount						int64
-	ProductTime						int64
-	ProductBatch					string
-	ProductDeadline					int64
-	GoodsOriginalUrl				string
-	SalesDate						int64
-	BuyerName						string
-	BuyerAddress					string
-	BuyerTel						string
-	ResponsibilityName				string
-	InspectionCertificateNumber		string
-	ProductionProcessId				string
-	GoodsId							string
-	SalsesId						string
-	UniqueCodes						[]string
-	EnterpriseId					string
-	EnterpriseName					string
-	Token							string
+type SalesInfo struct {
+	Id                          string
+	No                          string
+	SalesTitle                  string
+	PurchaseId                  string
+	ProductAddress              string
+	ProductionName              string
+	ProductionSpecification     string
+	CreateSalesEnterpriseId     string
+	TranstitSalesEnterpriseId   string
+	SalesCount                  int64
+	ProductTime                 int64
+	ProductBatch                string
+	ProductDeadline             int64
+	GoodsOriginalUrl            string
+	SalesDate                   int64
+	BuyerName                   string
+	BuyerAddress                string
+	BuyerTel                    string
+	ResponsibilityName          string
+	InspectionCertificateNumber string
+	ProductionProcessId         string
+	GoodsId                     string
+	SalsesId                    string
+	UniqueCodes                 []string
+	EnterpriseId                string
+	EnterpriseName              string
+	Token                       string
 }
 
-type Trace struct{
-	TraceName						string
-	TraceTime						int64
+type Trace struct {
+	TraceName string
+	TraceTime int64
 }
 
-type TransportBill struct{
-	Id								string
-	PermitNumber 					string
-	UnifiedSocialCreditIdentifier	string
-	Carrier						    string
-	BusinessTypeCode				string
-	OriginalDocumentNumber			string
-	ShippingNoteNumber				string
-	ConsignmentDateTime				int64
-	DespatchActualDateTime			int64
-	GoodsReceiptDateTime			int64
-	FreeText				        string
-	Token							string
-	ConsignorInfo					ConsignorInfo
-	ConsigneeInfo					ConsigneeInfo
-	PriceInfo						PriceInfo
-	VehicleInfo						VehicleInfo
-	LogisticsTraceList				[]Trace
-	GoodsTraceList					[]GoodsTrace
+type TransportBill struct {
+	Id                            string
+	PermitNumber                  string
+	UnifiedSocialCreditIdentifier string
+	Carrier                       string
+	BusinessTypeCode              string
+	OriginalDocumentNumber        string
+	ShippingNoteNumber            string
+	ConsignmentDateTime           int64
+	DespatchActualDateTime        int64
+	GoodsReceiptDateTime          int64
+	FreeText                      string
+	Token                         string
+	ConsignorInfo                 ConsignorInfo
+	ConsigneeInfo                 ConsigneeInfo
+	PriceInfo                     PriceInfo
+	VehicleInfo                   VehicleInfo
+	LogisticsTraceList            []Trace
+	GoodsTraceList                []GoodsTrace
 }
 
-type StorageBill struct{
-	Id								string
-	StorageTitle					string
-	WarehouseName					string
-	GiverName						string
-	GiverPhone						string
-	RecipientName					string
-	RecipientPhone					string
-	StartTime						int64
-	EndTime							int64
-	StorageAddress					string
-	HandoverInfo					string
-	Type						    string
-	UniqueCodes						[]string
-	CreateTime						int64
-	EnterpriseId					string
-	EnterpriseName					string
-	Token							string
+type StorageBill struct {
+	Id             string
+	StorageTitle   string
+	WarehouseName  string
+	GiverName      string
+	GiverPhone     string
+	RecipientName  string
+	RecipientPhone string
+	StartTime      int64
+	EndTime        int64
+	StorageAddress string
+	HandoverInfo   string
+	Type           string
+	UniqueCodes    []string
+	CreateTime     int64
+	EnterpriseId   string
+	EnterpriseName string
+	Token          string
 }
 
 //批发零售信息
-type TransitSalesInfo struct{
-	Id								string
-	TransitSalesName				string
-	EnterpriseId					string
-	EnterpriseName					string
-	Type							string
-	TransitSalesType				string
-	SalesDate						int64
-	CreateTime						int64
-	BuyerName					    string
-	BuyerAddress					string
-	BuyerTel						string
-	UniqueCodes						[]string
-	Token							string
+type TransitSalesInfo struct {
+	Id               string
+	TransitSalesName string
+	EnterpriseId     string
+	EnterpriseName   string
+	Type             string
+	TransitSalesType string
+	SalesDate        int64
+	CreateTime       int64
+	BuyerName        string
+	BuyerAddress     string
+	BuyerTel         string
+	UniqueCodes      []string
+	Token            string
 }
 
 // ============================================================================================================================
@@ -392,10 +393,10 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.saveTransferInfo(stub, args)
 
 	case "saveProduct":
-    		return t.saveProduct(stub, args)
+		return t.saveProduct(stub, args)
 
-    case "saveProduceInfo":
-        	return t.saveProduceInfo(stub, args)
+	case "saveProduceInfo":
+		return t.saveProduceInfo(stub, args)
 
 	case "getProductInfo":
 		return t.getProductInfo(stub, args)
@@ -432,7 +433,6 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.revoke(stub, args)
 	case "query":
 		return t.query(stub, args)
-
 
 	default:
 		return shim.Error("Unsupported operation")
@@ -664,7 +664,7 @@ func (t *myChaincode) saveTransitSalesInfo(stub shim.ChaincodeStubInterface, arg
 
 	//save the json info
 	//FIXME check key exists
-	err = stub.PutState(transitSalesInfo.Id,bTransitSalesInfo)
+	err = stub.PutState(transitSalesInfo.Id, bTransitSalesInfo)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -688,7 +688,7 @@ func (t *myChaincode) saveStorageBill(stub shim.ChaincodeStubInterface, args []s
 
 	//save the json info
 	//FIXME check key exists
-	err = stub.PutState(storageBill.Id,bStorageBill)
+	err = stub.PutState(storageBill.Id, bStorageBill)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -712,7 +712,7 @@ func (t *myChaincode) saveTransportBill(stub shim.ChaincodeStubInterface, args [
 
 	//save the json info
 	//FIXME check key exists
-	err = stub.PutState(transportBill.Id,bTransportBill)
+	err = stub.PutState(transportBill.Id, bTransportBill)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -736,7 +736,7 @@ func (t *myChaincode) saveSalesInfo(stub shim.ChaincodeStubInterface, args []str
 
 	//save the json info
 	//FIXME check key exists
-	err = stub.PutState(salesInfo.Id,bSalesInfo)
+	err = stub.PutState(salesInfo.Id, bSalesInfo)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -760,7 +760,7 @@ func (t *myChaincode) saveGoods(stub shim.ChaincodeStubInterface, args []string)
 
 	//save the json info
 	//FIXME check key exists
-	err = stub.PutState(goods.Id,bGoods)
+	err = stub.PutState(goods.UniqueCode, bGoods)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -824,52 +824,52 @@ func (t *myChaincode) saveProductInfo(stub shim.ChaincodeStubInterface, args []s
 
 //保存product 产品信息的数据
 func (t *myChaincode) saveProduct(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-   if len(args) < 1 {
-      return shim.Error("saveProduct operation must have 1 arg")
-   }
-   // get the args
-   bApprovalNumber := []byte(args[0])
-   //get some info
-   product := &ProductOther{}
-   err := json.Unmarshal(bApprovalNumber, &product)
-   if err != nil {
-      return shim.Error(err.Error())
-   }
-   //save the json info
-   //bProduct = json.Marshal(product)
-   err = stub.PutState("product"+sp+product.ProductCode, bApprovalNumber)
+	if len(args) < 1 {
+		return shim.Error("saveProduct operation must have 1 arg")
+	}
+	// get the args
+	bApprovalNumber := []byte(args[0])
+	//get some info
+	product := &ProductOther{}
+	err := json.Unmarshal(bApprovalNumber, &product)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	//save the json info
+	//bProduct = json.Marshal(product)
+	err = stub.PutState(product.ProductCode, bApprovalNumber)
 
-   if err != nil {
-      return shim.Error(err.Error())
-   }
-   return shim.Success(nil)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(nil)
 }
 
 //保存ProduceInfo 生成信息的数据
 func (t *myChaincode) saveProduceInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-   if len(args) < 1 {
-      return shim.Error("saveProductInfo operation must have 1 arg")
-   }
-   // get the args
-   bProduceInfo := []byte(args[0])
-   //get some info
-   produceInfo := &ProduceInfo{}
-   err := json.Unmarshal(bProduceInfo, &produceInfo)
-   if err != nil {
-      return shim.Error(err.Error())
-   }
+	if len(args) < 1 {
+		return shim.Error("saveProductInfo operation must have 1 arg")
+	}
+	// get the args
+	bProduceInfo := []byte(args[0])
+	//get some info
+	produceInfo := &ProduceInfo{}
+	err := json.Unmarshal(bProduceInfo, &produceInfo)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
-   if produceInfo.Id == "" {
-      return shim.Error("produceInfo.Id is null")
-   }
+	if produceInfo.Id == "" {
+		return shim.Error("produceInfo.Id is null")
+	}
 
-   //save the json info
-   //bProduceInfo = json.Marshal(produceInfo)
-   err = stub.PutState("produceInfo"+sp+produceInfo.Id, bProduceInfo)
-   if err != nil {
-      return shim.Error(err.Error())
-   }
-   return shim.Success(nil)
+	//save the json info
+	//bProduceInfo = json.Marshal(produceInfo)
+	err = stub.PutState("produceInfo"+sp+produceInfo.Id, bProduceInfo)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(nil)
 }
 
 func (t *myChaincode) saveSensorData(stub shim.ChaincodeStubInterface, args []string) pb.Response {
