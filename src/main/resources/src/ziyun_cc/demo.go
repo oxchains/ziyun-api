@@ -344,6 +344,92 @@ type TransitSalesInfo struct{
 	Token							string
 }
 
+type ProductProvincialPnspectionReport struct{
+	ProductProvincialPnspectionReportKey 	string
+	ProductProvincialPnspectionReportValue 	string
+}
+type ProductPriceDocument struct{
+	ProductPriceDocumentKey		string
+	ProductPriceDocumentValue	string
+}
+type ProductFactoryInspectionReport struct{
+	ProductFactoryInspectionReportKey	string
+	ProductFactoryInspectionReportValue string
+}
+type PurchaserCertificate struct{
+	PurchaserCertificateKey		string
+	PurchaserCertificateValue	string
+}
+//产品首营资料
+type ProductGmp struct{
+	Id								string
+	EnterpriseId					string
+	EnterpriseName					string
+	ApprovalUrl						string
+	ApprovalNo						string
+	ProductCode						string
+	ProductPatentCertificateUrl		string
+	ProductTrademarkDocumentsUrl	string
+	ProductName						string
+	ProductMiniPackageUrl			string
+	DrugInstructionsUrl				string
+	GeneralTaxpayerRecordsUrl		string
+	LegalPowerOfAttorneyUrl			string
+	IdCardUrl						string
+	ProudctProduceStandardUrl		string
+	PurchaseAndSaleContractUrl		string
+	ProductPackageAndManualUrl		string
+	ProductProvincialPnspectionReport []ProductProvincialPnspectionReport
+	ProductPriceDocument			[]ProductPriceDocument
+	ProductFactoryInspectionReport	[]ProductFactoryInspectionReport
+	PurchaserCertificate 			[]PurchaserCertificate
+	Token							string
+}
+type YearTaxReport struct{
+	YearTaxReportKey				string
+	YearTaxReportValue				string
+}
+type EnterpriseQualityQuestionnaire struct{
+	EnterpriseQualityQuestionnaireKey	string
+	EnterpriseQualityQuestionnaireValue string
+}
+type DeliveryUnitQualityQuestionnaire struct{
+	DeliveryUnitQualityQuestionnaireKey   string
+	DeliveryUnitQualityQuestionnaireValue string
+}
+//企业首营资料
+type EnterpriseGmp struct{
+	Id								string
+	EnterpriseId					string
+	EnterpriseName					string
+	EnterpriseType					string
+	EnterpriseLicenseUrl			string
+	EnterpriseLicenseNo				string
+	TaxRegistrationCertificateUrl	string
+	TaxRegistrationCode				string
+	OrganizationCodeCertificateUrl	string
+	OrganizationCode				string
+	QualityAssuranceUrl				string
+	DrugProductionLicenseUrl		string
+	DrugProductionLicensNo			string
+	GoodManufacturPracticesUrl		string
+	DrugOperatingLicenseUrl			string
+	DrugOperatingLicenseNo			string
+	GoodSupplyingPracticesUrl		string
+	OpeningPermitNo					string
+	OpeningPermitUrl				string
+	OpenBank						string
+	BankAccountNumber				string
+	BillingUnit						string
+	TaxpayerIdentificationNumber	string
+	EnterprisePhone					string
+	EnterpriseAdress				string
+	YearTaxReport					[]YearTaxReport
+	EnterpriseQualityQuestionnaire  []EnterpriseQualityQuestionnaire
+	DeliveryUnitQualityQuestionnaire []DeliveryUnitQualityQuestionnaire
+	Token							string
+}
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -363,6 +449,15 @@ func (t *myChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	switch function {
+
+	case "saveEnterpriseGmp":
+		return t.saveEnterpriseGmp(stub,args)
+
+	case "saveProductGmp":
+		return t.saveProductGmp(stub,args)
+
+	case "getProductGmpByProducName":
+		return t.getProductGmpByProducName(stub,args)
 
 	case "saveTransitSalesInfo":
 		return t.saveTransitSalesInfo(stub, args)
@@ -437,6 +532,68 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	default:
 		return shim.Error("Unsupported operation")
 	}
+}
+
+func (t *myChaincode) saveEnterpriseGmp(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveEnterpriseGmp===")
+	if len(args) < 1 {
+		return shim.Error("saveEnterpriseGmp operation must have 1 arg")
+	}
+	// get the args
+	bEnterpriseGmp := []byte(args[0])
+	//get some info
+	enterpriseGmp := &EnterpriseGmp{}
+	err := json.Unmarshal(bEnterpriseGmp, &enterpriseGmp)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+	//save the json info
+	err = stub.PutState(enterpriseGmp.EnterpriseName,bEnterpriseGmp)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
+
+func (t *myChaincode) saveProductGmp(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveProductGmp===")
+	if len(args) < 1 {
+		return shim.Error("saveProductGmp operation must have 1 arg")
+	}
+	// get the args
+	bProductGmp := []byte(args[0])
+	//get some info
+	productGmp := &ProductGmp{}
+	err := json.Unmarshal(bProductGmp, &productGmp)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	err = stub.PutState(productGmp.ProductName,bProductGmp)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
+
+func (t *myChaincode) getProductGmpByProducName(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 1 {
+		return shim.Error("getProductGmpByProducName operation must have 1 args")
+	}
+	//get the args
+	ProducName := args[0]
+	fmt.Println("===getProductGmpByProducName==="+ProducName)
+	value, err := stub.GetState(ProducName)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	if value == nil {
+		return shim.Error("no such ProducName")
+	}
+	return shim.Success(value)
 }
 
 func (t *myChaincode) searchByQuery(stub shim.ChaincodeStubInterface, args []string) pb.Response {
