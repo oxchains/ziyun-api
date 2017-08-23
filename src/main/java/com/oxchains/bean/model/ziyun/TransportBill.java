@@ -64,6 +64,12 @@ public class TransportBill extends BaseEntity {
     @JsonProperty("GoodsTraceList")
     private List<GoodsTrace> GoodsTraceList;//货物追溯信息，数组形式
 
+    @JsonProperty("TransportState")
+    private int TransportState;//运输状态
+
+    @JsonProperty("UniqueCodes")
+    private List<String> UniqueCodes;//货物唯一码List集合
+
     @JsonProperty("Token")
     private String Token;//token
 
@@ -76,4 +82,13 @@ public class TransportBill extends BaseEntity {
         this.Token = Token;
     }
 
+    private String TxId;
+
+    public void setTxId(String txId) {
+        TxId = txId;
+    }
+
+    public String getTxId() {
+        return TxId;
+    }
 }

@@ -306,6 +306,8 @@ type TransportBill struct {
 	VehicleInfo                   VehicleInfo
 	LogisticsTraceList            []Trace
 	GoodsTraceList                []GoodsTrace
+	TransportState				  int32
+	UniqueCodes      			  []string
 }
 
 type StorageBill struct {
@@ -342,6 +344,8 @@ type TransitSalesInfo struct {
 	BuyerAddress     string
 	BuyerTel         string
 	UniqueCodes      []string
+	TransitSalesState int32
+	TransitSalesMoney float64
 	Token            string
 }
 

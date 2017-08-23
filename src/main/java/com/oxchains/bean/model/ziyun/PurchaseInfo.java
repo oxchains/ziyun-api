@@ -63,4 +63,13 @@ public class PurchaseInfo extends BaseEntity {
         this.Token = Token;
     }
 
+    private String TxId;
+
+    public void setTxId(String txId) {
+        TxId = txId;
+    }
+
+    public String getTxId() {
+        return TxId;
+    }
 }

@@ -41,13 +41,16 @@ public class ProductGmpService extends BaseService {
     }
 
     public RespDTO<List<ProductGmp>> getProductGmpByProducName(String ProducName,String Token){
-        String jsonStr = chaincodeService.query("getProductGmpByProducName", new String[]{ProducName});
-        log.debug("===getProductGmpByProducName===" + jsonStr);
-        if (StringUtils.isEmpty(jsonStr)) {
+        String result = chaincodeService.getPayloadAndTxid("getProductGmpByProducName", new String[]{ProducName});
+
+        log.debug("===getProductGmpByProducName===" + result);
+        if (StringUtils.isEmpty(result)) {
             return RespDTO.fail("没有数据");
         }
+        String jsonStr = result.split("!#!")[0];
+        String txId = result.split("!#!")[1];
         ProductGmp productGmp = simpleGson.fromJson(jsonStr, ProductGmp.class);
-
+        productGmp.setTxId(txId);
         JwtToken jwt = TokenUtils.parseToken(Token);
         String username = jwt.getId();
 

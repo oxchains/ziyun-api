@@ -100,4 +100,14 @@ public class SalesInfo extends BaseEntity {
     public void setToken(String Token) {
         this.Token = Token;
     }
+
+    private String TxId;
+
+    public void setTxId(String txId) {
+        TxId = txId;
+    }
+
+    public String getTxId() {
+        return TxId;
+    }
 }

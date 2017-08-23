@@ -40,17 +40,20 @@ public class SalesInfoService extends BaseService  {
     }
 
     public RespDTO<List<SalesInfo>> querySalesInfoList(String Id,String Token ){
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{
                 "{\"selector\":{\"Id\" : \""+Id + "\"}}"});
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
+        String txId = jsonStr.split("!#!")[1];
+        jsonStr =  jsonStr.split("!#!")[0];
         SalesInfoDTO salesInfoDTO = simpleGson.fromJson(jsonStr, SalesInfoDTO.class);
 
         JwtToken jwt = TokenUtils.parseToken(Token);
         String username = jwt.getId();
         for (Iterator<SalesInfo> it = salesInfoDTO.getList().iterator(); it.hasNext();) {
             SalesInfo SalesInfo = it.next();
+            SalesInfo.setTxId(txId);
             log.debug("===SalesInfo.getToken()==="+SalesInfo.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { SalesInfo.getToken() });
             log.debug("===jsonAuth==="+jsonAuth);

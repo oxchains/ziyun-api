@@ -37,19 +37,22 @@ public class GoodsService extends BaseService {
     }
 
     public RespDTO<List<Goods>> getGoodsList(String UniqueCode,String Token) throws Exception{
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\n" +
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\n" +
                 "    \"UniqueCode\": \""+UniqueCode+"\"\n" +
                 "}}"});
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
         log.debug("===getGoodsList==="+jsonStr);
+        String txId = jsonStr.split("!#!")[1];
+        jsonStr =  jsonStr.split("!#!")[0];
         GoodsDTO goodsDTO = simpleGson.fromJson(jsonStr, GoodsDTO.class);
 
         JwtToken jwt = TokenUtils.parseToken(Token);
         String username = jwt.getId();
         for (Iterator<Goods> it = goodsDTO.getList().iterator(); it.hasNext();) {
             Goods goods = it.next();
+            goods.setTxId(txId);
             log.debug("===goods.getToken()==="+goods.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { goods.getToken() });
             log.debug("===jsonAuth==="+jsonAuth);

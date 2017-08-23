@@ -40,28 +40,53 @@ public class PurchaseInfoService extends BaseService  {
     }
 
     public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByUniqueCode(String UniqueCode,String Token){
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+UniqueCode+"\"]},\"Type\" :\"purchase\"}}"});
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+UniqueCode+"\"]},\"Type\" :\"purchase\"}}"});
+        if (StringUtils.isEmpty(jsonStr)) {
+            return RespDTO.fail("没有数据");
+        }
         log.debug("===jsonStr1==="+jsonStr);
+        String txId = jsonStr.split("!#!")[1];
+        jsonStr =  jsonStr.split("!#!")[0];
         PurchaseInfoDTO purchaseInfoDTO = simpleGson.fromJson(jsonStr, PurchaseInfoDTO.class);
         if (purchaseInfoDTO.getList().isEmpty()) {
-            jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+UniqueCode+"\"}}"});
+            jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+UniqueCode+"\"}}"});
+            if (StringUtils.isEmpty(jsonStr)) {
+                return RespDTO.fail("没有数据");
+            }
             log.debug("===jsonStr2==="+jsonStr);//parentcode
+            txId = jsonStr.split("!#!")[1];
+            jsonStr =  jsonStr.split("!#!")[0];
             GoodsDTO goodsDTO = simpleGson.fromJson(jsonStr, GoodsDTO.class);
             if(goodsDTO!=null && goodsDTO.getList().size()>0){
                 String parentCode = goodsDTO.getList().get(0).getParentCode();
                 if(!StringUtils.isEmpty(parentCode)){
-                    jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+parentCode+"\"]},\"Type\" :\"purchase\"}}"});
+                    jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+parentCode+"\"]},\"Type\" :\"purchase\"}}"});
+                    if (StringUtils.isEmpty(jsonStr)) {
+                        return RespDTO.fail("没有数据");
+                    }
                     log.debug("===jsonStr3==="+jsonStr);
+                    txId = jsonStr.split("!#!")[1];
+                    jsonStr =  jsonStr.split("!#!")[0];
                     purchaseInfoDTO = simpleGson.fromJson(jsonStr, PurchaseInfoDTO.class);
                     if (purchaseInfoDTO.getList().isEmpty()) {
-                        jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+parentCode+"\"}}"});
+                        jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCode\" : \""+parentCode+"\"}}"});
+                        if (StringUtils.isEmpty(jsonStr)) {
+                            return RespDTO.fail("没有数据");
+                        }
                         log.debug("===jsonStr4==="+jsonStr);//parent_parentcode
+                        txId = jsonStr.split("!#!")[1];
+                        jsonStr =  jsonStr.split("!#!")[0];
                         goodsDTO = simpleGson.fromJson(jsonStr, GoodsDTO.class);
                         if(goodsDTO!=null && goodsDTO.getList().size()>0){
                             String pparentCode = goodsDTO.getList().get(0).getParentCode();
                             if(!StringUtils.isEmpty(pparentCode)){
-                                jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+pparentCode+"\"]},\"Type\" :\"purchase\"}}"});
+                                jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+pparentCode+"\"]},\"Type\" :\"purchase\"}}"});
+                                if (StringUtils.isEmpty(jsonStr)) {
+                                    return RespDTO.fail("没有数据");
+                                }
                                 log.debug("===jsonStr5==="+jsonStr);
+                                txId = jsonStr.split("!#!")[1];
+                                jsonStr =  jsonStr.split("!#!")[0];
                                 purchaseInfoDTO = simpleGson.fromJson(jsonStr, PurchaseInfoDTO.class);
                             }
                         }
@@ -75,6 +100,7 @@ public class PurchaseInfoService extends BaseService  {
         String username = jwt.getId();
         for (Iterator<PurchaseInfo> it = purchaseInfoDTO.getList().iterator(); it.hasNext();) {
             PurchaseInfo PurchaseInfo = it.next();
+            PurchaseInfo.setTxId(txId);
             log.debug("===PurchaseInfo.getToken()==="+PurchaseInfo.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { PurchaseInfo.getToken() });
             log.debug("===jsonAuth==="+jsonAuth);

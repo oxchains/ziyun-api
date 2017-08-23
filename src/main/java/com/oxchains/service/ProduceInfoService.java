@@ -47,17 +47,21 @@ public class ProduceInfoService extends BaseService {
 
 
     public RespDTO<List<ProduceInfo>> getProduceInfoList(String id,String Token) {
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{" {\"selector\":{\"Id\" : \""+id+"\"}}"});
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{" {\"selector\":{\"Id\" : \""+id+"\"}}"});
         System.err.println("-->生产信息JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)){
             return RespDTO.fail("没有数据");
         }
+        String txId = jsonStr.split("!#!")[1];
+        jsonStr =  jsonStr.split("!#!")[0];
+
         ProduceInfoDTO produceInfoDTO = simpleGson.fromJson(jsonStr, ProduceInfoDTO.class);
 
         JwtToken jwt = TokenUtils.parseToken(Token);
         String username = jwt.getId();
         for (Iterator<ProduceInfo> it = produceInfoDTO.getList().iterator(); it.hasNext();) {
             ProduceInfo ProduceInfo = it.next();
+            ProduceInfo.setTxId(txId);
             log.debug("===ProduceInfo.getToken()==="+ProduceInfo.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { ProduceInfo.getToken() });
             log.debug("===jsonAuth==="+jsonAuth);

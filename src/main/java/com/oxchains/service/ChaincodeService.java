@@ -249,6 +249,33 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         return null;
     }
 
+    public String getPayloadAndTxid(String func, String[] args) {
+        String txId = "UNKOWN";
+        QueryByChaincodeRequest queryByChaincodeRequest = hfClient.newQueryProposalRequest();
+        queryByChaincodeRequest.setArgs(args);
+        queryByChaincodeRequest.setFcn(func);
+        queryByChaincodeRequest.setChaincodeID(channelCodeID);
+
+        Collection<ProposalResponse> queryProposals = null;
+        try {
+            queryProposals = channel.queryByChaincode(queryByChaincodeRequest, channel.getPeers());
+        } catch (InvalidArgumentException | ProposalException ignored) {
+            log.error(ignored.getMessage());
+            return null;
+        }
+        for (ProposalResponse proposalResponse : queryProposals) {
+            if (proposalResponse.isVerified() && proposalResponse.getStatus() == ProposalResponse.Status.SUCCESS) {
+                String payload = proposalResponse.getProposalResponse().getResponse().getPayload().toStringUtf8();
+                txId = proposalResponse.getTransactionID();
+                log.debug("===payload==="+payload+"txId==="+txId);
+                return payload+"!#!"+txId;
+            }
+        }
+
+        return null;
+    }
+
+
     public BlockchainInfo queryChain() throws InvalidArgumentException, ProposalException, InvalidProtocolBufferException, ExecutionException {
         BlockchainInfo blockchannelInfo = channel.queryBlockchainInfo();
         /*String channelCurrentHash = Hex.encodeHexString(blockchannelInfo.getCurrentBlockHash());
@@ -438,7 +465,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem")), "UTF-8");
 
         //PrivateKey privateKey = getPrivateKeyFromFile(privateKeyFile);
-        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/0880f9de3e22993623203af9c3045c891318b02fbf81225f0ece4bb77a34076c_sk";
+        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/8e5b954ea612d736ef792e217ba2d60611fb40f12584415084ca59e009954898_sk";
         final PEMParser pemParser = new PEMParser(new StringReader(new String(IOUtils.toByteArray(new FileInputStream(privateKeyFile)))));
 
         PrivateKeyInfo pemPair = (PrivateKeyInfo) pemParser.readObject();

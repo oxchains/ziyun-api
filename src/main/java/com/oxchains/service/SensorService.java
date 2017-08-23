@@ -59,22 +59,26 @@ public class SensorService extends BaseService {
 
 	public RespDTO<List<Sensor>> getSensorData(String number, Long startTime, Long endTime,String Token) {
 		try {
-			String jsonStr = chaincodeService.query("getSensorDataBySensorNum",
+			String jsonStr = chaincodeService.getPayloadAndTxid("getSensorDataBySensorNum",
 					new String[] { number, startTime + "", endTime + "" });
 			SensorDTO sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
 			if (sensorDTO.getList() == null || sensorDTO.getList().size() <= 0) {
-				jsonStr = chaincodeService.query("getSensorDataByEquipmentNum",
+				jsonStr = chaincodeService.getPayloadAndTxid("getSensorDataByEquipmentNum",
 						new String[] { number, startTime + "", endTime + "" });
 			}
 			if (StringUtils.isEmpty(jsonStr)) {
 				return RespDTO.fail("没有数据");
 			}
+			log.debug("===getSensorData==="+jsonStr);
+			String txId = jsonStr.split("!#!")[1];
+			jsonStr =  jsonStr.split("!#!")[0];
 			sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
 
 			JwtToken jwt = TokenUtils.parseToken(Token);
 			String username = jwt.getId();
 			for (Iterator<Sensor> it= sensorDTO.getList().iterator(); it.hasNext();) {
 				Sensor sensor = it.next();
+				sensor.setTxId(txId);
 				log.debug("===sensor.getToken()==="+sensor.getToken());
 				String jsonAuth = chaincodeService.query("query", new String[] { sensor.getToken() });
 				log.debug("===jsonAuth==="+jsonAuth);

@@ -105,4 +105,14 @@ public class Goods extends BaseEntity {
     public String getParentCode() {
         return ParentCode;
     }
+
+    private String TxId;
+
+    public void setTxId(String txId) {
+        TxId = txId;
+    }
+
+    public String getTxId() {
+        return TxId;
+    }
 }

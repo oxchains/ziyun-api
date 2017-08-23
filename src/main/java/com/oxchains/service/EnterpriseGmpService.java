@@ -42,18 +42,21 @@ public class EnterpriseGmpService extends BaseService {
     }
 
     public RespDTO<List<EnterpriseGmp>> getEnterpriseGmpByEnterpriseNameAndType(String EnterpriseName, String EnterpriseType, String Token){
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\n" +
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\n" +
                 "    \"EnterpriseName\": \""+EnterpriseName+"\"\n" + " ,   \"EnterpriseType\": \""+EnterpriseType+ "\"}}"});
         log.debug("===getProductGmpByProducName===" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
+        String txId = jsonStr.split("!#!")[1];
+        jsonStr =  jsonStr.split("!#!")[0];
         EnterpriseGmpDTO enterpriseGmpDTO = simpleGson.fromJson(jsonStr, EnterpriseGmpDTO.class);
 
         JwtToken jwt = TokenUtils.parseToken(Token);
         String username = jwt.getId();
         for (Iterator<EnterpriseGmp> it = enterpriseGmpDTO.getList().iterator(); it.hasNext();) {
             EnterpriseGmp EnterpriseGmp = it.next();
+            EnterpriseGmp.setTxId(txId);
             log.debug("===EnterpriseGmp.getToken()==="+EnterpriseGmp.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { EnterpriseGmp.getToken() });
             log.debug("===jsonAuth==="+jsonAuth);

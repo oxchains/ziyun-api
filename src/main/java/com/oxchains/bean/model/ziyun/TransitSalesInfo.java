@@ -47,6 +47,12 @@ public class TransitSalesInfo extends BaseEntity {
     @JsonProperty("UniqueCodes")
     private List<String> UniqueCodes;//货物唯一码List集合
 
+    @JsonProperty("TransitSalesState")
+    private  int TransitSalesState;// 销售状态
+
+    @JsonProperty("TransitSalesMoney")
+    private double TransitSalesMoney;//销售金额
+
     @JsonProperty("Token")
     private String Token;//token
 
@@ -57,5 +63,15 @@ public class TransitSalesInfo extends BaseEntity {
 
     public void setToken(String Token) {
         this.Token = Token;
+    }
+
+    private String TxId;
+
+    public void setTxId(String txId) {
+        TxId = txId;
+    }
+
+    public String getTxId() {
+        return TxId;
     }
 }

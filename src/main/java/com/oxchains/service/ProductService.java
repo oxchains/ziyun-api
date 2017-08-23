@@ -42,17 +42,21 @@ public class ProductService extends BaseService {
     }
 
     public RespDTO<List<Product>> getProductList(String Id, String Token) {
-        String jsonStr = chaincodeService.query("searchByQuery", new String[]{"{\"selector\":{\"Id\" : \""+ Id +"\"}}"});
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"Id\" : \""+ Id +"\"}}"});
        log.debug("-->产品JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
+        String txId = jsonStr.split("!#!")[1];
+        jsonStr =  jsonStr.split("!#!")[0];
         ProductDTO productDTO = simpleGson.fromJson(jsonStr, ProductDTO.class);
+        ProductDTO result = new ProductDTO();
 
         JwtToken jwt = TokenUtils.parseToken(Token);
         String username = jwt.getId();
         for (Iterator<Product> it = productDTO.getList().iterator(); it.hasNext();) {
             Product Product = it.next();
+            Product.setTxId(txId);
             log.debug("===Product.getToken()==="+Product.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { Product.getToken() });
             log.debug("===jsonAuth==="+jsonAuth);
