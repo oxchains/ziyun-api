@@ -39,7 +39,7 @@ public class Customer implements User {
     }
 
     @Override
-    public String getMSPID() {
+    public String getMspId() {
         return mspID;
     }
 }
