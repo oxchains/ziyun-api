@@ -279,6 +279,7 @@ type SalesInfo struct {
 	UniqueCodes                 []string
 	EnterpriseId                string
 	EnterpriseName              string
+	SalesInvoiceUrl				string
 	Token                       string
 }
 
@@ -308,6 +309,8 @@ type TransportBill struct {
 	GoodsTraceList                []GoodsTrace
 	TransportState				  int32
 	UniqueCodes      			  []string
+	InvoiceDownLoadUrl			  string
+	ReportDownLoadUrl			  string
 }
 
 type StorageBill struct {
@@ -346,6 +349,7 @@ type TransitSalesInfo struct {
 	UniqueCodes      []string
 	TransitSalesState int32
 	TransitSalesMoney float64
+	TransitSalesInvoiceUrl string
 	Token            string
 }
 

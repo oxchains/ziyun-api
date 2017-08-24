@@ -70,6 +70,12 @@ public class TransportBill extends BaseEntity {
     @JsonProperty("UniqueCodes")
     private List<String> UniqueCodes;//货物唯一码List集合
 
+    @JsonProperty("InvoiceDownLoadUrl")
+    private String InvoiceDownLoadUrl;//发票
+
+    @JsonProperty("ReportDownLoadUrl")
+    private String ReportDownLoadUrl;//检测报告
+
     @JsonProperty("Token")
     private String Token;//token
 
