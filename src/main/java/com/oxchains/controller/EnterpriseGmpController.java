@@ -37,6 +37,7 @@ public class EnterpriseGmpController extends BaseController {
     @GetMapping("/{EnterpriseName}/{EnterpriseType}")
     public RespDTO<List<EnterpriseGmp>> getEnterpriseGmpByEnterpriseNameAndType(@PathVariable String EnterpriseName,@PathVariable String EnterpriseType,@RequestParam String Token){
         try {
+            System.out.println("===getProductGmpByProducName===");
             return enterpriseGmpService.getEnterpriseGmpByEnterpriseNameAndType(EnterpriseName,EnterpriseType,Token);
         }catch (Exception e) {
             log.error("query error!", e);

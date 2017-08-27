@@ -3,6 +3,7 @@ package com.oxchains.bean.model.ziyun;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
+import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
@@ -82,18 +83,116 @@ public class ProductGmp extends BaseEntity {
     public String getToken() {
         return Token;
     }
+    @JsonIgnore
+    public String getApprovalUrl() {
+        return ApprovalUrl;
+    }
+    public void setApprovalUrl(String approvalUrl) {
+        ApprovalUrl = approvalUrl;
+    }
+    @JsonIgnore
+    public String getProductPatentCertificateUrl() {
+        return ProductPatentCertificateUrl;
+    }
+    public void setProductPatentCertificateUrl(String productPatentCertificateUrl) {
+        ProductPatentCertificateUrl = productPatentCertificateUrl;
+    }
+    @JsonIgnore
+    public String getProductTrademarkDocumentsUrl() {
+        return ProductTrademarkDocumentsUrl;
+    }
+    public void setProductTrademarkDocumentsUrl(String productTrademarkDocumentsUrl) {
+        ProductTrademarkDocumentsUrl = productTrademarkDocumentsUrl;
+    }
+    @JsonIgnore
+    public String getProductMiniPackageUrl() {
+        return ProductMiniPackageUrl;
+    }
+    public void setProductMiniPackageUrl(String productMiniPackageUrl) {
+        ProductMiniPackageUrl = productMiniPackageUrl;
+    }
+    @JsonIgnore
+    public String getDrugInstructionsUrl() {
+        return DrugInstructionsUrl;
+    }
+    public void setDrugInstructionsUrl(String drugInstructionsUrl) {
+        DrugInstructionsUrl = drugInstructionsUrl;
+    }
+    @JsonIgnore
+    public String getGeneralTaxpayerRecordsUrl() {
+        return GeneralTaxpayerRecordsUrl;
+    }
+    public void setGeneralTaxpayerRecordsUrl(String generalTaxpayerRecordsUrl) {
+        GeneralTaxpayerRecordsUrl = generalTaxpayerRecordsUrl;
+    }
+    @JsonIgnore
+    public String getLegalPowerOfAttorneyUrl() {
+        return LegalPowerOfAttorneyUrl;
+    }
+    public void setLegalPowerOfAttorneyUrl(String legalPowerOfAttorneyUrl) {
+        LegalPowerOfAttorneyUrl = legalPowerOfAttorneyUrl;
+    }
+    @JsonIgnore
+    public String getIdCardUrl() {
+        return IdCardUrl;
+    }
 
-    public void setToken(String Token) {
-        this.Token = Token;
+    public void setIdCardUrl(String idCardUrl) {
+        IdCardUrl = idCardUrl;
+    }
+    @JsonIgnore
+    public String getProudctProduceStandardUrl() {
+        return ProudctProduceStandardUrl;
+    }
+
+    public void setProudctProduceStandardUrl(String proudctProduceStandardUrl) {
+        ProudctProduceStandardUrl = proudctProduceStandardUrl;
+    }
+    @JsonIgnore
+    public String getPurchaseAndSaleContractUrl() {
+        return PurchaseAndSaleContractUrl;
+    }
+
+    public void setPurchaseAndSaleContractUrl(String purchaseAndSaleContractUrl) {
+        PurchaseAndSaleContractUrl = purchaseAndSaleContractUrl;
+    }
+    @JsonIgnore
+    public String getProductPackageAndManualUrl() {
+        return ProductPackageAndManualUrl;
+    }
+
+    public void setProductPackageAndManualUrl(String productPackageAndManualUrl) {
+        ProductPackageAndManualUrl = productPackageAndManualUrl;
     }
 
     private String TxId;
+
+    public String getTxId() {
+        return TxId;
+    }
 
     public void setTxId(String txId) {
         TxId = txId;
     }
 
-    public String getTxId() {
-        return TxId;
+    public void setToken(String token) {
+        Token = token;
+    }
+
+    @JsonIgnore
+    public List<com.oxchains.bean.model.ziyun.ProductProvincialPnspectionReport> getProductProvincialPnspectionReport() {
+        return ProductProvincialPnspectionReport;
+    }
+    @JsonIgnore
+    public List<com.oxchains.bean.model.ziyun.ProductPriceDocument> getProductPriceDocument() {
+        return ProductPriceDocument;
+    }
+    @JsonIgnore
+    public List<com.oxchains.bean.model.ziyun.ProductFactoryInspectionReport> getProductFactoryInspectionReport() {
+        return ProductFactoryInspectionReport;
+    }
+    @JsonIgnore
+    public List<com.oxchains.bean.model.ziyun.PurchaserCertificate> getPurchaserCertificate() {
+        return PurchaserCertificate;
     }
 }

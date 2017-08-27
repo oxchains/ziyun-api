@@ -33,10 +33,11 @@ public class ProductGmpController extends BaseController{
         return RespDTO.fail();
     }
 
-    @GetMapping("/{ProducName}")
+    @RequestMapping(value = "/{ProducName}", method = RequestMethod.GET)
     public RespDTO<List<ProductGmp>> getProductGmpByProducName(@PathVariable String ProducName, @RequestParam String Token){
         try {
-            log.debug("===getProductGmpByProducName==="+ProducName);
+            System.out.println("===getProductGmpByProducName===");
+            //log.debug("===getProductGmpByProducName==="+ProducName);
             return productGmpService.getProductGmpByProducName(ProducName,Token);
         }catch (Exception e) {
             log.error("query error!", e);

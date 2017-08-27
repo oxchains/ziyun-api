@@ -7,7 +7,6 @@ import com.oxchains.dao.TabTokenDao;
 import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.result.Output;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
@@ -19,7 +18,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 
@@ -45,7 +43,6 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
         addInterceptor.excludePathPatterns("/user/login")
                 .excludePathPatterns("/datav/**")
                 .excludePathPatterns("/healthz");
-                //.excludePathPatterns("/cargo/install").excludePathPatterns("/user/register");
 
         // 拦截配置
         addInterceptor.addPathPatterns("/**");
@@ -104,4 +101,6 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
             return false;
         }
     }
+
+
 }

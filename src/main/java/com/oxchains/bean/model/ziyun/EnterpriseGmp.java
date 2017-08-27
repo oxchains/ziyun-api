@@ -3,6 +3,7 @@ package com.oxchains.bean.model.ziyun;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
+import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
@@ -104,8 +105,8 @@ public class EnterpriseGmp extends BaseEntity {
         return Token;
     }
 
-    public void setToken(String Token) {
-        this.Token = Token;
+    public void setToken(String token) {
+        Token = token;
     }
 
     private String TxId;
@@ -116,5 +117,95 @@ public class EnterpriseGmp extends BaseEntity {
 
     public String getTxId() {
         return TxId;
+    }
+
+    @JsonIgnore
+    public String getEnterpriseLicenseUrl() {
+        return EnterpriseLicenseUrl;
+    }
+
+    public void setEnterpriseLicenseUrl(String enterpriseLicenseUrl) {
+        EnterpriseLicenseUrl = enterpriseLicenseUrl;
+    }
+    @JsonIgnore
+    public String getTaxRegistrationCertificateUrl() {
+        return TaxRegistrationCertificateUrl;
+    }
+
+    public void setTaxRegistrationCertificateUrl(String taxRegistrationCertificateUrl) {
+        TaxRegistrationCertificateUrl = taxRegistrationCertificateUrl;
+    }
+    @JsonIgnore
+    public String getOrganizationCodeCertificateUrl() {
+        return OrganizationCodeCertificateUrl;
+    }
+
+    public void setOrganizationCodeCertificateUrl(String organizationCodeCertificateUrl) {
+        OrganizationCodeCertificateUrl = organizationCodeCertificateUrl;
+    }
+    @JsonIgnore
+    public String getQualityAssuranceUrl() {
+        return QualityAssuranceUrl;
+    }
+
+    public void setQualityAssuranceUrl(String qualityAssuranceUrl) {
+        QualityAssuranceUrl = qualityAssuranceUrl;
+    }
+    @JsonIgnore
+    public String getDrugProductionLicenseUrl() {
+        return DrugProductionLicenseUrl;
+    }
+
+    public void setDrugProductionLicenseUrl(String drugProductionLicenseUrl) {
+        DrugProductionLicenseUrl = drugProductionLicenseUrl;
+    }
+    @JsonIgnore
+    public String getGoodManufacturPracticesUrl() {
+        return GoodManufacturPracticesUrl;
+    }
+
+    public void setGoodManufacturPracticesUrl(String goodManufacturPracticesUrl) {
+        GoodManufacturPracticesUrl = goodManufacturPracticesUrl;
+    }
+    @JsonIgnore
+    public String getDrugOperatingLicenseUrl() {
+        return DrugOperatingLicenseUrl;
+    }
+
+    public void setDrugOperatingLicenseUrl(String drugOperatingLicenseUrl) {
+        DrugOperatingLicenseUrl = drugOperatingLicenseUrl;
+    }
+    @JsonIgnore
+    public String getGoodSupplyingPracticesUrl() {
+        return GoodSupplyingPracticesUrl;
+    }
+
+    public void setGoodSupplyingPracticesUrl(String goodSupplyingPracticesUrl) {
+        GoodSupplyingPracticesUrl = goodSupplyingPracticesUrl;
+    }
+    @JsonIgnore
+    public String getOpeningPermitUrl() {
+        return OpeningPermitUrl;
+    }
+
+    public void setOpeningPermitUrl(String openingPermitUrl) {
+        OpeningPermitUrl = openingPermitUrl;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    @JsonIgnore
+    public List<YearTaxReport> getYearTaxReport() {
+        return YearTaxReport;
+    }
+    @JsonIgnore
+    public List<EnterpriseQualityQuestionnaire> getEnterpriseQualityQuestionnaire() {
+        return EnterpriseQualityQuestionnaire;
+    }
+    @JsonIgnore
+    public List<DeliveryUnitQualityQuestionnaire> getDeliveryUnitQualityQuestionnaire() {
+        return DeliveryUnitQualityQuestionnaire;
     }
 }
