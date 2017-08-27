@@ -90,54 +90,54 @@ public class EnterpriseGmpService extends BaseService {
     private void translateFile(EnterpriseGmp enterpriseGmp){
 
         String EnterpriseLicenseUrl = enterpriseGmp.getEnterpriseLicenseUrl();
-        if(EnterpriseLicenseUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(EnterpriseLicenseUrl) && EnterpriseLicenseUrl.startsWith("http")){
             enterpriseGmp.setEnterpriseLicenseUrl(storeFile(EnterpriseLicenseUrl));
         }
 
         String TaxRegistrationCertificateUrl = enterpriseGmp.getTaxRegistrationCertificateUrl();
-        if(TaxRegistrationCertificateUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(TaxRegistrationCertificateUrl) && TaxRegistrationCertificateUrl.startsWith("http")){
             enterpriseGmp.setTaxRegistrationCertificateUrl(storeFile(TaxRegistrationCertificateUrl));
         }
 
         String OrganizationCodeCertificateUrl = enterpriseGmp.getOrganizationCodeCertificateUrl();
-        if(OrganizationCodeCertificateUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(OrganizationCodeCertificateUrl) && OrganizationCodeCertificateUrl.startsWith("http")){
             enterpriseGmp.setOrganizationCodeCertificateUrl(storeFile(OrganizationCodeCertificateUrl));
         }
 
         String QualityAssuranceUrl = enterpriseGmp.getQualityAssuranceUrl();
-        if(QualityAssuranceUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(QualityAssuranceUrl) && QualityAssuranceUrl.startsWith("http")){
             enterpriseGmp.setQualityAssuranceUrl(storeFile(QualityAssuranceUrl));
         }
 
         String DrugProductionLicenseUrl = enterpriseGmp.getDrugProductionLicenseUrl();
-        if(DrugProductionLicenseUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(DrugProductionLicenseUrl) && DrugProductionLicenseUrl.startsWith("http")){
             enterpriseGmp.setDrugProductionLicenseUrl(storeFile(DrugProductionLicenseUrl));
         }
 
         String GoodManufacturPracticesUrl = enterpriseGmp.getGoodManufacturPracticesUrl();
-        if(GoodManufacturPracticesUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(GoodManufacturPracticesUrl) && GoodManufacturPracticesUrl.startsWith("http")){
             enterpriseGmp.setGoodManufacturPracticesUrl(storeFile(GoodManufacturPracticesUrl));
         }
 
         String DrugOperatingLicenseUrl = enterpriseGmp.getDrugOperatingLicenseUrl();
-        if(DrugOperatingLicenseUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(DrugOperatingLicenseUrl) && DrugOperatingLicenseUrl.startsWith("http")){
             enterpriseGmp.setDrugOperatingLicenseUrl(storeFile(DrugOperatingLicenseUrl));
         }
 
         String GoodSupplyingPracticesUrl = enterpriseGmp.getGoodSupplyingPracticesUrl();
-        if(GoodSupplyingPracticesUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(GoodSupplyingPracticesUrl) && GoodSupplyingPracticesUrl.startsWith("http")){
             enterpriseGmp.setGoodSupplyingPracticesUrl(storeFile(GoodSupplyingPracticesUrl));
         }
 
         String OpeningPermitUrl = enterpriseGmp.getOpeningPermitUrl();
-        if(OpeningPermitUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(OpeningPermitUrl) && OpeningPermitUrl.startsWith("http")){
             enterpriseGmp.setOpeningPermitUrl(storeFile(OpeningPermitUrl));
         }
 
         List<YearTaxReport> yearTaxReportList = enterpriseGmp.getYearTaxReport();
         for(YearTaxReport yearTaxReport : yearTaxReportList){
             String p = yearTaxReport.getYearTaxReportValue();
-            if(p.startsWith("http")){
+            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
                 yearTaxReport.setYearTaxReportValue(storeFile(p));
             }
         }
@@ -145,7 +145,7 @@ public class EnterpriseGmpService extends BaseService {
         List<EnterpriseQualityQuestionnaire> enterpriseQualityQuestionnaireList = enterpriseGmp.getEnterpriseQualityQuestionnaire();
         for(EnterpriseQualityQuestionnaire enterpriseQualityQuestionnaire : enterpriseQualityQuestionnaireList){
             String p = enterpriseQualityQuestionnaire.getEnterpriseQualityQuestionnaireValue();
-            if(p.startsWith("http")){
+            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
                 enterpriseQualityQuestionnaire.setEnterpriseQualityQuestionnaireValue(storeFile(p));
             }
         }
@@ -153,7 +153,7 @@ public class EnterpriseGmpService extends BaseService {
         List<DeliveryUnitQualityQuestionnaire> deliveryUnitQualityQuestionnaireList = enterpriseGmp.getDeliveryUnitQualityQuestionnaire();
         for(DeliveryUnitQualityQuestionnaire deliveryUnitQualityQuestionnaire : deliveryUnitQualityQuestionnaireList){
             String p = deliveryUnitQualityQuestionnaire.getDeliveryUnitQualityQuestionnaireValue();
-            if(p.startsWith("http")){
+            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
                 deliveryUnitQualityQuestionnaire.setDeliveryUnitQualityQuestionnaireValue(storeFile(p));
             }
         }

@@ -80,64 +80,64 @@ public class ProductGmpService extends BaseService {
     private void translateFile(ProductGmp productGmp){
 
         String ApprovalUrl = productGmp.getApprovalUrl();
-        if(ApprovalUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(ApprovalUrl) && ApprovalUrl.startsWith("http")){
             productGmp.setApprovalUrl(storeFile(ApprovalUrl));
         }
 
         String ProductPatentCertificateUrl = productGmp.getProductPatentCertificateUrl();
-        if(ProductPatentCertificateUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(ProductPatentCertificateUrl) && ProductPatentCertificateUrl.startsWith("http")){
             productGmp.setProductPatentCertificateUrl(storeFile(ProductPatentCertificateUrl));
         }
 
         String ProductTrademarkDocumentsUrl = productGmp.getProductTrademarkDocumentsUrl();
-        if(ProductTrademarkDocumentsUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(ProductTrademarkDocumentsUrl) && ProductTrademarkDocumentsUrl.startsWith("http")){
             productGmp.setProductTrademarkDocumentsUrl(storeFile(ProductTrademarkDocumentsUrl));
         }
 
         String ProductMiniPackageUrl = productGmp.getProductMiniPackageUrl();
-        if(ProductMiniPackageUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(ProductMiniPackageUrl) && ProductMiniPackageUrl.startsWith("http")){
             productGmp.setProductMiniPackageUrl(storeFile(ProductMiniPackageUrl));
         }
 
         String DrugInstructionsUrl = productGmp.getDrugInstructionsUrl();
-        if(DrugInstructionsUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(DrugInstructionsUrl) && DrugInstructionsUrl.startsWith("http")){
             productGmp.setDrugInstructionsUrl(storeFile(DrugInstructionsUrl));
         }
 
         String GeneralTaxpayerRecordsUrl = productGmp.getGeneralTaxpayerRecordsUrl();
-        if(GeneralTaxpayerRecordsUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(GeneralTaxpayerRecordsUrl) && GeneralTaxpayerRecordsUrl.startsWith("http")){
             productGmp.setGeneralTaxpayerRecordsUrl(storeFile(GeneralTaxpayerRecordsUrl));
         }
 
         String LegalPowerOfAttorneyUrl = productGmp.getLegalPowerOfAttorneyUrl();
-        if(LegalPowerOfAttorneyUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(LegalPowerOfAttorneyUrl) && LegalPowerOfAttorneyUrl.startsWith("http")){
             productGmp.setLegalPowerOfAttorneyUrl(storeFile(LegalPowerOfAttorneyUrl));
         }
 
         String IdCardUrl = productGmp.getIdCardUrl();
-        if(IdCardUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(IdCardUrl) && IdCardUrl.startsWith("http")){
             productGmp.setIdCardUrl(storeFile(IdCardUrl));
         }
 
         String ProudctProduceStandardUrl = productGmp.getProudctProduceStandardUrl();
-        if(ProudctProduceStandardUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(ProudctProduceStandardUrl) && ProudctProduceStandardUrl.startsWith("http")){
             productGmp.setProudctProduceStandardUrl(storeFile(ProudctProduceStandardUrl));
         }
 
         String PurchaseAndSaleContractUrl = productGmp.getPurchaseAndSaleContractUrl();
-        if(PurchaseAndSaleContractUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(PurchaseAndSaleContractUrl) && PurchaseAndSaleContractUrl.startsWith("http")){
             productGmp.setPurchaseAndSaleContractUrl(storeFile(PurchaseAndSaleContractUrl));
         }
 
         String ProductPackageAndManualUrl = productGmp.getProductPackageAndManualUrl();
-        if(ProductPackageAndManualUrl.startsWith("http")){
+        if(!StringUtils.isEmpty(ProductPackageAndManualUrl) && ProductPackageAndManualUrl.startsWith("http")){
             productGmp.setProductPackageAndManualUrl(storeFile(ProductPackageAndManualUrl));
         }
 
         List<ProductProvincialPnspectionReport> productProvincialPnspectionReportList = productGmp.getProductProvincialPnspectionReport();
         for(ProductProvincialPnspectionReport productProvincialPnspectionReport : productProvincialPnspectionReportList){
             String p = productProvincialPnspectionReport.getProductProvincialPnspectionReportValue();
-            if(p.startsWith("http")){
+            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
                 productProvincialPnspectionReport.setProductProvincialPnspectionReportValue(storeFile(p));
             }
         }
@@ -145,7 +145,7 @@ public class ProductGmpService extends BaseService {
         List<ProductPriceDocument> productPriceDocumentList = productGmp.getProductPriceDocument();
         for(ProductPriceDocument productPriceDocument : productPriceDocumentList){
             String p = productPriceDocument.getProductPriceDocumentValue();
-            if(p.startsWith("http")){
+            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
                 productPriceDocument.setProductPriceDocumentValue(storeFile(p));
             }
         }
@@ -153,7 +153,7 @@ public class ProductGmpService extends BaseService {
         List<ProductFactoryInspectionReport> productFactoryInspectionReportList = productGmp.getProductFactoryInspectionReport();
         for(ProductFactoryInspectionReport productFactoryInspectionReport : productFactoryInspectionReportList){
             String p = productFactoryInspectionReport.getProductFactoryInspectionReportValue();
-            if(p.startsWith("http")){
+            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
                 productFactoryInspectionReport.setProductFactoryInspectionReportValue(storeFile(p));
             }
         }
@@ -161,7 +161,7 @@ public class ProductGmpService extends BaseService {
         List<PurchaserCertificate> purchaserCertificates = productGmp.getPurchaserCertificate();
         for(PurchaserCertificate purchaserCertificate : purchaserCertificates){
             String p = purchaserCertificate.getPurchaserCertificateValue();
-            if(p.startsWith("http")){
+            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
                 purchaserCertificate.setPurchaserCertificateValue(storeFile(p));
             }
         }
