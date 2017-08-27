@@ -135,6 +135,7 @@ public class EnterpriseGmpService extends BaseService {
         }
 
         List<YearTaxReport> yearTaxReportList = enterpriseGmp.getYearTaxReport();
+        if(yearTaxReportList!=null && yearTaxReportList.size()>0)
         for(YearTaxReport yearTaxReport : yearTaxReportList){
             String p = yearTaxReport.getYearTaxReportValue();
             if(!StringUtils.isEmpty(p) && p.startsWith("http")){
@@ -143,6 +144,7 @@ public class EnterpriseGmpService extends BaseService {
         }
 
         List<EnterpriseQualityQuestionnaire> enterpriseQualityQuestionnaireList = enterpriseGmp.getEnterpriseQualityQuestionnaire();
+        if(enterpriseQualityQuestionnaireList!=null && enterpriseQualityQuestionnaireList.size()>0)
         for(EnterpriseQualityQuestionnaire enterpriseQualityQuestionnaire : enterpriseQualityQuestionnaireList){
             String p = enterpriseQualityQuestionnaire.getEnterpriseQualityQuestionnaireValue();
             if(!StringUtils.isEmpty(p) && p.startsWith("http")){
@@ -151,6 +153,7 @@ public class EnterpriseGmpService extends BaseService {
         }
 
         List<DeliveryUnitQualityQuestionnaire> deliveryUnitQualityQuestionnaireList = enterpriseGmp.getDeliveryUnitQualityQuestionnaire();
+        if(deliveryUnitQualityQuestionnaireList!=null && deliveryUnitQualityQuestionnaireList.size()>0)
         for(DeliveryUnitQualityQuestionnaire deliveryUnitQualityQuestionnaire : deliveryUnitQualityQuestionnaireList){
             String p = deliveryUnitQualityQuestionnaire.getDeliveryUnitQualityQuestionnaireValue();
             if(!StringUtils.isEmpty(p) && p.startsWith("http")){

@@ -135,6 +135,7 @@ public class ProductGmpService extends BaseService {
         }
 
         List<ProductProvincialPnspectionReport> productProvincialPnspectionReportList = productGmp.getProductProvincialPnspectionReport();
+        if(productProvincialPnspectionReportList!=null && productProvincialPnspectionReportList.size()>0)
         for(ProductProvincialPnspectionReport productProvincialPnspectionReport : productProvincialPnspectionReportList){
             String p = productProvincialPnspectionReport.getProductProvincialPnspectionReportValue();
             if(!StringUtils.isEmpty(p) && p.startsWith("http")){
@@ -143,6 +144,7 @@ public class ProductGmpService extends BaseService {
         }
 
         List<ProductPriceDocument> productPriceDocumentList = productGmp.getProductPriceDocument();
+        if(productPriceDocumentList!=null && productPriceDocumentList.size()>0)
         for(ProductPriceDocument productPriceDocument : productPriceDocumentList){
             String p = productPriceDocument.getProductPriceDocumentValue();
             if(!StringUtils.isEmpty(p) && p.startsWith("http")){
@@ -151,6 +153,7 @@ public class ProductGmpService extends BaseService {
         }
 
         List<ProductFactoryInspectionReport> productFactoryInspectionReportList = productGmp.getProductFactoryInspectionReport();
+        if(productFactoryInspectionReportList!=null && productFactoryInspectionReportList.size()>0)
         for(ProductFactoryInspectionReport productFactoryInspectionReport : productFactoryInspectionReportList){
             String p = productFactoryInspectionReport.getProductFactoryInspectionReportValue();
             if(!StringUtils.isEmpty(p) && p.startsWith("http")){
@@ -159,6 +162,7 @@ public class ProductGmpService extends BaseService {
         }
 
         List<PurchaserCertificate> purchaserCertificates = productGmp.getPurchaserCertificate();
+        if(purchaserCertificates!=null && purchaserCertificates.size()>0)
         for(PurchaserCertificate purchaserCertificate : purchaserCertificates){
             String p = purchaserCertificate.getPurchaserCertificateValue();
             if(!StringUtils.isEmpty(p) && p.startsWith("http")){
