@@ -65,16 +65,16 @@ public class ProductGmp extends BaseEntity {
     private String ProductPackageAndManualUrl;//产品内外包装和说明书
 
     @JsonProperty("ProductProvincialPnspectionReport")
-    private List<ProductProvincialPnspectionReport> ProductProvincialPnspectionReport;// 省级产品检验报告
+    private List<Map<String,String>> ProductProvincialPnspectionReport;// 省级产品检验报告
 
     @JsonProperty("ProductPriceDocument")
-    private List<ProductPriceDocument> ProductPriceDocument;// 产品物价文件
+    private List<Map<String,String>> ProductPriceDocument;// 产品物价文件
 
     @JsonProperty("ProductFactoryInspectionReport")
-    private List<ProductFactoryInspectionReport> ProductFactoryInspectionReport;//厂检验报告
+    private List<Map<String,String>> ProductFactoryInspectionReport;//厂检验报告
 
     @JsonProperty("PurchaserCertificate")
-    private List<PurchaserCertificate> PurchaserCertificate;// 购销员资格证书
+    private List<Map<String,String>> PurchaserCertificate;// 购销员资格证书
 
     @JsonProperty("Token")
     private String Token;//token
@@ -180,19 +180,19 @@ public class ProductGmp extends BaseEntity {
     }
 
     @JsonIgnore
-    public List<com.oxchains.bean.model.ziyun.ProductProvincialPnspectionReport> getProductProvincialPnspectionReport() {
+    public List<Map<String,String>> getProductProvincialPnspectionReport() {
         return ProductProvincialPnspectionReport;
     }
     @JsonIgnore
-    public List<com.oxchains.bean.model.ziyun.ProductPriceDocument> getProductPriceDocument() {
+    public List<Map<String,String>> getProductPriceDocument() {
         return ProductPriceDocument;
     }
     @JsonIgnore
-    public List<com.oxchains.bean.model.ziyun.ProductFactoryInspectionReport> getProductFactoryInspectionReport() {
+    public List<Map<String,String>> getProductFactoryInspectionReport() {
         return ProductFactoryInspectionReport;
     }
     @JsonIgnore
-    public List<com.oxchains.bean.model.ziyun.PurchaserCertificate> getPurchaserCertificate() {
+    public List<Map<String,String>> getPurchaserCertificate() {
         return PurchaserCertificate;
     }
 }

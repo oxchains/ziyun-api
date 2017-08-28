@@ -19,10 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -134,30 +131,42 @@ public class EnterpriseGmpService extends BaseService {
             enterpriseGmp.setOpeningPermitUrl(storeFile(OpeningPermitUrl));
         }
 
-        List<YearTaxReport> yearTaxReportList = enterpriseGmp.getYearTaxReport();
+        List<Map<String,String>> yearTaxReportList = enterpriseGmp.getYearTaxReport();
         if(yearTaxReportList!=null && yearTaxReportList.size()>0)
-        for(YearTaxReport yearTaxReport : yearTaxReportList){
-            String p = yearTaxReport.getYearTaxReportValue();
-            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
-                yearTaxReport.setYearTaxReportValue(storeFile(p));
+        for(Map<String,String> yearTaxReport : yearTaxReportList){
+            Iterator it = yearTaxReport.keySet().iterator();
+            while(it.hasNext()){
+                String key = it.next().toString();
+                String value = yearTaxReport.get(key);
+                if(!StringUtils.isEmpty(value) && value.startsWith("http")){
+                    yearTaxReport.put(key,storeFile(value));
+                }
             }
         }
 
-        List<EnterpriseQualityQuestionnaire> enterpriseQualityQuestionnaireList = enterpriseGmp.getEnterpriseQualityQuestionnaire();
+        List<Map<String,String>> enterpriseQualityQuestionnaireList = enterpriseGmp.getEnterpriseQualityQuestionnaire();
         if(enterpriseQualityQuestionnaireList!=null && enterpriseQualityQuestionnaireList.size()>0)
-        for(EnterpriseQualityQuestionnaire enterpriseQualityQuestionnaire : enterpriseQualityQuestionnaireList){
-            String p = enterpriseQualityQuestionnaire.getEnterpriseQualityQuestionnaireValue();
-            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
-                enterpriseQualityQuestionnaire.setEnterpriseQualityQuestionnaireValue(storeFile(p));
+        for(Map<String,String> enterpriseQualityQuestionnaire : enterpriseQualityQuestionnaireList){
+            Iterator it = enterpriseQualityQuestionnaire.keySet().iterator();
+            while(it.hasNext()){
+                String key = it.next().toString();
+                String value = enterpriseQualityQuestionnaire.get(key);
+                if(!StringUtils.isEmpty(value) && value.startsWith("http")){
+                    enterpriseQualityQuestionnaire.put(key,storeFile(value));
+                }
             }
         }
 
-        List<DeliveryUnitQualityQuestionnaire> deliveryUnitQualityQuestionnaireList = enterpriseGmp.getDeliveryUnitQualityQuestionnaire();
+        List<Map<String,String>> deliveryUnitQualityQuestionnaireList = enterpriseGmp.getDeliveryUnitQualityQuestionnaire();
         if(deliveryUnitQualityQuestionnaireList!=null && deliveryUnitQualityQuestionnaireList.size()>0)
-        for(DeliveryUnitQualityQuestionnaire deliveryUnitQualityQuestionnaire : deliveryUnitQualityQuestionnaireList){
-            String p = deliveryUnitQualityQuestionnaire.getDeliveryUnitQualityQuestionnaireValue();
-            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
-                deliveryUnitQualityQuestionnaire.setDeliveryUnitQualityQuestionnaireValue(storeFile(p));
+        for(Map<String,String> deliveryUnitQualityQuestionnaire : deliveryUnitQualityQuestionnaireList){
+            Iterator it = deliveryUnitQualityQuestionnaire.keySet().iterator();
+            while(it.hasNext()){
+                String key = it.next().toString();
+                String value = deliveryUnitQualityQuestionnaire.get(key);
+                if(!StringUtils.isEmpty(value) && value.startsWith("http")){
+                    deliveryUnitQualityQuestionnaire.put(key,storeFile(value));
+                }
             }
         }
     }

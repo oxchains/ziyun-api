@@ -134,39 +134,56 @@ public class ProductGmpService extends BaseService {
             productGmp.setProductPackageAndManualUrl(storeFile(ProductPackageAndManualUrl));
         }
 
-        List<ProductProvincialPnspectionReport> productProvincialPnspectionReportList = productGmp.getProductProvincialPnspectionReport();
+        List<Map<String,String>> productProvincialPnspectionReportList = productGmp.getProductProvincialPnspectionReport();
         if(productProvincialPnspectionReportList!=null && productProvincialPnspectionReportList.size()>0)
-        for(ProductProvincialPnspectionReport productProvincialPnspectionReport : productProvincialPnspectionReportList){
-            String p = productProvincialPnspectionReport.getProductProvincialPnspectionReportValue();
-            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
-                productProvincialPnspectionReport.setProductProvincialPnspectionReportValue(storeFile(p));
+        for(Map<String,String> productProvincialPnspectionReport : productProvincialPnspectionReportList){
+            Iterator it = productProvincialPnspectionReport.keySet().iterator();
+            while(it.hasNext()){
+                String key = it.next().toString();
+                String value = productProvincialPnspectionReport.get(key);
+                if(!StringUtils.isEmpty(value) && value.startsWith("http")){
+                    productProvincialPnspectionReport.put(key,storeFile(value));
+                }
             }
+
         }
 
-        List<ProductPriceDocument> productPriceDocumentList = productGmp.getProductPriceDocument();
+        List<Map<String,String>> productPriceDocumentList = productGmp.getProductPriceDocument();
         if(productPriceDocumentList!=null && productPriceDocumentList.size()>0)
-        for(ProductPriceDocument productPriceDocument : productPriceDocumentList){
-            String p = productPriceDocument.getProductPriceDocumentValue();
-            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
-                productPriceDocument.setProductPriceDocumentValue(storeFile(p));
+        for(Map<String,String> productPriceDocument : productPriceDocumentList){
+            Iterator it = productPriceDocument.keySet().iterator();
+            while(it.hasNext()){
+                String key = it.next().toString();
+                String value = productPriceDocument.get(key);
+                if(!StringUtils.isEmpty(value) && value.startsWith("http")){
+                    productPriceDocument.put(key,storeFile(value));
+                }
             }
         }
 
-        List<ProductFactoryInspectionReport> productFactoryInspectionReportList = productGmp.getProductFactoryInspectionReport();
+        List<Map<String,String>> productFactoryInspectionReportList = productGmp.getProductFactoryInspectionReport();
         if(productFactoryInspectionReportList!=null && productFactoryInspectionReportList.size()>0)
-        for(ProductFactoryInspectionReport productFactoryInspectionReport : productFactoryInspectionReportList){
-            String p = productFactoryInspectionReport.getProductFactoryInspectionReportValue();
-            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
-                productFactoryInspectionReport.setProductFactoryInspectionReportValue(storeFile(p));
+        for(Map<String,String> productFactoryInspectionReport : productFactoryInspectionReportList){
+            Iterator it = productFactoryInspectionReport.keySet().iterator();
+            while(it.hasNext()){
+                String key = it.next().toString();
+                String value = productFactoryInspectionReport.get(key);
+                if(!StringUtils.isEmpty(value) && value.startsWith("http")){
+                    productFactoryInspectionReport.put(key,storeFile(value));
+                }
             }
         }
 
-        List<PurchaserCertificate> purchaserCertificates = productGmp.getPurchaserCertificate();
+        List<Map<String,String>> purchaserCertificates = productGmp.getPurchaserCertificate();
         if(purchaserCertificates!=null && purchaserCertificates.size()>0)
-        for(PurchaserCertificate purchaserCertificate : purchaserCertificates){
-            String p = purchaserCertificate.getPurchaserCertificateValue();
-            if(!StringUtils.isEmpty(p) && p.startsWith("http")){
-                purchaserCertificate.setPurchaserCertificateValue(storeFile(p));
+        for(Map<String,String> purchaserCertificate : purchaserCertificates){
+            Iterator it = purchaserCertificate.keySet().iterator();
+            while(it.hasNext()){
+                String key = it.next().toString();
+                String value = purchaserCertificate.get(key);
+                if(!StringUtils.isEmpty(value) && value.startsWith("http")){
+                    purchaserCertificate.put(key,storeFile(value));
+                }
             }
         }
     }

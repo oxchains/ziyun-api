@@ -89,13 +89,13 @@ public class EnterpriseGmp extends BaseEntity {
     private String EnterpriseAdress;//企业地址
 
     @JsonProperty("YearTaxReport")
-    private List<YearTaxReport> YearTaxReport;// 年纳税报表
+    private List<Map<String,String>> YearTaxReport;// 年纳税报表
 
     @JsonProperty("EnterpriseQualityQuestionnaire")
-    private List<EnterpriseQualityQuestionnaire> EnterpriseQualityQuestionnaire;// 企业质量情况调查表
+    private List<Map<String,String>> EnterpriseQualityQuestionnaire;// 企业质量情况调查表
 
     @JsonProperty("DeliveryUnitQualityQuestionnaire")
-    private List<DeliveryUnitQualityQuestionnaire> DeliveryUnitQualityQuestionnaire;//企业质量情况调查表
+    private List<Map<String,String>> DeliveryUnitQualityQuestionnaire;//企业质量情况调查表
 
     @JsonProperty("Token")
     private String Token;//token
@@ -192,20 +192,16 @@ public class EnterpriseGmp extends BaseEntity {
         OpeningPermitUrl = openingPermitUrl;
     }
 
-    public String getId() {
-        return Id;
-    }
-
     @JsonIgnore
-    public List<YearTaxReport> getYearTaxReport() {
+    public List<Map<String,String>> getYearTaxReport() {
         return YearTaxReport;
     }
     @JsonIgnore
-    public List<EnterpriseQualityQuestionnaire> getEnterpriseQualityQuestionnaire() {
+    public List<Map<String,String>> getEnterpriseQualityQuestionnaire() {
         return EnterpriseQualityQuestionnaire;
     }
     @JsonIgnore
-    public List<DeliveryUnitQualityQuestionnaire> getDeliveryUnitQualityQuestionnaire() {
+    public List<Map<String,String>> getDeliveryUnitQualityQuestionnaire() {
         return DeliveryUnitQualityQuestionnaire;
     }
 }

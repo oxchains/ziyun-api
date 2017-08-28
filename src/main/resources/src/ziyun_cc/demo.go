@@ -388,10 +388,10 @@ type ProductGmp struct{
 	ProudctProduceStandardUrl		string
 	PurchaseAndSaleContractUrl		string
 	ProductPackageAndManualUrl		string
-	ProductProvincialPnspectionReport []ProductProvincialPnspectionReport
-	ProductPriceDocument			[]ProductPriceDocument
-	ProductFactoryInspectionReport	[]ProductFactoryInspectionReport
-	PurchaserCertificate 			[]PurchaserCertificate
+	ProductProvincialPnspectionReport []map[string]string
+	ProductPriceDocument			[]map[string]string
+	ProductFactoryInspectionReport	[]map[string]string
+	PurchaserCertificate 			[]map[string]string
 	Token							string
 }
 type YearTaxReport struct{
@@ -433,9 +433,9 @@ type EnterpriseGmp struct{
 	TaxpayerIdentificationNumber	string
 	EnterprisePhone					string
 	EnterpriseAdress				string
-	YearTaxReport					[]YearTaxReport
-	EnterpriseQualityQuestionnaire  []EnterpriseQualityQuestionnaire
-	DeliveryUnitQualityQuestionnaire []DeliveryUnitQualityQuestionnaire
+	YearTaxReport					[]map[string]string
+	EnterpriseQualityQuestionnaire  []map[string]string
+	DeliveryUnitQualityQuestionnaire []map[string]string
 	Token							string
 }
 
