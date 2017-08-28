@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.oxchains.bean.model.ziyun.TabUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static com.google.common.net.HttpHeaders.CONTENT_DISPOSITION;
 import static java.net.URLConnection.guessContentTypeFromName;
@@ -87,6 +89,27 @@ public class UserController extends BaseController{
         return RespDTO.fail();
 	 }
 
+    @RequestMapping(value = "/auth/query", method = RequestMethod.GET)
+    public RespDTO<String> query(@RequestBody String body,@RequestParam String Token) {
+        try {
+            System.out.println("body==="+body);
+            return userService.query(Token);
+        } catch (Exception e) {
+            log.error("user auth allow error!", e);
+        }
+        return RespDTO.fail();
+    }
+
+    @RequestMapping(value = "/queryuser", method = RequestMethod.GET)
+    public RespDTO<List<TabUser>> queryuser(@RequestParam String Token) {
+        try {
+            return userService.queryuser(Token);
+        } catch (Exception e) {
+            log.error("user auth allow error!", e);
+        }
+        return RespDTO.fail();
+    }
+
 
     @GetMapping("/{uuid}/downloadfile")
     public void downloadFileByFilename(@PathVariable String uuid, HttpServletRequest request, HttpServletResponse response) {
@@ -97,6 +120,7 @@ public class UserController extends BaseController{
                 response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + applicationFile.getName());
                 response.setContentType(guessContentTypeFromName(applicationFile.getName()));
                 response.setContentLengthLong(applicationFile.length());
+                System.out.println("length==="+applicationFile.length());
                 Files.copy(filePath, response.getOutputStream());
             } catch (Exception e) {
                 log.warn("failed to downloadfile {}: {}", uuid, e.getMessage());
@@ -105,7 +129,6 @@ public class UserController extends BaseController{
             fileNotFound(response);
         }
     }
-
     private void fileNotFound(HttpServletResponse response) {
         try {
             response.setStatus(SC_NOT_FOUND);

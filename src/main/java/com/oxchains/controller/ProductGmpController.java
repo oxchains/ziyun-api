@@ -23,7 +23,8 @@ public class ProductGmpController extends BaseController{
     @PostMapping
     public RespDTO<String> addProductGmp(@RequestBody String body,@RequestParam String Token) {
         try {
-            log.debug("===addProductGmp==="+body);
+            //log.debug("===addProductGmp==="+body);
+            System.out.println("===addProductGmp==="+body);
             ProductGmp productGmp = gson.fromJson(body, ProductGmp.class);
             productGmp.setToken(Token);
             return productGmpService.addProductGmp(productGmp);

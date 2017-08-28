@@ -1,11 +1,15 @@
 package com.oxchains.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import com.oxchains.bean.model.ziyun.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -13,11 +17,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.oxchains.bean.model.ziyun.JwtToken;
-import com.oxchains.bean.model.ziyun.TabLog;
-import com.oxchains.bean.model.ziyun.TabToken;
-import com.oxchains.bean.model.ziyun.TabUser;
-import com.oxchains.bean.model.ziyun.Token;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.dao.TabLogDao;
@@ -232,6 +231,79 @@ public class UserService extends BaseService {
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功");
+	}
+
+	public RespDTO<List<TabUser>> queryuser(String Token){
+		List<TabUser> tabUserList = new ArrayList<>();
+		try{
+			JwtToken jwt = TokenUtils.parseToken(Token);
+			Date expire = jwt.getExpiratioin();
+			String authUser = jwt.getId();
+			Date now = new Date();
+			if(expire.before(now)){//expired
+				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
+			}
+			//unlogin
+			TabToken tabToken = tabTokenDao.findByUsername(authUser);
+			if(tabToken != null){
+				if(!Token.equals(tabToken.getToken())){
+					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
+				}
+			}
+			else{
+				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
+			}
+
+			Iterator<TabUser> tabUserIterator = tabUserDao.findAll().iterator();
+
+			while (tabUserIterator.hasNext()){
+				tabUserList.add(tabUserIterator.next());
+			}
+		}
+		catch(JsonSyntaxException | NullPointerException e){
+			log.error(e.getMessage());
+			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
+		}
+		catch(Exception e){
+			log.error(e.getMessage());
+			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
+		}
+		return RespDTO.success("操作成功",tabUserList);
+	}
+
+	public RespDTO<String> query(String Token){
+		String jsonAuth = "";
+		try{
+			JwtToken jwt = TokenUtils.parseToken(Token);
+			Date expire = jwt.getExpiratioin();
+			String authUser = jwt.getId();
+			Date now = new Date();
+			if(expire.before(now)){//expired
+				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
+			}
+			//unlogin
+			TabToken tabToken = tabTokenDao.findByUsername(authUser);
+			if(tabToken != null){
+				if(!Token.equals(tabToken.getToken())){
+					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
+				}
+			}
+			else{
+				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
+			}
+
+			jsonAuth = chaincodeService.query("query", new String[] { authUser });
+			log.debug("===jsonAuth==="+jsonAuth);
+		}
+		catch(JsonSyntaxException | NullPointerException e){
+			log.error(e.getMessage());
+			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
+		}
+		catch(Exception e){
+			log.error(e.getMessage());
+			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
+		}
+		return RespDTO.success("操作成功",jsonAuth);
 	}
 	
 	public RespDTO<String> revoke(String body,String Token){

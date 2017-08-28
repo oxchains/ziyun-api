@@ -23,7 +23,8 @@ public class EnterpriseGmpController extends BaseController {
     @PostMapping
     public RespDTO<String> addEnterprise(@RequestBody String body,@RequestParam String Token) {
         try {
-            log.debug("===addEnterprise==="+body);
+            //log.debug("===addEnterprise==="+body);
+            System.out.println("===addEnterprise==="+body);
             EnterpriseGmp enterpriseGmp = gson.fromJson(body,EnterpriseGmp.class);
             enterpriseGmp.setToken(Token);
             return enterpriseGmpService.addEnterpriseGmp(enterpriseGmp);

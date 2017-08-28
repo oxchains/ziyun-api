@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
         // 排除配置
         addInterceptor.excludePathPatterns("/user/login")
                 .excludePathPatterns("/datav/**")
-                .excludePathPatterns("/healthz");
+                .excludePathPatterns("/healthz").excludePathPatterns("/user/**/downloadfile");
 
         // 拦截配置
         addInterceptor.addPathPatterns("/**");
