@@ -1,14 +1,11 @@
 package com.oxchains.service;
 
-import com.oxchains.bean.dto.PurchaseInfoDTO;
+import com.oxchains.Application;
 import com.oxchains.bean.dto.SalesInfoDTO;
 import com.oxchains.bean.model.ziyun.Auth;
-import com.oxchains.bean.model.ziyun.JwtToken;
-import com.oxchains.bean.model.ziyun.PurchaseInfo;
 import com.oxchains.bean.model.ziyun.SalesInfo;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,9 +25,7 @@ public class SalesInfoService extends BaseService  {
     private ChaincodeService chaincodeService;
 
     public RespDTO<String> addSalesInfo(SalesInfo salesInfo) throws Exception{
-        String token = salesInfo.getToken();
-        JwtToken jwt = TokenUtils.parseToken(token);
-        salesInfo.setToken(jwt.getId());// store username ,not token
+        salesInfo.setToken(Application.userContext().get().getUsername());// store username ,not token
         String txID = chaincodeService.invoke("saveSalesInfo", new String[] { gson.toJson(salesInfo) });
         log.debug("===txID==="+txID);
         if(txID == null){
@@ -39,7 +34,7 @@ public class SalesInfoService extends BaseService  {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<SalesInfo>> querySalesInfoList(String Id,String Token ){
+    public RespDTO<List<SalesInfo>> querySalesInfoList(String Id){
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{
                 "{\"selector\":{\"Id\" : \""+Id + "\"}}"});
         if (StringUtils.isEmpty(jsonStr) || "null".equals(jsonStr)) {
@@ -49,8 +44,7 @@ public class SalesInfoService extends BaseService  {
         jsonStr =  jsonStr.split("!#!")[0];
         SalesInfoDTO salesInfoDTO = simpleGson.fromJson(jsonStr, SalesInfoDTO.class);
 
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         for (Iterator<SalesInfo> it = salesInfoDTO.getList().iterator(); it.hasNext();) {
             SalesInfo SalesInfo = it.next();
             SalesInfo.setTxId(txId);

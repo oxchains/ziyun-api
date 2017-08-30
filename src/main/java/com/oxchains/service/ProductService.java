@@ -1,17 +1,14 @@
 package com.oxchains.service;
 
+import com.oxchains.Application;
 import com.oxchains.bean.dto.ProductDTO;
 import com.oxchains.bean.model.ziyun.Auth;
-import com.oxchains.bean.model.ziyun.Goods;
-import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.Product;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -30,9 +27,7 @@ public class ProductService extends BaseService {
     private ChaincodeService chaincodeService;
 
     public RespDTO<String> addProduct(Product product) throws Exception {
-        String token = product.getToken();
-        JwtToken jwt = TokenUtils.parseToken(token);
-        product.setToken(jwt.getId());// store username ,not token
+        product.setToken(Application.userContext().get().getUsername());// store username ,not token
         String txID = chaincodeService.invoke("saveProduct", new String[] { gson.toJson(product) });
         log.debug("===txID==="+txID);
         if(txID == null){
@@ -41,7 +36,7 @@ public class ProductService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<Product>> getProductList(String Id, String Token) {
+    public RespDTO<List<Product>> getProductList(String Id) {
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"Id\" : \""+ Id +"\"}}"});
        log.debug("-->产品JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
@@ -52,8 +47,7 @@ public class ProductService extends BaseService {
         ProductDTO productDTO = simpleGson.fromJson(jsonStr, ProductDTO.class);
         ProductDTO result = new ProductDTO();
 
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         for (Iterator<Product> it = productDTO.getList().iterator(); it.hasNext();) {
             Product Product = it.next();
             Product.setTxId(txId);
@@ -72,7 +66,7 @@ public class ProductService extends BaseService {
             return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
         }
 
-        System.err.println("-->产品集合：" + productDTO.getList());
+        log.debug("-->产品集合：" + productDTO.getList());
         return RespDTO.success(productDTO.getList());
     }
 

@@ -1,0 +1,9 @@
+/peer-base/
+/src/
+/configtx.yaml
+/configtx.yaml.bak
+/crypto-config.yaml
+/docker-compose.yaml
+/logback-spring.xml
+/orderer.block
+/ziyunchannel.tx

@@ -1,27 +1,21 @@
 package com.oxchains.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
+import com.oxchains.Application;
 import com.oxchains.bean.dto.SensorDTO;
 import com.oxchains.bean.model.ziyun.Auth;
-import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.Sensor;
-import com.oxchains.bean.model.ziyun.TabToken;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.dao.TabTokenDao;
-import com.oxchains.util.TokenUtils;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * SensorService
@@ -40,9 +34,7 @@ public class SensorService extends BaseService {
 
 	public RespDTO<String> add(Sensor sensor) {
 		try {
-			String token = sensor.getToken();
-			JwtToken jwt = TokenUtils.parseToken(token);
-			sensor.setToken(jwt.getId());// store username ,not token
+			sensor.setToken(Application.userContext().get().getUsername());// store username ,not token
 			String txID = null;
 			txID = chaincodeService.invoke("saveSensorData", new String[] { gson.toJson(sensor) });
 			log.debug("===txID==="+txID);
@@ -57,7 +49,7 @@ public class SensorService extends BaseService {
 		}
 	}
 
-	public RespDTO<List<Sensor>> getSensorData(String number, Long startTime, Long endTime,String Token) {
+	public RespDTO<List<Sensor>> getSensorData(String number, Long startTime, Long endTime) {
 		try {
 			String jsonStr = chaincodeService.getPayloadAndTxid("getSensorDataBySensorNum",
 					new String[] { number, startTime + "", endTime + "" });
@@ -74,8 +66,7 @@ public class SensorService extends BaseService {
 			jsonStr =  jsonStr.split("!#!")[0];
 			sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
 
-			JwtToken jwt = TokenUtils.parseToken(Token);
-			String username = jwt.getId();
+			String username = Application.userContext().get().getUsername();
 			for (Iterator<Sensor> it= sensorDTO.getList().iterator(); it.hasNext();) {
 				Sensor sensor = it.next();
 				sensor.setTxId(txId);
@@ -101,11 +92,8 @@ public class SensorService extends BaseService {
 		}
 	}
 
-	public RespDTO<List<Sensor>> getSensorData(String number, Long startTime, Long endTime, int pageIndex,
-			String Token) {
+	public RespDTO<List<Sensor>> getSensorData(String number, Long startTime, Long endTime, int pageIndex) {
 		try {
-			JwtToken jwt = TokenUtils.parseToken(Token);
-
 			String jsonStr = chaincodeService.query("getSensorDataBySensorNum",
 					new String[] { number, startTime + "", endTime + "" });
 			SensorDTO sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
@@ -119,7 +107,7 @@ public class SensorService extends BaseService {
 			log.debug("===getSensorData==="+jsonStr);
 			sensorDTO = simpleGson.fromJson(jsonStr, SensorDTO.class);
 
-			String username = jwt.getId();
+			String username = Application.userContext().get().getUsername();
 			for (Iterator<Sensor> it= sensorDTO.getList().iterator(); it.hasNext();) {
 				Sensor sensor = it.next();
 				log.debug("===sensor.getToken()==="+sensor.getToken());

@@ -24,11 +24,10 @@ public class SalesInfoController extends BaseController {
     private SalesInfoService salesInfoService;
 
     @PostMapping
-    public RespDTO<String> addSalesInfo(@RequestBody String body,@RequestParam String Token){
+    public RespDTO<String> addSalesInfo(@RequestBody String body){
         try {
             log.debug("===addSalesInfo==="+body);
             SalesInfo salesInfo = gson.fromJson(body, SalesInfo.class);
-            salesInfo.setToken(Token);
             return salesInfoService.addSalesInfo(salesInfo);
         }
         catch(JsonSyntaxException e){
@@ -42,10 +41,10 @@ public class SalesInfoController extends BaseController {
     }
 
     @GetMapping(value = "/{Id}")
-    public RespDTO<List<SalesInfo>> querySalesInfoList(@PathVariable String Id, @RequestParam String Token){
+    public RespDTO<List<SalesInfo>> querySalesInfoList(@PathVariable String Id){
         try {
             log.debug("===querySalesInfoList===");
-            return salesInfoService.querySalesInfoList(Id,Token);
+            return salesInfoService.querySalesInfoList(Id);
         }
         catch (Exception e) {
             log.error(e.getMessage());

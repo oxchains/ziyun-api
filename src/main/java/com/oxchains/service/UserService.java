@@ -1,31 +1,31 @@
 package com.oxchains.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-
-import com.oxchains.bean.model.ziyun.*;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.oxchains.Application;
+import com.oxchains.auth.JwtService;
+import com.oxchains.bean.model.ziyun.TabLog;
+import com.oxchains.bean.model.ziyun.TabToken;
+import com.oxchains.bean.model.ziyun.TabUser;
+import com.oxchains.bean.model.ziyun.Token;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
 import com.oxchains.dao.TabLogDao;
 import com.oxchains.dao.TabTokenDao;
 import com.oxchains.dao.TabUserDao;
 import com.oxchains.util.Md5Utils;
-import com.oxchains.util.TokenUtils;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -43,6 +43,9 @@ public class UserService extends BaseService {
 	
 	@Resource
 	private TabLogDao tabLogDao;
+
+	@Resource
+	private JwtService jwtService;
 
 	public RespDTO<String> addUser(String body){
 		TabUser user = new TabUser();
@@ -115,7 +118,9 @@ public class UserService extends BaseService {
 			}
 			
 			//generate token
-			String token = TokenUtils.createToken(username);
+			//String token = TokenUtils.createToken(username);
+			String token = jwtService.generate(user);
+
 			//check token exists
 			TabToken tabtoken = tabTokenDao.findByUsername(username);
 			if(tabtoken != null){
@@ -153,37 +158,19 @@ public class UserService extends BaseService {
 		}
 	}
 	
-	public RespDTO<String> logout(String body,String Token){
+	public RespDTO<String> logout(){
 		try{
-			JsonObject obj = gson.fromJson(body, JsonObject.class);
-			String username = obj.get("Username").getAsString();
-
-			//compare token with db
-			TabToken tabToken = tabTokenDao.findByUsername(username);
-			if(tabToken != null){
-				if(!Token.equals(tabToken.getToken())){
-					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-				}
+			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+			String authorization = request.getHeader("Authorization");
+			if (authorization != null && authorization.startsWith("Bearer ")) {
+				jwtService.parse(authorization.replaceAll("Bearer ", "")).ifPresent(
+						//update logouttime
+						jwtAuthentication -> {
+							System.out.println("===jwt==="+jwtAuthentication.getCredentials().toString());
+							tabLogDao.updateLogouttime(jwtAuthentication.getCredentials().toString());
+						}
+				);
 			}
-			else{
-				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
-			
-			//verify token
-			//FIXME add other verify ???
-			JwtToken jwt = TokenUtils.parseToken(Token);
-			if(!username.equals(jwt.getId())){
-				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
-			
-			//delete token
-			tabTokenDao.delete(tabToken.getId());
-			
-			//update logouttime
-			TabLog tabLog = tabLogDao.findByToken(Token);
-			tabLog.setLogouttime(getCurrentTimeStamp());
-			tabLogDao.save(tabLog);
-			
 		}catch(JsonSyntaxException |NullPointerException e){
 			log.error(e.getMessage());
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
@@ -195,27 +182,13 @@ public class UserService extends BaseService {
 		return RespDTO.success("操作成功", null);
 	}
 	
-	public RespDTO<String> allow(String body,String Token){
+	public RespDTO<String> allow(String body){
 		try{
 			JsonObject obj = gson.fromJson(body, JsonObject.class);
 			String username = obj.get("Username").getAsString();
-			JwtToken jwt = TokenUtils.parseToken(Token);
-			Date expire = jwt.getExpiratioin();
-			String authUser = jwt.getId();
-			Date now = new Date();
-			if(expire.before(now)){//expired
-				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
-			}
-			//unlogin
-			TabToken tabToken = tabTokenDao.findByUsername(authUser);
-			if(tabToken != null){
-				if(!Token.equals(tabToken.getToken())){
-					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-				}
-			}
-			else{
-				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
+
+			String authUser = Application.userContext().get().getUsername();
+
 			String txId = chaincodeService.invoke("auth", new String[]{authUser,username});
 			log.debug("===txID==="+txId);
 			if(txId == null){
@@ -233,27 +206,9 @@ public class UserService extends BaseService {
 		return RespDTO.success("操作成功");
 	}
 
-	public RespDTO<List<TabUser>> queryuser(String Token){
+	public RespDTO<List<TabUser>> queryuser(){
 		List<TabUser> tabUserList = new ArrayList<>();
 		try{
-			JwtToken jwt = TokenUtils.parseToken(Token);
-			Date expire = jwt.getExpiratioin();
-			String authUser = jwt.getId();
-			Date now = new Date();
-			if(expire.before(now)){//expired
-				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
-			}
-			//unlogin
-			TabToken tabToken = tabTokenDao.findByUsername(authUser);
-			if(tabToken != null){
-				if(!Token.equals(tabToken.getToken())){
-					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-				}
-			}
-			else{
-				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
-
 			Iterator<TabUser> tabUserIterator = tabUserDao.findAll().iterator();
 
 			while (tabUserIterator.hasNext()){
@@ -271,26 +226,10 @@ public class UserService extends BaseService {
 		return RespDTO.success("操作成功",tabUserList);
 	}
 
-	public RespDTO<String> query(String Token){
+	public RespDTO<String> query(){
 		String jsonAuth = "";
 		try{
-			JwtToken jwt = TokenUtils.parseToken(Token);
-			Date expire = jwt.getExpiratioin();
-			String authUser = jwt.getId();
-			Date now = new Date();
-			if(expire.before(now)){//expired
-				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
-			}
-			//unlogin
-			TabToken tabToken = tabTokenDao.findByUsername(authUser);
-			if(tabToken != null){
-				if(!Token.equals(tabToken.getToken())){
-					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-				}
-			}
-			else{
-				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
+			String authUser = Application.userContext().get().getUsername();
 
 			jsonAuth = chaincodeService.query("query", new String[] { authUser });
 			log.debug("===jsonAuth==="+jsonAuth);
@@ -306,27 +245,12 @@ public class UserService extends BaseService {
 		return RespDTO.success("操作成功",jsonAuth);
 	}
 	
-	public RespDTO<String> revoke(String body,String Token){
+	public RespDTO<String> revoke(String body){
 		try{
 			JsonObject obj = gson.fromJson(body, JsonObject.class);
 			String username = obj.get("Username").getAsString();
-			JwtToken jwt = TokenUtils.parseToken(Token);
-			Date expire = jwt.getExpiratioin();
-			String authUser = jwt.getId();
-			Date now = new Date();
-			if(expire.before(now)){//expired
-				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
-			}
-			//unlogin
-			TabToken tabToken = tabTokenDao.findByUsername(authUser);
-			if(tabToken != null){
-				if(!Token.equals(tabToken.getToken())){
-					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-				}
-			}
-			else{
-				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
+
+			String authUser = Application.userContext().get().getUsername();
 			
 			String txId = chaincodeService.invoke("revoke", new String[]{authUser,username});
 			log.debug("===txID==="+txId);

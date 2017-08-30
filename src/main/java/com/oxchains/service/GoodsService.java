@@ -1,11 +1,11 @@
 package com.oxchains.service;
 
+import com.oxchains.Application;
 import com.oxchains.bean.dto.GoodsDTO;
-import com.oxchains.bean.dto.WaybillDTO;
-import com.oxchains.bean.model.ziyun.*;
+import com.oxchains.bean.model.ziyun.Auth;
+import com.oxchains.bean.model.ziyun.Goods;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -25,9 +25,7 @@ public class GoodsService extends BaseService {
     private ChaincodeService chaincodeService;
 
     public RespDTO<String> addGoods(Goods goods) throws Exception{
-        String token = goods.getToken();
-        JwtToken jwt = TokenUtils.parseToken(token);
-        goods.setToken(jwt.getId());// store username ,not token
+        goods.setToken(Application.userContext().get().getUsername());// store username ,not token
         String txID = chaincodeService.invoke("saveGoods", new String[] { gson.toJson(goods) });
         log.debug("===txID==="+txID);
         if(txID == null){
@@ -36,7 +34,7 @@ public class GoodsService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<Goods>> getGoodsList(String UniqueCode,String Token) throws Exception{
+    public RespDTO<List<Goods>> getGoodsList(String UniqueCode) throws Exception{
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\n" +
                 "    \"UniqueCode\": \""+UniqueCode+"\"\n" +
                 "}}"});
@@ -48,8 +46,7 @@ public class GoodsService extends BaseService {
         jsonStr =  jsonStr.split("!#!")[0];
         GoodsDTO goodsDTO = simpleGson.fromJson(jsonStr, GoodsDTO.class);
 
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         for (Iterator<Goods> it = goodsDTO.getList().iterator(); it.hasNext();) {
             Goods goods = it.next();
             goods.setTxId(txId);

@@ -26,11 +26,10 @@ public class GoodsController extends BaseController {
     private GoodsService goodsService;
 
     @PostMapping
-    public RespDTO<String> addGoods(@RequestBody String body,@RequestParam String Token){
+    public RespDTO<String> addGoods(@RequestBody String body){
         try {
-            log.debug("===addGoods==="+body);
+            log.info("===addGoods==="+body);
             Goods goods = gson.fromJson(body, Goods.class);
-            goods.setToken(Token);
             return goodsService.addGoods(goods);
         }
         catch(JsonSyntaxException e){
@@ -44,10 +43,10 @@ public class GoodsController extends BaseController {
     }
 
     @GetMapping(value = "/{UniqueCode}")
-    public RespDTO<List<Goods>> queryGoodsList(@PathVariable String UniqueCode,@RequestParam String Token){
+    public RespDTO<List<Goods>> queryGoodsList(@PathVariable String UniqueCode){
         try {
-            log.debug("===queryGoods===");
-            return goodsService.getGoodsList(UniqueCode,Token);
+            log.info("===queryGoods===");
+            return goodsService.getGoodsList(UniqueCode);
         }
         catch (Exception e) {
             log.error(e.getMessage());

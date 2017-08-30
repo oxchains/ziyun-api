@@ -1,20 +1,15 @@
 package com.oxchains.service;
 
+import com.oxchains.Application;
 import com.oxchains.bean.dto.GoodsDTO;
-import com.oxchains.bean.dto.TransitSalesInfoDTO;
 import com.oxchains.bean.dto.TransportBillDTO;
 import com.oxchains.bean.model.ziyun.Auth;
-import com.oxchains.bean.model.ziyun.JwtToken;
-import com.oxchains.bean.model.ziyun.TransitSalesInfo;
 import com.oxchains.bean.model.ziyun.TransportBill;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -39,7 +34,7 @@ public class TransportBillService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<TransportBill>> getTransportBillList( String uniqueCode,  String Token){
+    public RespDTO<List<TransportBill>> getTransportBillList( String uniqueCode){
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+uniqueCode+"\"]}}}"});
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
@@ -95,8 +90,7 @@ public class TransportBillService extends BaseService {
             }
         }
 
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         for (Iterator<TransportBill> it = transportBillDTO.getList().iterator(); it.hasNext();) {
             TransportBill transportBill = it.next();
             transportBill.setTxId(txId);

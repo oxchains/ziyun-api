@@ -45,7 +45,7 @@ public class ProductTest {
 
     @Test
     public void queryProduct(){
-        String url = "http://localhost:8080/product/ApprovalNumber/ProductCode?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY";
+        String url = "http://localhost:8090/productGmp/产品名称?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ6aXl1biIsImlhdCI6MTUwMzQ2OTcxNiwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTUwNDA3NDUxNn0.K0FCAvRgWjXyjqD4ONwr9o1H2FSaud-249z3sShP5pU";
         HttpGet get = new HttpGet(url);
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         try {

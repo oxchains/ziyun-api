@@ -1,12 +1,11 @@
 package com.oxchains.service;
 
-import com.oxchains.bean.model.ziyun.*;
+import com.oxchains.Application;
+import com.oxchains.bean.model.ziyun.Auth;
+import com.oxchains.bean.model.ziyun.ProductGmp;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.hyperledger.fabric.sdk.exception.InvalidArgumentException;
 import org.hyperledger.fabric.sdk.exception.ProposalException;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,16 +13,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import static java.time.LocalDateTime.now;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
 /**
  * Created by root on 17-8-8.
@@ -38,9 +38,7 @@ public class ProductGmpService extends BaseService {
     private String upload;
 
     public RespDTO<String> addProductGmp(ProductGmp productGmp) throws InterruptedException, InvalidArgumentException, TimeoutException, ProposalException, ExecutionException {
-        String token = productGmp.getToken();
-        JwtToken jwt = TokenUtils.parseToken(token);
-        productGmp.setToken(jwt.getId());// store username ,not token
+        productGmp.setToken(Application.userContext().get().getUsername());// store username ,not token
         translateFile(productGmp);//translate url to localfile
         String txID = chaincodeService.invoke("saveProductGmp", new String[] { gson.toJson(productGmp) });
         log.debug("===txID==="+txID);
@@ -50,7 +48,7 @@ public class ProductGmpService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<ProductGmp>> getProductGmpByProducName(String ProducName,String Token){
+    public RespDTO<List<ProductGmp>> getProductGmpByProducName(String ProducName){
         String result = chaincodeService.getPayloadAndTxid("getProductGmpByProducName", new String[]{ProducName});
 
         log.debug("===getProductGmpByProducName===" + result);
@@ -61,8 +59,7 @@ public class ProductGmpService extends BaseService {
         String txId = result.split("!#!")[1];
         ProductGmp productGmp = simpleGson.fromJson(jsonStr, ProductGmp.class);
         productGmp.setTxId(txId);
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         log.debug("===ProductGmp.getToken()==="+productGmp.getToken());
         String jsonAuth = chaincodeService.query("query", new String[] { productGmp.getToken() });
         log.debug("===jsonAuth==="+jsonAuth);

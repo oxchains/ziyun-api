@@ -28,14 +28,13 @@ public class ProductController extends BaseController {
     private ProductService productService;
 
     @PostMapping
-    public RespDTO<String> addProduct(@RequestBody String body,@RequestParam String Token){
+    public RespDTO<String> addProduct(@RequestBody String body){
         try {
-            log.debug("===addProduct==="+body);
+            log.info("===addProduct==="+body);
             if (StringUtils.isBlank(body)) {
                 return RespDTO.fail("参数错误");
             }
             Product product = gson.fromJson(body, Product.class);
-            product.setToken(Token);
             return productService.addProduct(product);
         } catch(JsonSyntaxException e){
             log.error(e.getMessage());
@@ -47,9 +46,9 @@ public class ProductController extends BaseController {
     }
 
     @GetMapping("/{Id}")
-    public RespDTO<List<Product>> queryProductInfo(@PathVariable String Id, @RequestParam String Token) {
+    public RespDTO<List<Product>> queryProductInfo(@PathVariable String Id) {
         try {
-            return productService.getProductList(Id,Token);
+            return productService.getProductList(Id);
         }catch (Exception e) {
             log.error("query error!", e);
         }

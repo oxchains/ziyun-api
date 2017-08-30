@@ -1,22 +1,19 @@
-curl localhost:8080/healthz
-
-curl localhost:8080/cargo/install
-
-curl -X POST -H "Content-Type: application/json" -d '{"Username":"f4","Password":"f4pwd","Realname":"f4"}' http://localhost:8080/user/register
-
-curl -X POST -H "Content-Type: application/json" -d '{"Username":"f2","Password":"f4pwd"}' http://localhost:8080/user/login
-
-curl -X POST -H "Content-Type: application/json" -d '{"Username":"f3"}' http://localhost:8080/user/logout?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmMyIsImlhdCI6MTQ5OTc2NzAwNywic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDIwN30.aJaCjgSPirDciBq1-EM30-0XlPPanjfpfj8VkpUm5nI
-
-curl -X POST -H "Content-Type: application/json" -d '{"Username":"f2"}' http://localhost:8080/user/auth/allow?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY
 
 
-curl -X POST -H "Content-Type: application/json" -d '{"Username":"f2"}' http://localhost:8080/user/auth/revoke?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY
-
-curl -X POST -H "Content-Type: application/json" -d '{"SensorNumber":"cgq2017033000112ab","SensorType":"HD-3K1","EquipmentNumber":"sb2017033000012","EquipmentType":"冷藏车","Time":1490155871000,"Temperature":[12.2,12.3],"Humidity":[20.3,20.4],"GPSLongitude":113.653056,"GPSLatitude":34.860076,"Address":"河南省郑州市惠济区英才街"}' localhost:8080/sensor/create?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNCIsImlhdCI6MTQ5OTc2NzE4Miwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDM4Mn0.7sCv3QFvCos4GfeBIJunQ0SKfQYiFv4tdoKHHKVr5iY
 
 
-curl http://localhost:8080/sensor/cgq2017033000112ab/1490155870000/1490155872000/11?Token=eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmMiIsImlhdCI6MTQ5OTc2NzQyMCwic3ViIjoidG9rZW4iLCJpc3MiOiJveGNoYWlucyIsImV4cCI6MTQ5OTc3NDYyMH0.AYwMSK_2WqFQMl60PHYQaRtnWPJq6Y_zOEduaBBFnXY
+#########################
+curl http://localhost:8090/healthz
 
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJFUzI1NiJ9.eyJqdGkiOiJiYmNkOWE3Ni1hZWZmLTQzYzgtOGMwNi0xM2IwYjc1MjkyMWIiLCJzdWIiOiJ6aXl1bjIwMTEiLCJleHAiOjE1MDQ2ODM2Mzh9.z5g_aLUid8_2Bo8T5vFgrOyukFm7k0VBsvugyCYsdKfT_YJ6vW_kipPRibDqpKTuaiaqQqTAJLSmSp6Qhq1qBQ" http://localhost:8090/cargo/install
 
+curl -X POST -H "Content-Type: application/json" -d '{"Username":"ziyun2011","Password":"ziyun2011"}' http://localhost:8090/user/login
+
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJFUzI1NiJ9.eyJqdGkiOiJiYmNkOWE3Ni1hZWZmLTQzYzgtOGMwNi0xM2IwYjc1MjkyMWIiLCJzdWIiOiJ6aXl1bjIwMTEiLCJleHAiOjE1MDQ2ODM2Mzh9.z5g_aLUid8_2Bo8T5vFgrOyukFm7k0VBsvugyCYsdKfT_YJ6vW_kipPRibDqpKTuaiaqQqTAJLSmSp6Qhq1qBQ" -d '{"Username":"spring","Password":"spring","Realname":"spring"}' http://localhost:8090/user/register
+
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJFUzI1NiJ9.eyJqdGkiOiJmOTkxYmI4MC1lNWYxLTQ4M2UtYmY4Ni02MmZmMjVhNWY1ZmYiLCJzdWIiOiJ6aXl1bjIwMTEiLCJleHAiOjE1MDQ2ODM0MTB9.1-6v4PUi6zDcXgTIZfpn9L1W0lrukNlupsmTe-4amfd3zQT-ydz5GIGrqbvfXlVGlzh1hRaM3XHdbrdxpasRYA" -d '{"Username":"ziyun2011"}' http://localhost:8090/user/logout
+
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJFUzI1NiJ9.eyJqdGkiOiJiYmNkOWE3Ni1hZWZmLTQzYzgtOGMwNi0xM2IwYjc1MjkyMWIiLCJzdWIiOiJ6aXl1bjIwMTEiLCJleHAiOjE1MDQ2ODM2Mzh9.z5g_aLUid8_2Bo8T5vFgrOyukFm7k0VBsvugyCYsdKfT_YJ6vW_kipPRibDqpKTuaiaqQqTAJLSmSp6Qhq1qBQ" -d '{"Username":"spring"}' http://localhost:8090/user/auth/allow
+
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJFUzI1NiJ9.eyJqdGkiOiJiYmNkOWE3Ni1hZWZmLTQzYzgtOGMwNi0xM2IwYjc1MjkyMWIiLCJzdWIiOiJ6aXl1bjIwMTEiLCJleHAiOjE1MDQ2ODM2Mzh9.z5g_aLUid8_2Bo8T5vFgrOyukFm7k0VBsvugyCYsdKfT_YJ6vW_kipPRibDqpKTuaiaqQqTAJLSmSp6Qhq1qBQ" -d '{"Username":"spring"}' http://localhost:8090/user/auth/revoke
 

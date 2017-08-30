@@ -1,14 +1,12 @@
 package com.oxchains.service;
 
+import com.oxchains.Application;
 import com.oxchains.bean.dto.GoodsDTO;
 import com.oxchains.bean.dto.PurchaseInfoDTO;
 import com.oxchains.bean.model.ziyun.Auth;
-import com.oxchains.bean.model.ziyun.JwtToken;
-import com.oxchains.bean.model.ziyun.Product;
 import com.oxchains.bean.model.ziyun.PurchaseInfo;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,9 +26,7 @@ public class PurchaseInfoService extends BaseService  {
     private ChaincodeService chaincodeService;
 
     public RespDTO<String> addPurchaseInfo(PurchaseInfo purchaseInfo) throws Exception{
-        String token = purchaseInfo.getToken();
-        JwtToken jwt = TokenUtils.parseToken(token);
-        purchaseInfo.setToken(jwt.getId());// store username ,not token
+        purchaseInfo.setToken(Application.userContext().get().getUsername());// store username ,not token
         String txID = chaincodeService.invoke("savePurchaseInfo", new String[] { gson.toJson(purchaseInfo) });
         log.debug("===txID==="+txID);
         if(txID == null){
@@ -39,7 +35,7 @@ public class PurchaseInfoService extends BaseService  {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByUniqueCode(String UniqueCode,String Token){
+    public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByUniqueCode(String UniqueCode){
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+UniqueCode+"\"]},\"Type\" :\"purchase\"}}"});
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
@@ -96,8 +92,7 @@ public class PurchaseInfoService extends BaseService  {
         }
 
 
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         for (Iterator<PurchaseInfo> it = purchaseInfoDTO.getList().iterator(); it.hasNext();) {
             PurchaseInfo PurchaseInfo = it.next();
             PurchaseInfo.setTxId(txId);

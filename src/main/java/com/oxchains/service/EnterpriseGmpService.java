@@ -1,5 +1,6 @@
 package com.oxchains.service;
 
+import com.oxchains.Application;
 import com.oxchains.bean.dto.EnterpriseGmpDTO;
 import com.oxchains.bean.model.ziyun.*;
 import com.oxchains.common.ConstantsData;
@@ -39,9 +40,7 @@ public class EnterpriseGmpService extends BaseService {
     private String upload;
 
     public RespDTO<String> addEnterpriseGmp(EnterpriseGmp enterpriseGmp) throws InterruptedException, InvalidArgumentException, TimeoutException, ProposalException, ExecutionException {
-        String token = enterpriseGmp.getToken();
-        JwtToken jwt = TokenUtils.parseToken(token);
-        enterpriseGmp.setToken(jwt.getId());
+        enterpriseGmp.setToken(Application.userContext().get().getUsername());
         translateFile(enterpriseGmp);//translate url to localfile
         String txID = chaincodeService.invoke("saveEnterpriseGmp", new String[] { gson.toJson(enterpriseGmp) });
         log.debug("===txID==="+txID);
@@ -51,7 +50,7 @@ public class EnterpriseGmpService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<EnterpriseGmp>> getEnterpriseGmpByEnterpriseNameAndType(String EnterpriseName, String EnterpriseType, String Token){
+    public RespDTO<List<EnterpriseGmp>> getEnterpriseGmpByEnterpriseNameAndType(String EnterpriseName, String EnterpriseType){
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\n" +
                 "    \"EnterpriseName\": \""+EnterpriseName+"\"\n" + " ,   \"EnterpriseType\": \""+EnterpriseType+ "\"}}"});
         log.debug("===getProductGmpByProducName===" + jsonStr);
@@ -62,8 +61,7 @@ public class EnterpriseGmpService extends BaseService {
         jsonStr =  jsonStr.split("!#!")[0];
         EnterpriseGmpDTO enterpriseGmpDTO = simpleGson.fromJson(jsonStr, EnterpriseGmpDTO.class);
 
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         for (Iterator<EnterpriseGmp> it = enterpriseGmpDTO.getList().iterator(); it.hasNext();) {
             EnterpriseGmp EnterpriseGmp = it.next();
             EnterpriseGmp.setTxId(txId);

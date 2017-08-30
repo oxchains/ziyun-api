@@ -1,6 +1,7 @@
 package com.oxchains.controller;
 
 import com.google.gson.JsonSyntaxException;
+import com.oxchains.Application;
 import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.TransportBill;
 import com.oxchains.common.ConstantsData;
@@ -28,12 +29,11 @@ public class TransportBillController extends BaseController{
     private TransportBillService transportBillService;
 
     @PostMapping
-    public RespDTO<String> addTransportBill(@RequestBody String body,@RequestParam String Token){
+    public RespDTO<String> addTransportBill(@RequestBody String body){
         try {
             log.debug("===addTransportBill==="+body);
             TransportBill transportBill = gson.fromJson(body, TransportBill.class);
-            JwtToken jwt = TokenUtils.parseToken(Token);
-            transportBill.setToken(jwt.getId());// store username ,not token
+            transportBill.setToken(Application.userContext().get().getUsername());// store username ,not token
             return transportBillService.addTransportBill(transportBill);
         }
         catch(JsonSyntaxException e){
@@ -47,10 +47,10 @@ public class TransportBillController extends BaseController{
     }
 
     @GetMapping(value = "/{UniqueCode}")
-    public RespDTO<List<TransportBill>> getTransportBillList(@PathVariable String UniqueCode, @RequestParam String Token){
+    public RespDTO<List<TransportBill>> getTransportBillList(@PathVariable String UniqueCode){
         try {
             log.debug("===getTransportBillList===");
-            return transportBillService.getTransportBillList(UniqueCode,Token);
+            return transportBillService.getTransportBillList(UniqueCode);
         }
         catch (Exception e) {
             log.error(e.getMessage());

@@ -1,6 +1,7 @@
 package com.oxchains.controller;
 
 import com.google.gson.JsonSyntaxException;
+import com.oxchains.Application;
 import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.StorageBill;
 import com.oxchains.bean.model.ziyun.TransitSalesInfo;
@@ -26,12 +27,11 @@ public class StorageBillController extends BaseController{
     private StorageBillService storageBillService;
 
     @PostMapping
-    public RespDTO<String> addStorageBill(@RequestBody String body,@RequestParam String Token){
+    public RespDTO<String> addStorageBill(@RequestBody String body){
         try {
             log.debug("===addStorageBill==="+body);
             StorageBill storageBill = gson.fromJson(body, StorageBill.class);
-            JwtToken jwt = TokenUtils.parseToken(Token);
-            storageBill.setToken(jwt.getId());// store username ,not token
+            storageBill.setToken(Application.userContext().get().getUsername());// store username ,not token
             return storageBillService.addStorageBill(storageBill);
         }
         catch(JsonSyntaxException e){
@@ -45,10 +45,10 @@ public class StorageBillController extends BaseController{
     }
 
     @GetMapping(value = "/{UniqueCode}")
-    public RespDTO<List<StorageBill>> getStorageBillList(@PathVariable String UniqueCode, @RequestParam String Token){
+    public RespDTO<List<StorageBill>> getStorageBillList(@PathVariable String UniqueCode){
         try {
             log.debug("===getStorageBillList===");
-            return storageBillService.getStorageBillList(UniqueCode,Token);
+            return storageBillService.getStorageBillList(UniqueCode);
         }
         catch (Exception e) {
             log.error(e.getMessage());

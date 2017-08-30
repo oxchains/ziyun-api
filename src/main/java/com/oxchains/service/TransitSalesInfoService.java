@@ -1,15 +1,12 @@
 package com.oxchains.service;
 
+import com.oxchains.Application;
 import com.oxchains.bean.dto.GoodsDTO;
-import com.oxchains.bean.dto.ProductDTO;
 import com.oxchains.bean.dto.TransitSalesInfoDTO;
 import com.oxchains.bean.model.ziyun.Auth;
-import com.oxchains.bean.model.ziyun.JwtToken;
-import com.oxchains.bean.model.ziyun.Product;
 import com.oxchains.bean.model.ziyun.TransitSalesInfo;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -38,7 +35,7 @@ public class TransitSalesInfoService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<TransitSalesInfo>> getTransitSalesInfoList(String uniqueCode,String Token) {
+    public RespDTO<List<TransitSalesInfo>> getTransitSalesInfoList(String uniqueCode) {
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+uniqueCode+"\"]},\"Type\" :\"transitSales\"}}"});
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
@@ -94,8 +91,7 @@ public class TransitSalesInfoService extends BaseService {
             }
         }
 
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         for (Iterator<TransitSalesInfo> it = transitSalesInfoDTO.getList().iterator(); it.hasNext();) {
             TransitSalesInfo transitSalesInfo = it.next();
             transitSalesInfo.setTxId(txId);

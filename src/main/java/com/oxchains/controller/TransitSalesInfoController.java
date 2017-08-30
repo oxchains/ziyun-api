@@ -1,15 +1,11 @@
 package com.oxchains.controller;
 
 import com.google.gson.JsonSyntaxException;
-import com.oxchains.bean.model.ziyun.Goods;
-import com.oxchains.bean.model.ziyun.JwtToken;
+import com.oxchains.Application;
 import com.oxchains.bean.model.ziyun.TransitSalesInfo;
-import com.oxchains.bean.model.ziyun.TransportBill;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.service.ChaincodeService;
 import com.oxchains.service.TransitSalesInfoService;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +23,11 @@ public class TransitSalesInfoController extends BaseController{
     private TransitSalesInfoService transitSalesInfoService;
 
     @PostMapping
-    public RespDTO<String> addTransitSalesInfo(@RequestBody String body,@RequestParam String Token){
+    public RespDTO<String> addTransitSalesInfo(@RequestBody String body){
         try {
             log.debug("===addTransitSalesInfo==="+body);
             TransitSalesInfo transitSalesInfo = gson.fromJson(body, TransitSalesInfo.class);
-            JwtToken jwt = TokenUtils.parseToken(Token);
-            transitSalesInfo.setToken(jwt.getId());// store username ,not token
+            transitSalesInfo.setToken(Application.userContext().get().getUsername());// store username ,not token
             return transitSalesInfoService.addTransitSalesInfo(transitSalesInfo);
         }
         catch(JsonSyntaxException e){
@@ -46,10 +41,10 @@ public class TransitSalesInfoController extends BaseController{
     }
 
     @GetMapping(value = "/{UniqueCode}")
-    public RespDTO<List<TransitSalesInfo>> getTransitSalesInfoList(@PathVariable String UniqueCode, @RequestParam String Token){
+    public RespDTO<List<TransitSalesInfo>> getTransitSalesInfoList(@PathVariable String UniqueCode){
         try {
             log.debug("===getTransitSalesInfoList===");
-            return transitSalesInfoService.getTransitSalesInfoList(UniqueCode,Token);
+            return transitSalesInfoService.getTransitSalesInfoList(UniqueCode);
         }
         catch (Exception e) {
             log.error(e.getMessage());

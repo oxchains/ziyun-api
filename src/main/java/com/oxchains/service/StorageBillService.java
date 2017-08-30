@@ -1,15 +1,12 @@
 package com.oxchains.service;
 
+import com.oxchains.Application;
 import com.oxchains.bean.dto.GoodsDTO;
 import com.oxchains.bean.dto.StorageBillDTO;
-import com.oxchains.bean.dto.TransitSalesInfoDTO;
 import com.oxchains.bean.model.ziyun.Auth;
-import com.oxchains.bean.model.ziyun.JwtToken;
 import com.oxchains.bean.model.ziyun.StorageBill;
-import com.oxchains.bean.model.ziyun.TransitSalesInfo;
 import com.oxchains.common.ConstantsData;
 import com.oxchains.common.RespDTO;
-import com.oxchains.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -37,7 +34,7 @@ public class StorageBillService extends BaseService {
         return RespDTO.success("操作成功");
     }
 
-    public RespDTO<List<StorageBill>> getStorageBillList(String uniqueCode, String Token) {
+    public RespDTO<List<StorageBill>> getStorageBillList(String uniqueCode) {
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+uniqueCode+"\"]},\"Type\" :\"storage\"}}"});
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
@@ -93,8 +90,7 @@ public class StorageBillService extends BaseService {
             }
         }
 
-        JwtToken jwt = TokenUtils.parseToken(Token);
-        String username = jwt.getId();
+        String username = Application.userContext().get().getUsername();
         for (Iterator<StorageBill> it = storageBillDTO.getList().iterator(); it.hasNext();) {
             StorageBill storageBill  = it.next();
             storageBill.setTxId(txId);
