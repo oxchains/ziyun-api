@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oxchains.common.BaseEntity;
 
+import java.util.List;
+
 /**
  * Created by root on 17-7-3.
  * 产品
@@ -22,7 +24,10 @@ public class Product extends BaseEntity {
     private String EnterpriseName;//企业名字
 
     @JsonProperty("ProductOriginalUrl")
-    private String ProductOriginalUrl;//产品图片
+    private List<String> ProductOriginalUrl;//产品图片
+
+    @JsonProperty("ProductBuyUrl")
+    private String ProductBuyUrl;//产品购买url
 
     @JsonProperty("ProductAddress")
     private String ProductAddress;//生产地址

@@ -72,7 +72,8 @@ type ProductOther struct {
 	ProductName        string
 	EnterpriseId       string
 	EnterpriseName     string
-	ProductOriginalUrl string
+	ProductOriginalUrl []string
+	ProductBuyUrl	   string
 	ProductAddress     string
 	ProductTime        int64
 	ProductType        string
