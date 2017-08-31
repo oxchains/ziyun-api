@@ -86,9 +86,8 @@ public class UserController extends BaseController{
 	 }
 
     @RequestMapping(value = "/auth/query", method = RequestMethod.GET)
-    public RespDTO<String> query(@RequestBody String body) {
+    public RespDTO<String> query() {
         try {
-            System.out.println("body==="+body);
             return userService.query();
         } catch (Exception e) {
             log.error("user auth allow error!", e);
