@@ -56,6 +56,12 @@ public class TransitSalesInfo extends BaseEntity {
     @JsonProperty("TransitSalesInvoiceUrl")
     private String TransitSalesInvoiceUrl;//发票
 
+    @JsonProperty("BuyEnterpriseId")
+    private String BuyEnterpriseId;//购买企业id
+
+    @JsonProperty("BuyEnterpriseName")
+    private String BuyEnterpriseName;//购买企业名称
+
     @JsonProperty("Token")
     private String Token;//token
 

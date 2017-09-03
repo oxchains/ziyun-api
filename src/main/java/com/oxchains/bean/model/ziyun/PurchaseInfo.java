@@ -51,6 +51,12 @@ public class PurchaseInfo extends BaseEntity {
     @JsonProperty("CreateTime")
     private long CreateTime;
 
+    @JsonProperty("PreEnterpriseId")
+    private String PreEnterpriseId;//上游企业Id
+
+    @JsonProperty("PreEnterpriseName")
+    private String PreEnterpriseName;//上游企业名称
+
     @JsonProperty("Token")
     private String Token;//token
 

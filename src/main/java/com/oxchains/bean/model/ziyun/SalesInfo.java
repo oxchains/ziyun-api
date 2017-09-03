@@ -92,6 +92,12 @@ public class SalesInfo extends BaseEntity {
     @JsonProperty("SalesInvoiceUrl")
     private String SalesInvoiceUrl;//发票
 
+    @JsonProperty("BuyEnterpriseId")
+    private String BuyEnterpriseId;//购买企业id
+
+    @JsonProperty("BuyEnterpriseName")
+    private String BuyEnterpriseName;//购买企业名称
+
     @JsonProperty("Token")
     private String Token;//token
 

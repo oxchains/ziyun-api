@@ -73,7 +73,7 @@ type ProductOther struct {
 	EnterpriseId       string
 	EnterpriseName     string
 	ProductOriginalUrl []string
-	ProductBuyUrl	   string
+	ProductBuyUrl      string
 	ProductAddress     string
 	ProductTime        int64
 	ProductType        string
@@ -202,20 +202,22 @@ type Transfer struct {
 }
 
 type PurchaseInfo struct {
-	PurchaseTitle  string
-	Count          int64
-	EnterpriseId   string
-	EnterpriseName string
-	StockDate      int64
-	SupperName     string
-	SupperAddress  string
-	SupplyPhone    string
-	SupplyName     string
-	Id             string
-	Type           string
-	UniqueCodes    []string
-	CreateTime     int64
-	Token          string
+	PurchaseTitle     string
+	Count             int64
+	EnterpriseId      string
+	EnterpriseName    string
+	StockDate         int64
+	SupperName        string
+	SupperAddress     string
+	SupplyPhone       string
+	SupplyName        string
+	Id                string
+	Type              string
+	UniqueCodes       []string
+	CreateTime        int64
+	PreEnterpriseId   string
+	PreEnterpriseName string
+	Token             string
 }
 
 type FoodInformation struct {
@@ -280,7 +282,9 @@ type SalesInfo struct {
 	UniqueCodes                 []string
 	EnterpriseId                string
 	EnterpriseName              string
-	SalesInvoiceUrl				string
+	SalesInvoiceUrl             string
+	BuyEnterpriseId             string
+	BuyEnterpriseName           string
 	Token                       string
 }
 
@@ -308,136 +312,142 @@ type TransportBill struct {
 	VehicleInfo                   VehicleInfo
 	LogisticsTraceList            []Trace
 	GoodsTraceList                []GoodsTrace
-	TransportState				  int32
-	UniqueCodes      			  []string
-	InvoiceDownLoadUrl			  string
-	ReportDownLoadUrl			  string
+	TransportState                int32
+	UniqueCodes                   []string
+	InvoiceDownLoadUrl            string
+	ReportDownLoadUrl             string
 }
 
 type StorageBill struct {
-	Id             string
-	StorageTitle   string
-	WarehouseName  string
-	GiverName      string
-	GiverPhone     string
-	RecipientName  string
-	RecipientPhone string
-	StartTime      int64
-	EndTime        int64
-	StorageAddress string
-	HandoverInfo   string
-	Type           string
-	UniqueCodes    []string
-	CreateTime     int64
-	EnterpriseId   string
-	EnterpriseName string
-	Token          string
+	Id                string
+	StorageTitle      string
+	WarehouseName     string
+	GiverName         string
+	GiverPhone        string
+	RecipientName     string
+	RecipientPhone    string
+	StartTime         int64
+	EndTime           int64
+	StorageAddress    string
+	HandoverInfo      string
+	Type              string
+	UniqueCodes       []string
+	CreateTime        int64
+	EnterpriseId      string
+	EnterpriseName    string
+	PreEnterpriseId   string
+	PreEnterpriseName string
+	Token             string
 }
 
 //批发零售信息
 type TransitSalesInfo struct {
-	Id               string
-	TransitSalesName string
-	EnterpriseId     string
-	EnterpriseName   string
-	Type             string
-	TransitSalesType string
-	SalesDate        int64
-	CreateTime       int64
-	BuyerName        string
-	BuyerAddress     string
-	BuyerTel         string
-	UniqueCodes      []string
-	TransitSalesState int32
-	TransitSalesMoney float64
+	Id                     string
+	TransitSalesName       string
+	EnterpriseId           string
+	EnterpriseName         string
+	Type                   string
+	TransitSalesType       string
+	SalesDate              int64
+	CreateTime             int64
+	BuyerName              string
+	BuyerAddress           string
+	BuyerTel               string
+	UniqueCodes            []string
+	TransitSalesState      int32
+	TransitSalesMoney      float64
 	TransitSalesInvoiceUrl string
-	Token            string
+	PreEnterpriseId        string
+	PreEnterpriseName      string
+	Token                  string
 }
 
-type ProductProvincialPnspectionReport struct{
-	ProductProvincialPnspectionReportKey 	string
-	ProductProvincialPnspectionReportValue 	string
+type ProductProvincialPnspectionReport struct {
+	ProductProvincialPnspectionReportKey   string
+	ProductProvincialPnspectionReportValue string
 }
-type ProductPriceDocument struct{
-	ProductPriceDocumentKey		string
-	ProductPriceDocumentValue	string
+type ProductPriceDocument struct {
+	ProductPriceDocumentKey   string
+	ProductPriceDocumentValue string
 }
-type ProductFactoryInspectionReport struct{
-	ProductFactoryInspectionReportKey	string
+type ProductFactoryInspectionReport struct {
+	ProductFactoryInspectionReportKey   string
 	ProductFactoryInspectionReportValue string
 }
-type PurchaserCertificate struct{
-	PurchaserCertificateKey		string
-	PurchaserCertificateValue	string
+type PurchaserCertificate struct {
+	PurchaserCertificateKey   string
+	PurchaserCertificateValue string
 }
+
 //产品首营资料
-type ProductGmp struct{
-	Id								string
-	EnterpriseId					string
-	EnterpriseName					string
-	ApprovalUrl						string
-	ApprovalNo						string
-	ProductCode						string
-	ProductPatentCertificateUrl		string
-	ProductTrademarkDocumentsUrl	string
-	ProductName						string
-	ProductMiniPackageUrl			string
-	DrugInstructionsUrl				string
-	GeneralTaxpayerRecordsUrl		string
-	LegalPowerOfAttorneyUrl			string
-	IdCardUrl						string
-	ProudctProduceStandardUrl		string
-	PurchaseAndSaleContractUrl		string
-	ProductPackageAndManualUrl		string
+type ProductGmp struct {
+	Id                                string
+	EnterpriseId                      string
+	EnterpriseName                    string
+	ApprovalUrl                       string
+	ApprovalNo                        string
+	ProductCode                       string
+	ProductPatentCertificateUrl       string
+	ProductTrademarkDocumentsUrl      string
+	ProductName                       string
+	ProductMiniPackageUrl             string
+	DrugInstructionsUrl               string
+	GeneralTaxpayerRecordsUrl         string
+	LegalPowerOfAttorneyUrl           string
+	IdCardUrl                         string
+	ProudctProduceStandardUrl         string
+	PurchaseAndSaleContractUrl        string
+	ProductPackageAndManualUrl        string
 	ProductProvincialPnspectionReport []map[string]string
-	ProductPriceDocument			[]map[string]string
-	ProductFactoryInspectionReport	[]map[string]string
-	PurchaserCertificate 			[]map[string]string
-	Token							string
+	ProductPriceDocument              []map[string]string
+	ProductFactoryInspectionReport    []map[string]string
+	PurchaserCertificate              []map[string]string
+	Token                             string
 }
-type YearTaxReport struct{
-	YearTaxReportKey				string
-	YearTaxReportValue				string
+type YearTaxReport struct {
+	YearTaxReportKey   string
+	YearTaxReportValue string
 }
-type EnterpriseQualityQuestionnaire struct{
-	EnterpriseQualityQuestionnaireKey	string
+type EnterpriseQualityQuestionnaire struct {
+	EnterpriseQualityQuestionnaireKey   string
 	EnterpriseQualityQuestionnaireValue string
 }
-type DeliveryUnitQualityQuestionnaire struct{
+type DeliveryUnitQualityQuestionnaire struct {
 	DeliveryUnitQualityQuestionnaireKey   string
 	DeliveryUnitQualityQuestionnaireValue string
 }
+
 //企业首营资料
-type EnterpriseGmp struct{
-	Id								string
-	EnterpriseId					string
-	EnterpriseName					string
-	EnterpriseType					string
-	EnterpriseLicenseUrl			string
-	EnterpriseLicenseNo				string
-	TaxRegistrationCertificateUrl	string
-	TaxRegistrationCode				string
-	OrganizationCodeCertificateUrl	string
-	OrganizationCode				string
-	QualityAssuranceUrl				string
-	DrugProductionLicenseUrl		string
-	DrugProductionLicensNo			string
-	GoodManufacturPracticesUrl		string
-	DrugOperatingLicenseUrl			string
-	DrugOperatingLicenseNo			string
-	GoodSupplyingPracticesUrl		string
-	OpeningPermitNo					string
-	OpeningPermitUrl				string
-	OpenBank						string
-	BankAccountNumber				string
-	BillingUnit						string
-	TaxpayerIdentificationNumber	string
-	EnterprisePhone					string
-	EnterpriseAdress				string
-	YearTaxReport					[]map[string]string
-	EnterpriseQualityQuestionnaire  []map[string]string
+type EnterpriseGmp struct {
+	Id                               string
+	EnterpriseId                     string
+	EnterpriseName                   string
+	EnterpriseType                   string
+	EnterpriseLicenseUrl             string
+	EnterpriseLicenseNo              string
+	TaxRegistrationCertificateUrl    string
+	TaxRegistrationCode              string
+	OrganizationCodeCertificateUrl   string
+	OrganizationCode                 string
+	QualityAssuranceUrl              string
+	DrugProductionLicenseUrl         string
+	DrugProductionLicensNo           string
+	GoodManufacturPracticesUrl       string
+	DrugOperatingLicenseUrl          string
+	DrugOperatingLicenseNo           string
+	GoodSupplyingPracticesUrl        string
+	OpeningPermitNo                  string
+	OpeningPermitUrl                 string
+	OpenBank                         string
+	BankAccountNumber                string
+	BillingUnit                      string
+	TaxpayerIdentificationNumber     string
+	EnterprisePhone                  string
+	EnterpriseAdress                 string
+	YearTaxReport                    []map[string]string
+	EnterpriseQualityQuestionnaire   []map[string]string
 	DeliveryUnitQualityQuestionnaire []map[string]string
-	Token							string
+	Token                            string
 }
 
 // ============================================================================================================================
@@ -461,13 +471,13 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	switch function {
 
 	case "saveEnterpriseGmp":
-		return t.saveEnterpriseGmp(stub,args)
+		return t.saveEnterpriseGmp(stub, args)
 
 	case "saveProductGmp":
-		return t.saveProductGmp(stub,args)
+		return t.saveProductGmp(stub, args)
 
 	case "getProductGmpByProducName":
-		return t.getProductGmpByProducName(stub,args)
+		return t.getProductGmpByProducName(stub, args)
 
 	case "saveTransitSalesInfo":
 		return t.saveTransitSalesInfo(stub, args)
@@ -558,7 +568,7 @@ func (t *myChaincode) saveEnterpriseGmp(stub shim.ChaincodeStubInterface, args [
 		return shim.Error("Unmarshal failed")
 	}
 	//save the json info
-	err = stub.PutState(enterpriseGmp.EnterpriseName,bEnterpriseGmp)
+	err = stub.PutState(enterpriseGmp.EnterpriseName, bEnterpriseGmp)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -581,7 +591,7 @@ func (t *myChaincode) saveProductGmp(stub shim.ChaincodeStubInterface, args []st
 	}
 
 	//save the json info
-	err = stub.PutState(productGmp.ProductName,bProductGmp)
+	err = stub.PutState(productGmp.ProductName, bProductGmp)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
@@ -594,7 +604,7 @@ func (t *myChaincode) getProductGmpByProducName(stub shim.ChaincodeStubInterface
 	}
 	//get the args
 	ProducName := args[0]
-	fmt.Println("===getProductGmpByProducName==="+ProducName)
+	fmt.Println("===getProductGmpByProducName===" + ProducName)
 	value, err := stub.GetState(ProducName)
 	if err != nil {
 		return shim.Error(err.Error())
