@@ -54,7 +54,7 @@ public class EnterpriseGmpService extends BaseService {
     public RespDTO<List<EnterpriseGmp>> getEnterpriseGmpByEnterpriseNameAndType(String EnterpriseName, String EnterpriseType, String Token){
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\n" +
                 "    \"EnterpriseName\": \""+EnterpriseName+"\"\n" + " ,   \"EnterpriseType\": \""+EnterpriseType+ "\"}}"});
-        log.debug("===getProductGmpByProducName===" + jsonStr);
+        log.info("===getProductGmpByProducName===" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -67,14 +67,14 @@ public class EnterpriseGmpService extends BaseService {
         for (Iterator<EnterpriseGmp> it = enterpriseGmpDTO.getList().iterator(); it.hasNext();) {
             EnterpriseGmp EnterpriseGmp = it.next();
             EnterpriseGmp.setTxId(txId);
-            log.debug("===EnterpriseGmp.getToken()==="+EnterpriseGmp.getToken());
+            log.info("===EnterpriseGmp.getToken()==="+EnterpriseGmp.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { EnterpriseGmp.getToken() });
-            log.debug("===jsonAuth==="+jsonAuth);
+            log.info("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
-            log.debug("===username==="+username);
+            log.info("===username==="+username);
             if(!authList.contains(username)){
-                log.debug("===remove===");
+                log.info("===remove===");
                 it.remove();
             }
         }
