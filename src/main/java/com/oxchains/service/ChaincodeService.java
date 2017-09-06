@@ -74,6 +74,9 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     @Value("${channel.name}")
     private String channelName;
 
+    @Value("${chaincode.privatekey}")
+    private String PRIVATE_KEY;
+
     private Channel channel;
 
     private HFClient hfClient;
@@ -434,9 +437,12 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             hfClient.setUserContext(customer);
 
             Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
-                // 只有第一次需要创建channel
-            // IOException, InvalidArgumentException, TransactionException, ProposalException
-            try {
+
+            channel = getChain(channelName, orderer);
+
+            //=======begin
+            // 只有第一次需要创建channel,  第一次启动时放开下面的，注释掉上面的  channel = getChain(channelName, orderer);
+           /* try {
                 channel = createChain(configPath, orderer, channelName);
             } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
                 log.warn("createChain error!", e);
@@ -444,7 +450,9 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 channel = getChain(channelName, orderer);
             } catch (Exception e) {
                 log.error("createChain error!", e);
-            }
+            }*/
+           //========end
+
             channelCodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME)
                     .setVersion(CHAIN_CODE_VERSION)
                     .setPath(CHAIN_CODE_PATH).build();
@@ -465,7 +473,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem")), "UTF-8");
 
         //PrivateKey privateKey = getPrivateKeyFromFile(privateKeyFile);
-        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/e6b1e768e909361756e2be9284823d221d2634ccac7c7b20c5cd860784c401c9_sk";
+        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/"+PRIVATE_KEY;
         final PEMParser pemParser = new PEMParser(new StringReader(new String(IOUtils.toByteArray(new FileInputStream(privateKeyFile)))));
 
         PrivateKeyInfo pemPair = (PrivateKeyInfo) pemParser.readObject();
