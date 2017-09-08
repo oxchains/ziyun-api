@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_DIR" value="/Users/song/IdeaProjects/ziyundemo"/>
-
+    <property name="LOG_DIR" value="/root/oxchains/ziyunapi"/>
+    <springProperty scope="context" name="logLevel" source="log.level"/>
     <appender name="rollingFileINFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/ziyun.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -13,7 +13,7 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%p] - %msg %n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
+            <level>debug</level>
         </filter>
     </appender>
 
@@ -29,8 +29,9 @@
     <!--<logger name="org.apache.zookeeper" level="WARN"/>-->
     <!--<logger name="com.mljr.carfinance.crm.provider.mapper" level="DEBUG"/>-->
 
-    <root level="INFO">
+    <root level="${logLevel}">
         <appender-ref ref="console"/>
         <appender-ref ref="rollingFileINFO"/>
     </root>
+
 </configuration>
