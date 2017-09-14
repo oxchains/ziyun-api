@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.oxchains</groupId>
-	<artifactId>ziyun-demo</artifactId>
+	<artifactId>ziyun-api</artifactId>
 	<version>1.0</version>
 
 	<properties>
