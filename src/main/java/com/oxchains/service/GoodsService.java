@@ -55,10 +55,10 @@ public class GoodsService extends BaseService {
             goods.setTxId(txId);
             log.debug("===goods.getToken()==="+goods.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { goods.getToken() });
-            log.debug("===jsonAuth==="+jsonAuth);
+            log.info("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
-            log.debug("===username==="+username);
+            log.info("===username==="+username);
             if(!authList.contains(username)){
                 log.debug("===remove===");
                 it.remove();

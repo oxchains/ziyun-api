@@ -43,7 +43,6 @@ public class ProductService extends BaseService {
 
     public RespDTO<List<Product>> getProductList(String Id, String Token) {
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"Id\" : \""+ Id +"\"}}"});
-       log.debug("-->产品JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -59,10 +58,10 @@ public class ProductService extends BaseService {
             Product.setTxId(txId);
             log.debug("===Product.getToken()==="+Product.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { Product.getToken() });
-            log.debug("===jsonAuth==="+jsonAuth);
+            log.info("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
-            log.debug("===username==="+username);
+            log.info("===username==="+username);
             if(!authList.contains(username)){
                 log.debug("===remove===");
                 it.remove();
@@ -71,8 +70,6 @@ public class ProductService extends BaseService {
         if(productDTO.getList().isEmpty()){
             return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
         }
-
-        System.err.println("-->产品集合：" + productDTO.getList());
         return RespDTO.success(productDTO.getList());
     }
 

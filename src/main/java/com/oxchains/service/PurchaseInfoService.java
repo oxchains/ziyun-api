@@ -103,10 +103,10 @@ public class PurchaseInfoService extends BaseService  {
             PurchaseInfo.setTxId(txId);
             log.debug("===PurchaseInfo.getToken()==="+PurchaseInfo.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { PurchaseInfo.getToken() });
-            log.debug("===jsonAuth==="+jsonAuth);
+            log.info("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
-            log.debug("===username==="+username);
+            log.info("===username==="+username);
             if(!authList.contains(username)){
                 log.debug("===remove===");
                 it.remove();

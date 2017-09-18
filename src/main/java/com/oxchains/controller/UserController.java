@@ -37,10 +37,10 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/register", method = RequestMethod.POST)
 	 public RespDTO<String> register(@RequestBody String body ) {
         try {
-        	System.out.println("body==="+body);
+        	log.info("===register==="+body);
             return userService.addUser(body);
         } catch (Exception e) {
-            log.error("user register error!", e);
+            log.error("user register error: ", e);
         }
         return RespDTO.fail();
 	 }
@@ -48,10 +48,10 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/login", method = RequestMethod.POST)
 	 public RespDTO<String> login(@RequestBody String body) {
         try {
-        	System.out.println("body==="+body);
+            log.info("===login==="+body);
             return userService.login(body);
         } catch (Exception e) {
-            log.error("user login error!", e);
+            log.error("user login error: ", e);
         }
         return RespDTO.fail();
 	 }
@@ -59,10 +59,10 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/logout", method = RequestMethod.POST)
 	 public RespDTO<String> logout(@RequestBody String body,@RequestParam String Token) {
         try {
-        	System.out.println("body==="+body);
+            log.info("===logout==="+body);
             return userService.logout(body,Token);
         } catch (Exception e) {
-            log.error("user logout error!", e);
+            log.error("user logout error: ", e);
         }
         return RespDTO.fail();
 	 }
@@ -70,10 +70,10 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/auth/allow", method = RequestMethod.POST)
 	 public RespDTO<String> allow(@RequestBody String body,@RequestParam String Token) {
         try {
-        	System.out.println("body==="+body);
+            log.info("===allow==="+body);
             return userService.allow(body,Token);
         } catch (Exception e) {
-            log.error("user auth allow error!", e);
+            log.error("user auth allow error: ", e);
         }
         return RespDTO.fail();
 	 }
@@ -81,10 +81,10 @@ public class UserController extends BaseController{
 	 @RequestMapping(value = "/auth/revoke", method = RequestMethod.POST)
 	 public RespDTO<String> revoke(@RequestBody String body,@RequestParam String Token) {
         try {
-        	System.out.println("body==="+body);
+            log.info("===revoke==="+body);
             return userService.revoke(body,Token);
         } catch (Exception e) {
-            log.error("user auth revoke error!", e);
+            log.error("user auth revoke error: ", e);
         }
         return RespDTO.fail();
 	 }
@@ -92,10 +92,10 @@ public class UserController extends BaseController{
     @RequestMapping(value = "/auth/query", method = RequestMethod.GET)
     public RespDTO<String> query(@RequestBody String body,@RequestParam String Token) {
         try {
-            System.out.println("body==="+body);
+            log.info("===query==="+body);
             return userService.query(Token);
         } catch (Exception e) {
-            log.error("user auth allow error!", e);
+            log.error("user auth allow error: ", e);
         }
         return RespDTO.fail();
     }
@@ -103,9 +103,10 @@ public class UserController extends BaseController{
     @RequestMapping(value = "/queryuser", method = RequestMethod.GET)
     public RespDTO<List<TabUser>> queryuser(@RequestParam String Token) {
         try {
+            log.info("===queryuser===");
             return userService.queryuser(Token);
         } catch (Exception e) {
-            log.error("user auth allow error!", e);
+            log.error("user auth allow error: ", e);
         }
         return RespDTO.fail();
     }
@@ -113,6 +114,7 @@ public class UserController extends BaseController{
 
     @GetMapping("/{uuid}/downloadfile")
     public void downloadFileByFilename(@PathVariable String uuid, HttpServletRequest request, HttpServletResponse response) {
+        log.info("===downloadFileByFilename===");
         File applicationFile = new File(upload + "/" + uuid);
         if (applicationFile.exists()) {
             try {
@@ -120,10 +122,9 @@ public class UserController extends BaseController{
                 response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + applicationFile.getName());
                 response.setContentType(guessContentTypeFromName(applicationFile.getName()));
                 response.setContentLengthLong(applicationFile.length());
-                System.out.println("length==="+applicationFile.length());
                 Files.copy(filePath, response.getOutputStream());
             } catch (Exception e) {
-                log.warn("failed to downloadfile {}: {}", uuid, e.getMessage());
+                log.error("failed to downloadfile {}: {}", uuid, e);
             }
         } else {
             fileNotFound(response);
@@ -134,7 +135,7 @@ public class UserController extends BaseController{
             response.setStatus(SC_NOT_FOUND);
             response.getWriter().write("file not found");
         } catch (Exception e) {
-            log.warn("failed to write response");
+            log.error("failed to write response: ",e);
         }
     }
 }

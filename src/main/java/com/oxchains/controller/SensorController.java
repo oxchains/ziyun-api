@@ -24,12 +24,12 @@ public class SensorController extends BaseController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public RespDTO<String> add(@RequestBody String body,@RequestParam String Token) {
 		try {
-			log.debug("===body==="+body);
+			log.info("===body==="+body);
 			Sensor sensor = gson.fromJson(body, Sensor.class);
 			sensor.setToken(Token);
 			return sensorService.add(sensor);
 		} catch (Exception e) {
-			log.error("add sensor error!", e);
+			log.error("add sensor error: ", e);
 		}
 		return RespDTO.fail();
 	}
@@ -38,9 +38,10 @@ public class SensorController extends BaseController {
 	public RespDTO<List<Sensor>> querySensorBySnumOrEnum(@PathVariable String number, @PathVariable long starttime,
 			@PathVariable long endtime, @PathVariable int pageindex, @RequestParam String Token) {
 		try {
+			log.info("===querySensorBySnumOrEnum===");
 			return sensorService.getSensorData(number, starttime, endtime, pageindex, Token);
 		} catch (Exception e) {
-			log.error("getSensorDataBySensorNum error!", e);
+			log.error("querySensorBySnumOrEnum error: ", e);
 		}
 		return RespDTO.fail();
 	}
@@ -49,9 +50,10 @@ public class SensorController extends BaseController {
 	public RespDTO<List<Sensor>> listSensorNumOrEquipmentNum(@RequestParam String number, @RequestParam Long startTime,
 			@RequestParam Long endTime, @RequestParam String Token) {
 		try {
+			log.info("===listSensorNumOrEquipmentNum===");
 			return sensorService.getSensorData(number, startTime, endTime,Token);
 		} catch (Exception e) {
-			log.error("getSensorDataBySensorNum error!", e);
+			log.error("listSensorNumOrEquipmentNum error: ", e);
 		}
 		return RespDTO.fail();
 	}

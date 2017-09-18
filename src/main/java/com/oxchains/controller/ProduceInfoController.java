@@ -34,7 +34,7 @@ public class ProduceInfoController extends BaseController{
     @PostMapping
     public RespDTO<String> addProduceInfo(@RequestBody String body,@RequestParam String Token){
         try {
-            log.debug("===addProduceInfo==="+body);
+            log.info("===addProduceInfo==="+body);
             if (StringUtils.isBlank(body)) {
                 return RespDTO.fail("参数错误");
             }
@@ -42,21 +42,21 @@ public class ProduceInfoController extends BaseController{
             produceInfo.setToken(Token);
             return produceInfoService.addProduceInfo(produceInfo);
         } catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addProduceInfo error: ", e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addProduceInfo error: ", e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
 
     @GetMapping("/{Id}")
     public RespDTO<List<ProduceInfo>> getProduceInfo(@PathVariable String Id, @RequestParam String Token) {
-        log.debug("-->生产ID：" + Id);
+        log.info("===getProduceInfo===");
         try {
             return produceInfoService.getProduceInfoList(Id,Token);
         } catch (Exception e) {
-            log.error("getProduceInfo error!", e);
+            log.error("getProduceInfo error: ", e);
             return RespDTO.fail("操作失败");
         }
     }

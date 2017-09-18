@@ -102,10 +102,10 @@ public class TransportBillService extends BaseService {
             transportBill.setTxId(txId);
             log.debug("===transitSalesInfo.getToken()==="+transportBill.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { transportBill.getToken() });
-            log.debug("===jsonAuth==="+jsonAuth);
+            log.info("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
-            log.debug("===username==="+username);
+            log.info("===username==="+username);
             if(!authList.contains(username)){
                 log.debug("===remove===");
                 it.remove();

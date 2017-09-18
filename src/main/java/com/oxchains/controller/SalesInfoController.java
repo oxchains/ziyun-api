@@ -26,17 +26,17 @@ public class SalesInfoController extends BaseController {
     @PostMapping
     public RespDTO<String> addSalesInfo(@RequestBody String body,@RequestParam String Token){
         try {
-            log.debug("===addSalesInfo==="+body);
+            log.info("===addSalesInfo==="+body);
             SalesInfo salesInfo = gson.fromJson(body, SalesInfo.class);
             salesInfo.setToken(Token);
             return salesInfoService.addSalesInfo(salesInfo);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addSalesInfo error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addSalesInfo error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -44,11 +44,11 @@ public class SalesInfoController extends BaseController {
     @GetMapping(value = "/{Id}")
     public RespDTO<List<SalesInfo>> querySalesInfoList(@PathVariable String Id, @RequestParam String Token){
         try {
-            log.debug("===querySalesInfoList===");
+            log.info("===querySalesInfoList===");
             return salesInfoService.querySalesInfoList(Id,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("querySalesInfoList error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

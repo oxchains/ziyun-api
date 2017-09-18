@@ -52,7 +52,6 @@ public class ProductGmpService extends BaseService {
 
     public RespDTO<List<ProductGmp>> getProductGmpByProducName(String ProducName,String Token){
         String result = chaincodeService.getPayloadAndTxid("getProductGmpByProducName", new String[]{ProducName});
-
         log.debug("===getProductGmpByProducName===" + result);
         if (StringUtils.isEmpty(result)) {
             return RespDTO.fail("没有数据");
@@ -65,10 +64,10 @@ public class ProductGmpService extends BaseService {
         String username = jwt.getId();
         log.debug("===ProductGmp.getToken()==="+productGmp.getToken());
         String jsonAuth = chaincodeService.query("query", new String[] { productGmp.getToken() });
-        log.debug("===jsonAuth==="+jsonAuth);
+        log.info("===jsonAuth==="+jsonAuth);
         Auth auth = gson.fromJson(jsonAuth, Auth.class);
         ArrayList<String> authList = auth.getAuthList();
-        log.debug("===username==="+username);
+        log.info("===username==="+username);
         if(!authList.contains(username)){
             log.debug("===remove===");
             return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
@@ -203,7 +202,7 @@ public class ProductGmpService extends BaseService {
             }
             String head = urlCon.getHeaderField("Content-Disposition");
             String filename = head.split("filename=")[1].replace("\"","");
-            System.out.println("===head==="+head);
+            log.debug("===head==="+head);
             String fileType = filename.substring(filename.lastIndexOf("."));
 
             fileName = now().toLocalDate() +"-" + UUID.randomUUID().toString() + fileType;
@@ -217,20 +216,20 @@ public class ProductGmpService extends BaseService {
                 out.write(buffer, 0, count);
             }
         } catch (Exception e) {
-            log.error(e.toString());
+            log.error("storeFile error: ",e);
         }finally {
             if(in!=null){
                 try {
                     in.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("storeFile error: ",e);
                 }
             }
             if(out!=null){
                 try {
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("storeFile error: ",e);
                 }
             }
         }

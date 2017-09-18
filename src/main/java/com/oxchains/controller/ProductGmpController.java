@@ -23,13 +23,12 @@ public class ProductGmpController extends BaseController{
     @PostMapping
     public RespDTO<String> addProductGmp(@RequestBody String body,@RequestParam String Token) {
         try {
-            //log.debug("===addProductGmp==="+body);
-            System.out.println("===addProductGmp==="+body);
+            log.info("===addProductGmp==="+body);
             ProductGmp productGmp = gson.fromJson(body, ProductGmp.class);
             productGmp.setToken(Token);
             return productGmpService.addProductGmp(productGmp);
         } catch (Exception e) {
-            log.error("addProductGmp error!", e);
+            log.error("addProductGmp error: ", e);
         }
         return RespDTO.fail();
     }
@@ -37,11 +36,10 @@ public class ProductGmpController extends BaseController{
     @RequestMapping(value = "/{ProducName}", method = RequestMethod.GET)
     public RespDTO<List<ProductGmp>> getProductGmpByProducName(@PathVariable String ProducName, @RequestParam String Token){
         try {
-            System.out.println("===getProductGmpByProducName===");
-            //log.debug("===getProductGmpByProducName==="+ProducName);
+            log.info("===getProductGmpByProducName===");
             return productGmpService.getProductGmpByProducName(ProducName,Token);
         }catch (Exception e) {
-            log.error("query error!", e);
+            log.error("getProductGmpByProducName error: ", e);
         }
         return RespDTO.fail();
     }

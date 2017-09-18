@@ -29,18 +29,18 @@ public class TransitSalesInfoController extends BaseController{
     @PostMapping
     public RespDTO<String> addTransitSalesInfo(@RequestBody String body,@RequestParam String Token){
         try {
-            log.debug("===addTransitSalesInfo==="+body);
+            log.error("===addTransitSalesInfo==="+body);
             TransitSalesInfo transitSalesInfo = gson.fromJson(body, TransitSalesInfo.class);
             JwtToken jwt = TokenUtils.parseToken(Token);
             transitSalesInfo.setToken(jwt.getId());// store username ,not token
             return transitSalesInfoService.addTransitSalesInfo(transitSalesInfo);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addTransitSalesInfo error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addTransitSalesInfo error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -48,11 +48,11 @@ public class TransitSalesInfoController extends BaseController{
     @GetMapping(value = "/{UniqueCode}")
     public RespDTO<List<TransitSalesInfo>> getTransitSalesInfoList(@PathVariable String UniqueCode, @RequestParam String Token){
         try {
-            log.debug("===getTransitSalesInfoList===");
+            log.info("===getTransitSalesInfoList===");
             return transitSalesInfoService.getTransitSalesInfoList(UniqueCode,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("getTransitSalesInfoList error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

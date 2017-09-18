@@ -23,13 +23,12 @@ public class EnterpriseGmpController extends BaseController {
     @PostMapping
     public RespDTO<String> addEnterprise(@RequestBody String body,@RequestParam String Token) {
         try {
-            //log.debug("===addEnterprise==="+body);
-            System.out.println("===addEnterprise==="+body);
+            log.info("===addEnterprise==="+body);
             EnterpriseGmp enterpriseGmp = gson.fromJson(body,EnterpriseGmp.class);
             enterpriseGmp.setToken(Token);
             return enterpriseGmpService.addEnterpriseGmp(enterpriseGmp);
         } catch (Exception e) {
-            log.error("addEnterprise error!", e);
+            log.error("addEnterprise error: ", e);
         }
         return RespDTO.fail();
     }
@@ -38,10 +37,10 @@ public class EnterpriseGmpController extends BaseController {
     @GetMapping("/{EnterpriseName}/{EnterpriseType}")
     public RespDTO<List<EnterpriseGmp>> getEnterpriseGmpByEnterpriseNameAndType(@PathVariable String EnterpriseName,@PathVariable String EnterpriseType,@RequestParam String Token){
         try {
-            System.out.println("===getProductGmpByProducName===");
+            log.info("===getEnterpriseGmpByEnterpriseNameAndType===");
             return enterpriseGmpService.getEnterpriseGmpByEnterpriseNameAndType(EnterpriseName,EnterpriseType,Token);
         }catch (Exception e) {
-            log.error("query error!", e);
+            log.error("getEnterpriseGmpByEnterpriseNameAndType error: ", e);
         }
         return RespDTO.fail();
     }

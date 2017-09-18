@@ -28,17 +28,17 @@ public class GoodsController extends BaseController {
     @PostMapping
     public RespDTO<String> addGoods(@RequestBody String body,@RequestParam String Token){
         try {
-            log.debug("===addGoods==="+body);
+            log.info("===addGoods==="+body);
             Goods goods = gson.fromJson(body, Goods.class);
             goods.setToken(Token);
             return goodsService.addGoods(goods);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addGoods error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addGoods error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -46,11 +46,11 @@ public class GoodsController extends BaseController {
     @GetMapping(value = "/{UniqueCode}")
     public RespDTO<List<Goods>> queryGoodsList(@PathVariable String UniqueCode,@RequestParam String Token){
         try {
-            log.debug("===queryGoods===");
+            log.info("===queryGoodsList===");
             return goodsService.getGoodsList(UniqueCode,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("queryGoodsList error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

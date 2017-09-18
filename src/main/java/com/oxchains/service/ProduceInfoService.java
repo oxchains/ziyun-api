@@ -48,7 +48,6 @@ public class ProduceInfoService extends BaseService {
 
     public RespDTO<List<ProduceInfo>> getProduceInfoList(String id,String Token) {
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{" {\"selector\":{\"Id\" : \""+id+"\"}}"});
-        System.err.println("-->生产信息JSON：" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)){
             return RespDTO.fail("没有数据");
         }
@@ -64,10 +63,10 @@ public class ProduceInfoService extends BaseService {
             ProduceInfo.setTxId(txId);
             log.debug("===ProduceInfo.getToken()==="+ProduceInfo.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { ProduceInfo.getToken() });
-            log.debug("===jsonAuth==="+jsonAuth);
+            log.info("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
-            log.debug("===username==="+username);
+            log.info("===username==="+username);
             if(!authList.contains(username)){
                 log.debug("===remove===");
                 it.remove();
@@ -76,9 +75,6 @@ public class ProduceInfoService extends BaseService {
         if(produceInfoDTO.getList().isEmpty()){
             return RespDTO.fail("操作失败", ConstantsData.RTN_UNAUTH);
         }
-
-
-        System.err.println("-->生产信息集合：" + produceInfoDTO.getList());
         return RespDTO.success(produceInfoDTO.getList());
     }
 }

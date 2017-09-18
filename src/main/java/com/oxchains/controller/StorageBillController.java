@@ -28,18 +28,18 @@ public class StorageBillController extends BaseController{
     @PostMapping
     public RespDTO<String> addStorageBill(@RequestBody String body,@RequestParam String Token){
         try {
-            log.debug("===addStorageBill==="+body);
+            log.info("===addStorageBill==="+body);
             StorageBill storageBill = gson.fromJson(body, StorageBill.class);
             JwtToken jwt = TokenUtils.parseToken(Token);
             storageBill.setToken(jwt.getId());// store username ,not token
             return storageBillService.addStorageBill(storageBill);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addStorageBill error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addStorageBill error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -47,11 +47,11 @@ public class StorageBillController extends BaseController{
     @GetMapping(value = "/{UniqueCode}")
     public RespDTO<List<StorageBill>> getStorageBillList(@PathVariable String UniqueCode, @RequestParam String Token){
         try {
-            log.debug("===getStorageBillList===");
+            log.info("===getStorageBillList===");
             return storageBillService.getStorageBillList(UniqueCode,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("getStorageBillList error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

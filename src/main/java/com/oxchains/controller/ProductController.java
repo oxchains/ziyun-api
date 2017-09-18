@@ -30,7 +30,7 @@ public class ProductController extends BaseController {
     @PostMapping
     public RespDTO<String> addProduct(@RequestBody String body,@RequestParam String Token){
         try {
-            log.debug("===addProduct==="+body);
+            log.info("===addProduct==="+body);
             if (StringUtils.isBlank(body)) {
                 return RespDTO.fail("参数错误");
             }
@@ -38,10 +38,10 @@ public class ProductController extends BaseController {
             product.setToken(Token);
             return productService.addProduct(product);
         } catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addProduct error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addProduct error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -49,9 +49,10 @@ public class ProductController extends BaseController {
     @GetMapping("/{Id}")
     public RespDTO<List<Product>> queryProductInfo(@PathVariable String Id, @RequestParam String Token) {
         try {
+            log.info("===queryProductInfo===");
             return productService.getProductList(Id,Token);
         }catch (Exception e) {
-            log.error("query error!", e);
+            log.error("queryProductInfo error: ", e);
         }
         return RespDTO.fail();
     }

@@ -52,7 +52,7 @@ public class SensorService extends BaseService {
 			return RespDTO.success("操作成功", null);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("add sensor error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 	}
@@ -81,10 +81,10 @@ public class SensorService extends BaseService {
 				sensor.setTxId(txId);
 				log.debug("===sensor.getToken()==="+sensor.getToken());
 				String jsonAuth = chaincodeService.query("query", new String[] { sensor.getToken() });
-				log.debug("===jsonAuth==="+jsonAuth);
+				log.info("===jsonAuth==="+jsonAuth);
 				Auth auth = gson.fromJson(jsonAuth, Auth.class);
 				ArrayList<String> authList = auth.getAuthList();
-				log.debug("===username==="+username);
+				log.info("===username==="+username);
 				if(!authList.contains(username)){
 					log.debug("===remove===");
 					it.remove();
@@ -96,7 +96,7 @@ public class SensorService extends BaseService {
 
 			return RespDTO.success(sensorDTO.getList());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("getSensorData error: ",e);
 			return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 	}
@@ -124,10 +124,10 @@ public class SensorService extends BaseService {
 				Sensor sensor = it.next();
 				log.debug("===sensor.getToken()==="+sensor.getToken());
 				String jsonAuth = chaincodeService.query("query", new String[] { sensor.getToken() });
-				log.debug("===jsonAuth==="+jsonAuth);
+				log.info("===jsonAuth==="+jsonAuth);
 				Auth auth = gson.fromJson(jsonAuth, Auth.class);
 				ArrayList<String> authList = auth.getAuthList();
-				log.debug("===username==="+username);
+				log.info("===username==="+username);
 				if(!authList.contains(username)){
 					log.debug("===remove===");
 					it.remove();
@@ -138,7 +138,7 @@ public class SensorService extends BaseService {
 			}
 			return RespDTO.success(sensorDTO.getList());
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("getSensorData error: ",e);
 			return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 	}

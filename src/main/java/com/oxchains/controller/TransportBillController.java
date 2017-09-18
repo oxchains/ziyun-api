@@ -30,18 +30,18 @@ public class TransportBillController extends BaseController{
     @PostMapping
     public RespDTO<String> addTransportBill(@RequestBody String body,@RequestParam String Token){
         try {
-            log.debug("===addTransportBill==="+body);
+            log.info("===addTransportBill==="+body);
             TransportBill transportBill = gson.fromJson(body, TransportBill.class);
             JwtToken jwt = TokenUtils.parseToken(Token);
             transportBill.setToken(jwt.getId());// store username ,not token
             return transportBillService.addTransportBill(transportBill);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addTransportBill error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addTransportBill error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -49,11 +49,11 @@ public class TransportBillController extends BaseController{
     @GetMapping(value = "/{UniqueCode}")
     public RespDTO<List<TransportBill>> getTransportBillList(@PathVariable String UniqueCode, @RequestParam String Token){
         try {
-            log.debug("===getTransportBillList===");
+            log.info("===getTransportBillList===");
             return transportBillService.getTransportBillList(UniqueCode,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("getTransportBillList error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

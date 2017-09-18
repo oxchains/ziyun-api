@@ -74,15 +74,15 @@ public class UserService extends BaseService {
 				return RespDTO.success("操作成功", gson.toJson(user));
 			}
 		}catch(JsonSyntaxException e){
-			log.error(e.getMessage());
+			log.error("addUser error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(NullPointerException e){
-			log.error(e.getMessage());
+			log.error("addUser error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("addUser error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功", gson.toJson(user));
@@ -95,7 +95,7 @@ public class UserService extends BaseService {
 			user.setUsername(obj.get("Username").getAsString());
 			user.setPassword(obj.get("Password").getAsString());
 		}catch(JsonSyntaxException | NullPointerException e){
-			log.error(e.getMessage());
+			log.error("login error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		String username = user.getUsername();
@@ -148,7 +148,7 @@ public class UserService extends BaseService {
 			return RespDTO.success("操作成功", gson.toJson(tokenEn));
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("login error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 	}
@@ -185,11 +185,11 @@ public class UserService extends BaseService {
 			tabLogDao.save(tabLog);
 			
 		}catch(JsonSyntaxException |NullPointerException e){
-			log.error(e.getMessage());
+			log.error("logout error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("logout error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功", null);
@@ -223,11 +223,11 @@ public class UserService extends BaseService {
 			}
 		}
 		catch(JsonSyntaxException |NullPointerException e){
-			log.error(e.getMessage());
+			log.error("allow error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("allow error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功");
@@ -261,11 +261,11 @@ public class UserService extends BaseService {
 			}
 		}
 		catch(JsonSyntaxException | NullPointerException e){
-			log.error(e.getMessage());
+			log.error("queryuser error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("queryuser error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功",tabUserList);
@@ -296,11 +296,11 @@ public class UserService extends BaseService {
 			log.debug("===jsonAuth==="+jsonAuth);
 		}
 		catch(JsonSyntaxException | NullPointerException e){
-			log.error(e.getMessage());
+			log.error("query error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("query error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功",jsonAuth);
@@ -335,11 +335,11 @@ public class UserService extends BaseService {
 			}
 		}
 		catch(JsonSyntaxException | NullPointerException e){
-			log.error(e.getMessage());
+			log.error("revoke error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_INVALID_ARGS);
 		}
 		catch(Exception e){
-			log.error(e.getMessage());
+			log.error("revoke error: ",e);
 			return RespDTO.fail("操作失败",ConstantsData.RTN_SERVER_INTERNAL_ERROR);
 		}
 		return RespDTO.success("操作成功");
@@ -348,7 +348,7 @@ public class UserService extends BaseService {
 	private static java.sql.Timestamp getCurrentTimeStamp() {  
 		   
 	    java.util.Date today = new java.util.Date();  
-	    System.out.println(""+today.getTime());
+	    log.info(""+today.getTime());
 	    return new java.sql.Timestamp(today.getTime());  
 	   
 	} 

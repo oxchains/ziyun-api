@@ -26,17 +26,17 @@ public class PurchaseInfoController extends BaseController  {
     @PostMapping
     public RespDTO<String> addPurchaseInfo(@RequestBody String body,@RequestParam String Token){
         try {
-            log.debug("===addPurchaseInfo==="+body);
+            log.info("===addPurchaseInfo==="+body);
             PurchaseInfo purchaseInfo = gson.fromJson(body, PurchaseInfo.class);
             purchaseInfo.setToken(Token);
             return purchaseInfoService.addPurchaseInfo(purchaseInfo);
         }
         catch(JsonSyntaxException e){
-            log.error(e.getMessage());
+            log.error("addPurchaseInfo error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_INVALID_ARGS);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("addPurchaseInfo error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }
@@ -44,11 +44,11 @@ public class PurchaseInfoController extends BaseController  {
     @GetMapping(value="/{UniqueCode}")
     public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByUniqueCode(@PathVariable String UniqueCode, @RequestParam String Token){
         try {
-            log.debug("===queryPurchaseInfoByGoodsId==="+UniqueCode);
+            log.info("===queryPurchaseInfoByGoodsId===");
             return purchaseInfoService.queryPurchaseInfoByUniqueCode(UniqueCode,Token);
         }
         catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("queryPurchaseInfoByUniqueCode error: ",e);
             return RespDTO.fail("操作失败", ConstantsData.RTN_SERVER_INTERNAL_ERROR);
         }
     }

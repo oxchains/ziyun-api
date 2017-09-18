@@ -54,7 +54,7 @@ public class EnterpriseGmpService extends BaseService {
     public RespDTO<List<EnterpriseGmp>> getEnterpriseGmpByEnterpriseNameAndType(String EnterpriseName, String EnterpriseType, String Token){
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\n" +
                 "    \"EnterpriseName\": \""+EnterpriseName+"\"\n" + " ,   \"EnterpriseType\": \""+EnterpriseType+ "\"}}"});
-        log.info("===getProductGmpByProducName===" + jsonStr);
+        log.debug("===getProductGmpByProducName===" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -67,14 +67,14 @@ public class EnterpriseGmpService extends BaseService {
         for (Iterator<EnterpriseGmp> it = enterpriseGmpDTO.getList().iterator(); it.hasNext();) {
             EnterpriseGmp EnterpriseGmp = it.next();
             EnterpriseGmp.setTxId(txId);
-            log.info("===EnterpriseGmp.getToken()==="+EnterpriseGmp.getToken());
+            log.debug("===EnterpriseGmp.getToken()==="+EnterpriseGmp.getToken());
             String jsonAuth = chaincodeService.query("query", new String[] { EnterpriseGmp.getToken() });
             log.info("===jsonAuth==="+jsonAuth);
             Auth auth = gson.fromJson(jsonAuth, Auth.class);
             ArrayList<String> authList = auth.getAuthList();
             log.info("===username==="+username);
             if(!authList.contains(username)){
-                log.info("===remove===");
+                log.debug("===remove===");
                 it.remove();
             }
         }
@@ -186,7 +186,7 @@ public class EnterpriseGmpService extends BaseService {
             }
             String head = urlCon.getHeaderField("Content-Disposition");
             String filename = head.split("filename=")[1].replace("\"","");
-            System.out.println("===head==="+head);
+            log.debug("===head==="+head);
             String fileType = filename.substring(filename.lastIndexOf("."));
 
             fileName = now().toLocalDate() +"-" + UUID.randomUUID().toString() + fileType;
@@ -200,20 +200,20 @@ public class EnterpriseGmpService extends BaseService {
                 out.write(buffer, 0, count);
             }
         } catch (Exception e) {
-            log.error(e.toString());
+            log.error("storeFile error: ",e);
         }finally {
             if(in!=null){
                 try {
                     in.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("storeFile error: ",e);
                 }
             }
             if(out!=null){
                 try {
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("storeFile error: ",e);
                 }
             }
         }

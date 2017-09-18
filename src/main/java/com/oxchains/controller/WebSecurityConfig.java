@@ -92,7 +92,7 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
                 out.append(rtn);
                 log.debug(rtn);
             } catch (IOException e) {
-                log.error(e.getMessage());
+                log.error("preHandle error: ",e);
             } finally {
                 if (out != null) {
                     out.close();
