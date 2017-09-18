@@ -18,7 +18,7 @@ package main
 
 import (
 	//"errors"
-	//"time"
+	"time"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -69,6 +69,7 @@ type Product struct {
 
 //生产信息 Product
 type ProductOther struct {
+	Id                 string
 	ProductName        string
 	EnterpriseId       string
 	EnterpriseName     string
@@ -285,6 +286,7 @@ type SalesInfo struct {
 	SalesInvoiceUrl             string
 	BuyEnterpriseId             string
 	BuyEnterpriseName           string
+	HandoverStatus              int32
 	Token                       string
 }
 
@@ -759,8 +761,9 @@ func (t *myChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.
 func getQueryResultsForQueryString(stub shim.ChaincodeStubInterface, queryString string) ([]byte, error) {
 
 	fmt.Printf("getQueryResultsForQueryString queryString:\n%s\n", queryString)
-
+	fmt.Println("=== begin === ",time.Now().Unix())
 	resultsIterator, err := stub.GetQueryResult(queryString)
+	fmt.Println("===  end  === ",time.Now().Unix())
 	if err != nil {
 		return nil, err
 	}
@@ -785,7 +788,7 @@ func getQueryResultsForQueryString(stub shim.ChaincodeStubInterface, queryString
 		bArrayMemberAlreadyWritten = true
 	}
 	buffer.WriteString("]}")
-
+    fmt.Println("===end for===",time.Now().Unix())
 	fmt.Printf("getQueryResultsForQueryString queryResult:\n%s\n", buffer.String())
 
 	return buffer.Bytes(), nil

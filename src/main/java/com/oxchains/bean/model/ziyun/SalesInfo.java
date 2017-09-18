@@ -98,6 +98,9 @@ public class SalesInfo extends BaseEntity {
     @JsonProperty("BuyEnterpriseName")
     private String BuyEnterpriseName;//购买企业名称
 
+    @JsonProperty("HandoverStatus")
+    private int HandoverStatus;//交接状态
+
     @JsonProperty("Token")
     private String Token;//token
 
