@@ -40,7 +40,7 @@ public class PurchaseInfoService extends BaseService  {
     }
 
     public RespDTO<List<PurchaseInfo>> queryPurchaseInfoByUniqueCode(String UniqueCode,String Token){
-        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+UniqueCode+"\"]},\"Type\" :\"purchase\"}}"});
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+UniqueCode+"\"]},\"Type\" :\"purchase\"}}"});
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -60,7 +60,7 @@ public class PurchaseInfoService extends BaseService  {
             if(goodsDTO!=null && goodsDTO.getList().size()>0){
                 String parentCode = goodsDTO.getList().get(0).getParentCode();
                 if(!StringUtils.isEmpty(parentCode)){
-                    jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+parentCode+"\"]},\"Type\" :\"purchase\"}}"});
+                    jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+parentCode+"\"]},\"Type\" :\"purchase\"}}"});
                     if (StringUtils.isEmpty(jsonStr)) {
                         return RespDTO.fail("没有数据");
                     }
@@ -80,7 +80,7 @@ public class PurchaseInfoService extends BaseService  {
                         if(goodsDTO!=null && goodsDTO.getList().size()>0){
                             String pparentCode = goodsDTO.getList().get(0).getParentCode();
                             if(!StringUtils.isEmpty(pparentCode)){
-                                jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+pparentCode+"\"]},\"Type\" :\"purchase\"}}"});
+                                jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+pparentCode+"\"]},\"Type\" :\"purchase\"}}"});
                                 if (StringUtils.isEmpty(jsonStr)) {
                                     return RespDTO.fail("没有数据");
                                 }

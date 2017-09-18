@@ -39,7 +39,7 @@ public class TransitSalesInfoService extends BaseService {
     }
 
     public RespDTO<List<TransitSalesInfo>> getTransitSalesInfoList(String uniqueCode,String Token) {
-        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+uniqueCode+"\"]},\"Type\" :\"transitSales\"}}"});
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+uniqueCode+"\"]},\"Type\" :\"transitSales\"}}"});
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -59,7 +59,7 @@ public class TransitSalesInfoService extends BaseService {
             if(goodsDTO!=null && goodsDTO.getList().size()>0){
                 String parentCode = goodsDTO.getList().get(0).getParentCode();
                 if(!StringUtils.isEmpty(parentCode)){
-                    jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+parentCode+"\"]},\"Type\" :\"transitSales\"}}"});
+                    jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+parentCode+"\"]},\"Type\" :\"transitSales\"}}"});
                     if (StringUtils.isEmpty(jsonStr)) {
                         return RespDTO.fail("没有数据");
                     }
@@ -79,7 +79,7 @@ public class TransitSalesInfoService extends BaseService {
                         if(goodsDTO!=null && goodsDTO.getList().size()>0){
                             String pparentCode = goodsDTO.getList().get(0).getParentCode();
                             if(!StringUtils.isEmpty(pparentCode)){
-                                jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$all\": [\""+pparentCode+"\"]},\"Type\" :\"transitSales\"}}"});
+                                jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+pparentCode+"\"]},\"Type\" :\"transitSales\"}}"});
                                 if (StringUtils.isEmpty(jsonStr)) {
                                     return RespDTO.fail("没有数据");
                                 }
