@@ -24,7 +24,7 @@ public class SensorController extends BaseController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public RespDTO<String> add(@RequestBody String body,@RequestParam String Token) {
 		try {
-			log.info("===body==="+body);
+			log.info("===add sensor==="+body);
 			Sensor sensor = gson.fromJson(body, Sensor.class);
 			sensor.setToken(Token);
 			return sensorService.add(sensor);

@@ -438,11 +438,11 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
 
             Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
 
-            //channel = getChain(channelName, orderer);
+            channel = getChain(channelName, orderer);
 
             //=======begin
             // 只有第一次需要创建channel,  第一次启动时放开下面的，注释掉上面的  channel = getChain(channelName, orderer);
-            try {
+           /* try {
                 channel = createChain(configPath, orderer, channelName);
             } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
                 log.warn("createChain error!", e);
@@ -450,7 +450,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 channel = getChain(channelName, orderer);
             } catch (Exception e) {
                 log.error("createChain error!", e);
-            }
+            }*/
            //========end
 
             channelCodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME)
