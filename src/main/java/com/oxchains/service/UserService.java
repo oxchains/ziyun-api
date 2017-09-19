@@ -207,7 +207,7 @@ public class UserService extends BaseService {
 				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
 			}
 			//unlogin
-			TabToken tabToken = tabTokenDao.findByUsername(authUser);
+			/*TabToken tabToken = tabTokenDao.findByUsername(authUser);
 			if(tabToken != null){
 				if(!Token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
@@ -215,7 +215,7 @@ public class UserService extends BaseService {
 			}
 			else{
 				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
+			}*/
 			String txId = chaincodeService.invoke("auth", new String[]{authUser,username});
 			log.debug("===txID==="+txId);
 			if(txId == null){
@@ -244,7 +244,7 @@ public class UserService extends BaseService {
 				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
 			}
 			//unlogin
-			TabToken tabToken = tabTokenDao.findByUsername(authUser);
+			/*TabToken tabToken = tabTokenDao.findByUsername(authUser);
 			if(tabToken != null){
 				if(!Token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
@@ -252,7 +252,7 @@ public class UserService extends BaseService {
 			}
 			else{
 				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
+			}*/
 
 			Iterator<TabUser> tabUserIterator = tabUserDao.findAll().iterator();
 
@@ -282,7 +282,7 @@ public class UserService extends BaseService {
 				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
 			}
 			//unlogin
-			TabToken tabToken = tabTokenDao.findByUsername(authUser);
+			/*TabToken tabToken = tabTokenDao.findByUsername(authUser);
 			if(tabToken != null){
 				if(!Token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
@@ -290,7 +290,7 @@ public class UserService extends BaseService {
 			}
 			else{
 				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
+			}*/
 
 			jsonAuth = chaincodeService.query("query", new String[] { authUser });
 			log.debug("===jsonAuth==="+jsonAuth);
@@ -318,7 +318,7 @@ public class UserService extends BaseService {
 				return RespDTO.fail("操作失败",ConstantsData.RTN_LOGIN_EXPIRED);
 			}
 			//unlogin
-			TabToken tabToken = tabTokenDao.findByUsername(authUser);
+			/*TabToken tabToken = tabTokenDao.findByUsername(authUser);
 			if(tabToken != null){
 				if(!Token.equals(tabToken.getToken())){
 					return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
@@ -326,7 +326,7 @@ public class UserService extends BaseService {
 			}
 			else{
 				return RespDTO.fail("操作失败",ConstantsData.RTN_UNLOGIN);
-			}
+			}*/
 			
 			String txId = chaincodeService.invoke("revoke", new String[]{authUser,username});
 			log.debug("===txID==="+txId);

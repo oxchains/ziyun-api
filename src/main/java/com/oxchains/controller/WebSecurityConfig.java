@@ -64,7 +64,7 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
                     rtn = "{\"status\":\""+ConstantsData.RTN_LOGIN_EXPIRED+"\",\"message\":\"操作失败\"}";
                 }
                 //unlogin
-                TabToken tabToken = tabTokenDao.findByUsername(jwt.getId());
+                /*TabToken tabToken = tabTokenDao.findByUsername(jwt.getId());
                 if(tabToken != null){
                     if(!token.equals(tabToken.getToken())){
                         log.debug("===rtn=="+ConstantsData.RTN_UNLOGIN);
@@ -74,7 +74,7 @@ public class WebSecurityConfig extends WebMvcConfigurerAdapter {
                 else{
                     log.debug("===rtn=="+ConstantsData.RTN_UNLOGIN);
                     rtn = "{\"status\":\""+ConstantsData.RTN_UNLOGIN+"\",\"message\":\"操作失败\"}";
-                }
+                }*/
                 if(StringUtils.isEmpty(rtn)){
                     rtn = "{\"status\":\"0\",\"message\":\"操作成功\"}";
                     return true;

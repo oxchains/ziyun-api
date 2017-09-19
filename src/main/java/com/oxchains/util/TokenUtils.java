@@ -72,7 +72,7 @@ public class TokenUtils {
                 .parseClaimsJws(token);
         Claims claims = jws.getBody();
         JwtToken jwt = new JwtToken();
-        jwt.setId(claims.getId());
+        jwt.setId(claims.getSubject());
         jwt.setExpiratioin(claims.getExpiration());
         return jwt;
     }
