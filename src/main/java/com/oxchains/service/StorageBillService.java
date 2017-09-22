@@ -38,7 +38,7 @@ public class StorageBillService extends BaseService {
     }
 
     public RespDTO<List<StorageBill>> getStorageBillList(String uniqueCode, String Token) {
-        String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+uniqueCode+"\"]},\"Type\" :\"storage\"}}"});
+        String jsonStr = chaincodeService.getPayloadAndTxid("searchByView", new String[]{"{\"designDocName\":\"myview\",\"viewName\":\"view-storage\",\"key\":\""+uniqueCode+"\"}"});
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }
@@ -58,7 +58,7 @@ public class StorageBillService extends BaseService {
             if(goodsDTO!=null && goodsDTO.getList().size()>0){
                 String parentCode = goodsDTO.getList().get(0).getParentCode();
                 if(!StringUtils.isEmpty(parentCode)){
-                    jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+parentCode+"\"]},\"Type\" :\"storage\"}}"});
+                    jsonStr = chaincodeService.getPayloadAndTxid("searchByView", new String[]{"{\"designDocName\":\"myview\",\"viewName\":\"view-storage\",\"key\":\""+parentCode+"\"}"});
                     if (StringUtils.isEmpty(jsonStr)) {
                         return RespDTO.fail("没有数据");
                     }
@@ -78,7 +78,7 @@ public class StorageBillService extends BaseService {
                         if(goodsDTO!=null && goodsDTO.getList().size()>0){
                             String pparentCode = goodsDTO.getList().get(0).getParentCode();
                             if(!StringUtils.isEmpty(pparentCode)){
-                                jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\"UniqueCodes\" : {\"$eq\": [\""+pparentCode+"\"]},\"Type\" :\"storage\"}}"});
+                                jsonStr = chaincodeService.getPayloadAndTxid("searchByView", new String[]{"{\"designDocName\":\"myview\",\"viewName\":\"view-storage\",\"key\":\""+pparentCode+"\"}"});
                                 if (StringUtils.isEmpty(jsonStr)) {
                                     return RespDTO.fail("没有数据");
                                 }

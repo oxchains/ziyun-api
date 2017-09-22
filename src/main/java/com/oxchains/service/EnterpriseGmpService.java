@@ -54,7 +54,7 @@ public class EnterpriseGmpService extends BaseService {
     public RespDTO<List<EnterpriseGmp>> getEnterpriseGmpByEnterpriseNameAndType(String EnterpriseName, String EnterpriseType, String Token){
         String jsonStr = chaincodeService.getPayloadAndTxid("searchByQuery", new String[]{"{\"selector\":{\n" +
                 "    \"EnterpriseName\": \""+EnterpriseName+"\"\n" + " ,   \"EnterpriseType\": \""+EnterpriseType+ "\"}}"});
-        log.debug("===getProductGmpByProducName===" + jsonStr);
+        log.debug("===getEnterpriseGmpByEnterpriseNameAndType===" + jsonStr);
         if (StringUtils.isEmpty(jsonStr)) {
             return RespDTO.fail("没有数据");
         }

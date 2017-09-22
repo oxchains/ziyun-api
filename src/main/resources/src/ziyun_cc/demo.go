@@ -541,6 +541,9 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	case "searchByQuery":
 		return t.searchByQuery(stub, args)
 
+	case "searchByView":
+		return t.searchByView(stub, args)
+
 	case "add":
 		return t.add(stub, args)
 	case "auth":
@@ -615,6 +618,42 @@ func (t *myChaincode) getProductGmpByProducName(stub shim.ChaincodeStubInterface
 		return shim.Error("no such ProducName")
 	}
 	return shim.Success(value)
+}
+
+func (t *myChaincode) searchByView(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) < 1 {
+		return shim.Error("searchByView operation must have 1 ars")
+	}
+	opt := args[0]
+	fmt.Println("=== begin === ",time.Now().Unix())
+	res, err := stub.QueryByView(opt)
+	fmt.Println("===  end  === ",time.Now().Unix())
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// buffer is a JSON array containing QueryRecords
+	var buffer bytes.Buffer
+	buffer.WriteString("{\"list\":[")
+
+	bArrayMemberAlreadyWritten := false
+	for res.HasNext() {
+		queryResponse, err := res.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		// Add a comma before array members, suppress it for the first array member
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		// Record is a JSON object, so we write as-is
+		buffer.WriteString(string(queryResponse.Value))
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]}")
+	fmt.Printf("searchByView queryResult:\n%s\n", buffer.String())
+	return shim.Success(buffer.Bytes())
+
 }
 
 func (t *myChaincode) searchByQuery(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -788,7 +827,6 @@ func getQueryResultsForQueryString(stub shim.ChaincodeStubInterface, queryString
 		bArrayMemberAlreadyWritten = true
 	}
 	buffer.WriteString("]}")
-    fmt.Println("===end for===",time.Now().Unix())
 	fmt.Printf("getQueryResultsForQueryString queryResult:\n%s\n", buffer.String())
 
 	return buffer.Bytes(), nil
@@ -1084,7 +1122,7 @@ func (t *myChaincode) saveSensorData(stub shim.ChaincodeStubInterface, args []st
 	if err != nil {
 		return shim.Error("saveSensorData operation failed. Error while putting the other info : " + err.Error())
 	}
-	fmt.Println("the equNUm is " + eqmtNum + "and the sensorNum is " + sensor.SensorNumber)
+	//fmt.Println("the equNUm is " + eqmtNum + "and the sensorNum is " + sensor.SensorNumber)
 
 	return shim.Success(nil)
 }

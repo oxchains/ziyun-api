@@ -77,6 +77,12 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     @Value("${chaincode.privatekey}")
     private String PRIVATE_KEY;
 
+    @Value("${chaincode.signcert}")
+    private String SIGNCERT;
+
+    @Value("${app.firststartup}")
+    private String FIRST_STARTUP;
+
     private Channel channel;
 
     private HFClient hfClient;
@@ -431,27 +437,27 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
             hfClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
             hfcaClient = HFCAClient.createNewInstance(CA_URL, null);
             hfcaClient.setCryptoSuite(CryptoSuite.Factory.getCryptoSuite());
-
-            Enrollment enrollment = hfcaClient.enroll(username, password);
-            customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
-            hfClient.setUserContext(customer);
-
-            Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
-
-            channel = getChain(channelName, orderer);
-
-            //=======begin
-            // 只有第一次需要创建channel,  第一次启动时放开下面的，注释掉上面的  channel = getChain(channelName, orderer);
-           /* try {
-                channel = createChain(configPath, orderer, channelName);
-            } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
-                log.warn("createChain error!", e);
-                orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
+            //首次启动需要创建channel，否则不需要。1=首次启动，0=否
+            if("1".equals(FIRST_STARTUP)){
+                Enrollment enrollment = hfcaClient.enroll(username, password);
+                customer = new Customer(username, enrollment, roles, account, affiliation, mspID);
+                hfClient.setUserContext(customer);
+                Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
+                try {
+                    channel = createChain(configPath, orderer, channelName);
+                } catch (IOException | InvalidArgumentException | TransactionException | ProposalException e) {
+                    log.warn("createChain error!", e);
+                    orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
+                    channel = getChain(channelName, orderer);
+                } catch (Exception e) {
+                    log.error("createChain error!", e);
+                }
+            }
+            else{
+                hfClient.setUserContext(peerOrgAdmin);
+                Orderer orderer = hfClient.newOrderer(ordererName, ORDERER_URL, null);
                 channel = getChain(channelName, orderer);
-            } catch (Exception e) {
-                log.error("createChain error!", e);
-            }*/
-           //========end
+            }
 
             channelCodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME)
                     .setVersion(CHAIN_CODE_VERSION)
@@ -470,10 +476,10 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         peerOrgAdmin.setMspID("Org1MSP");
         peerOrgAdmin.setRoles(null);
 
-        String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem")), "UTF-8");
+        String certificate = new String(IOUtils.toByteArray(new FileInputStream(TEST_FIXTURES_PATH + "/msp/signcerts/"+SIGNCERT)), "UTF-8");
 
         //PrivateKey privateKey = getPrivateKeyFromFile(privateKeyFile);
-        String privateKeyFile = TEST_FIXTURES_PATH + "/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/"+PRIVATE_KEY;
+        String privateKeyFile = TEST_FIXTURES_PATH + "/msp/keystore/"+PRIVATE_KEY;
         final PEMParser pemParser = new PEMParser(new StringReader(new String(IOUtils.toByteArray(new FileInputStream(privateKeyFile)))));
 
         PrivateKeyInfo pemPair = (PrivateKeyInfo) pemParser.readObject();
