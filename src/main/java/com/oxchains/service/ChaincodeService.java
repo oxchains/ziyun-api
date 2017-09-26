@@ -108,11 +108,11 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         Collection<ProposalResponse> responses = hfClient.sendInstallProposal(installProposalRequest, channel.getPeers());
         for (ProposalResponse response : responses) {
             if (response.getStatus() == ProposalResponse.Status.SUCCESS) {
-                System.out.println(String.format("Successful install proposal response Txid: %s from peer %s",
+                log.info(String.format("Successful install proposal response Txid: %s from peer %s",
                         response.getTransactionID(),
                         response.getPeer().getName()));
             } else {
-                System.out.println("install channelcode error!");
+                log.info("install channelcode error!");
             }
         }
     }
@@ -148,13 +148,13 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                             response.getTransactionID(),
                             response.getPeer().getName()));
                 } else {
-                    System.out.println("Instantiate Chaincode error! " + response.getMessage());
+                    log.info("Instantiate Chaincode error! " + response.getMessage());
                 }
             }
 
             /// Send instantiate transaction to orderer
             channel.sendTransaction(successful, channel.getOrderers());
-            System.out.println("instantiateChaincode done");
+            log.info("instantiateChaincode done");
         }
     }
 
@@ -166,7 +166,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
     public List<Query.ChaincodeInfo> getInstalledChaincodes() throws ProposalException, InvalidArgumentException {
         List<Query.ChaincodeInfo> channelcodeInfos = hfClient.queryInstalledChaincodes(channel.getPeers().iterator().next());
         for (Query.ChaincodeInfo channelcodeInfo : channelcodeInfos) {
-            System.out.println(channelcodeInfo.getName());
+            log.info(channelcodeInfo.getName());
         }
         return channelcodeInfos;
     }
@@ -317,7 +317,7 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                 Common.Envelope envelope = Common.Envelope.parseFrom(data);
                 Common.Payload payload = Common.Payload.parseFrom(envelope.getPayload());
                 Common.ChannelHeader channelHeader = Common.ChannelHeader.parseFrom(payload.getHeader().getChannelHeader());
-                System.out.println("txID: " + channelHeader.getTxId());
+                //System.out.println("txID: " + channelHeader.getTxId());
                 //TransactionInfo transactionInfo = queryTransactionInfo(channelHeader.getTxId());
 
                 if (channelHeader.getType() == 1) {
@@ -340,22 +340,22 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
                                 .forEach(endorsement -> {
                                     try {
                                         Identities.SerializedIdentity endorser = Identities.SerializedIdentity.parseFrom(endorsement.getEndorser());
-                                        System.out.println(String.format("mspID: %s, idByte: %s.", endorser.getMspid(), endorser.getIdBytes().toStringUtf8()));
+                                        //System.out.println(String.format("mspID: %s, idByte: %s.", endorser.getMspid(), endorser.getIdBytes().toStringUtf8()));
                                     } catch (InvalidProtocolBufferException e) {
                                         e.printStackTrace();
                                     }
-                                    System.out.println();
+                                    //System.out.println();
                                 });
-                        System.out.println();
+                        //System.out.println();
                     }
                 } else {
                     throw new RuntimeException("Only able to decode ENDORSER_TRANSACTION and CONFIG type blocks");
                 }
-                System.out.println();
+                //System.out.println();
             }
             //System.out.println("height: " + i + ", blockData count: " + blockData.getDataCount());
         }
-        System.out.println();
+        //System.out.println();
 
         /*System.out.println("==================================");
         TransactionInfo transactionInfo = queryTransactionInfo("d2433a1e17e542bf865cbe2d3dd952d6c3f4a66f46476d86622313d6fcefbd3d");
@@ -400,13 +400,13 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
 
     public BlockInfo queryBlock(byte[] hash) throws ProposalException, InvalidArgumentException {
         BlockInfo blockInfo = channel.queryBlockByHash(hash);
-        System.out.println("queryBlockByHash returned block with blockNumber " + blockInfo.getBlockNumber());
+        //System.out.println("queryBlockByHash returned block with blockNumber " + blockInfo.getBlockNumber());
         return null;
     }
 
     public BlockInfo queryBlock(String txID) throws ProposalException, InvalidArgumentException {
         BlockInfo blockInfo = channel.queryBlockByTransactionID(txID);
-        System.out.println("queryBlockByTxID returned block with blockNumber " + blockInfo.getBlockNumber());
+        //System.out.println("queryBlockByTxID returned block with blockNumber " + blockInfo.getBlockNumber());
         return null;
     }
 
@@ -414,8 +414,8 @@ public class ChaincodeService extends BaseService implements InitializingBean, D
         TransactionInfo transactionInfo = channel.queryTransactionByID(txID);
         Common.Payload payload = Common.Payload.parseFrom(transactionInfo.getProcessedTransaction().getTransactionEnvelope().getPayload());
         Common.ChannelHeader channelHeader = Common.ChannelHeader.parseFrom(payload.getHeader().getChannelHeader());
-        System.out.println(channelHeader.getChannelId());
-        System.out.println("time: " + channelHeader.getTimestamp().getNanos());
+        //System.out.println(channelHeader.getChannelId());
+        //System.out.println("time: " + channelHeader.getTimestamp().getNanos());
         return transactionInfo;
     }
 
