@@ -63,6 +63,9 @@ public class SyzlEnterpriseGmp extends BaseEntity {
     @JsonProperty("YpjyxkzSignatureState")
     private String YpjyxkzSignatureState;//药品经营许可证签章状态
 
+    @JsonProperty("SignStatus")
+    private String SignStatus;//企业首营资料签收状态
+
     @JsonProperty("QybghztzsUrl")
     private List<String> QybghztzsUrl;//企业变更核准通知书
 

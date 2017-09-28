@@ -470,6 +470,7 @@ type SyzlEnterpriseGmp struct {
 	YpjyxkzUrl							[]string
 	YpjyxkzExchangeState				string
 	YpjyxkzSignatureState				string
+	SignStatus							string
 	QybghztzsUrl						[]string
 	QybghztzsExchangeState				string
 	QybghztzsSignatureState				string
