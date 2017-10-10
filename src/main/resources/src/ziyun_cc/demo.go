@@ -602,6 +602,22 @@ type SyzlProductGmp struct{
 	Token                              		 string
 }
 
+type SyzlExchangeRecord struct{
+	Id										string
+	No										string
+	EnterpriseFirstInformation              SyzlEnterpriseGmp
+	ProductFirstInformationList				[]SyzlProductGmp
+	SendEnterpriseId						string
+	SendEnterpriseName						string
+	SendEnterpriseType						string
+	ReceiveEnterpriseId						string
+	ReceiveEnterpriseName					string
+	ReceiveEnterpriseType					string
+	EntrustBookUrl							[]string
+	EntrustBookEndTime						int64
+	Token									string
+}
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -621,6 +637,9 @@ func (t *myChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	switch function {
+
+	case "saveSyzlExchangeRecord":
+		return t.saveSyzlExchangeRecord(stub, args)
 
 	case "saveSyzlProductGmp":
 		return t.saveSyzlProductGmp(stub, args)
@@ -712,6 +731,29 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	default:
 		return shim.Error("Unsupported operation")
 	}
+}
+
+func (t *myChaincode) saveSyzlExchangeRecord(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveSyzlExchangeRecord===")
+	if len(args) < 1 {
+		return shim.Error("saveSyzlExchangeRecord operation must have 1 arg")
+	}
+	// get the args
+	bSyzlProductGmp := []byte(args[0])
+	//get some info
+	productGmp := &SyzlProductGmp{}
+	err := json.Unmarshal(bSyzlProductGmp, &productGmp)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	err = stub.PutState(productGmp.Id, bSyzlProductGmp)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
 }
 
 func (t *myChaincode) saveSyzlEnterpriseGmp(stub shim.ChaincodeStubInterface, args []string) pb.Response {
