@@ -77,6 +77,18 @@ public class SyzlProductGmp extends BaseEntity {
     @JsonProperty("GxyzgzsUrl")
     private List<String> GxyzgzsUrl;//购销员资格证书
 
+    @JsonProperty("SjjybgEndTime")
+    private long SjjybgEndTime;//省级产品检验报告有效时间
+
+    @JsonProperty("CpwjwjEndTime")
+    private long CpwjwjEndTime;//产品物价文件有效时间
+
+    @JsonProperty("MpcpcjbgEndTime")
+    private long MpcpcjbgEndTime;//每批产品厂检报告有效时间
+
+    @JsonProperty("GxyzgzsEndTime")
+    private long GxyzgzsEndTime;//购销员资格证书有效时间
+
     @JsonIgnore
     public List<String> getApprovalUrl() {
         return ApprovalUrl;

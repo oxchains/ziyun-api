@@ -18,6 +18,9 @@ public class SyzlEnterpriseGmp extends BaseEntity {
     @JsonProperty("No")
     private String No;//编号
 
+    @JsonProperty("ReturnReason")
+    private String ReturnReason;//退回原因
+
     @JsonProperty("EnterpriseType")
     private String EnterpriseType;//企业类型
 

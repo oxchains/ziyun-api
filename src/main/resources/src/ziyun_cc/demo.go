@@ -455,6 +455,7 @@ type EnterpriseGmp struct {
 type SyzlEnterpriseGmp struct {
 	Id									string
 	No									string
+	ReturnReason						string
 	EnterpriseType						string
 	SyzlEnterpriseId					string
 	EnterpriseName						string
@@ -599,7 +600,11 @@ type SyzlProductGmp struct{
 	CpwjwjUrl								[]string
 	MpcpcjbgUrl								[]string
 	GxyzgzsUrl								[]string
-	Token                              		 string
+	Token                              		string
+	SjjybgEndTime					        int64
+	CpwjwjEndTime					        int64
+	MpcpcjbgEndTime					        int64
+	GxyzgzsEndTime					        int64
 }
 
 type SyzlExchangeRecord struct{
@@ -741,7 +746,7 @@ func (t *myChaincode) saveSyzlExchangeRecord(stub shim.ChaincodeStubInterface, a
 	// get the args
 	bSyzlProductGmp := []byte(args[0])
 	//get some info
-	productGmp := &SyzlProductGmp{}
+	productGmp := &SyzlExchangeRecord{}
 	err := json.Unmarshal(bSyzlProductGmp, &productGmp)
 	if err != nil {
 		fmt.Println(err)
