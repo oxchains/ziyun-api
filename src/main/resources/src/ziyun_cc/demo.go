@@ -452,6 +452,177 @@ type EnterpriseGmp struct {
 	Token                            string
 }
 
+type SyzlEnterpriseGmp struct {
+	Id									string
+	No									string
+	ReturnReason						string
+	EnterpriseType						string
+	SyzlEnterpriseId					string
+	EnterpriseName						string
+	YyzzUrl								[]string
+	YyzzExchangeState					string
+	YyzzSignatureState					string
+	DistributionAgreementUrl			[]string
+	DistributionAgreementExchangeState	string
+	DistributionAgreementSignatureState	string
+	InvoiceUrl							[]string
+	InvoiceExchangeState				string
+	InvoiceSignatureState				string
+	YpjyxkzUrl							[]string
+	YpjyxkzExchangeState				string
+	YpjyxkzSignatureState				string
+	SignStatus							string
+	QybghztzsUrl						[]string
+	QybghztzsExchangeState				string
+	QybghztzsSignatureState				string
+	GsnjUrl								[]string
+	GsnjExchangeState					string
+	GsnjSignatureState					string
+	YhkhxkzUrl							[]string
+	YhkhxkzExchangeState				string
+	YhkhxkzSignatureState				string
+	ZzszyfpybUrl						[]string
+	ZzszyfpybExchangeState				string
+	ZzszyfpybSignatureState				string
+	KpInfoUrl							[]string
+	KpInfoExchangeState					string
+	KpInfoSignatureState				string
+	YzymbaUrl							[]string
+	YzymbaExchangeState					string
+	YzymbaSignatureState				string
+	BlankSalesContractUrl				[]string
+	BlankSalesContractExchangeState		string
+	BlankSalesContractSignatureState	string
+	ShtxdyzUrl							[]string
+	ShtxdyzExchangeState				string
+	ShtxdyzSignatureState				string
+	QysyndbgUrl							[]string
+	QysyndbgExchangeState				string
+	QysyndbgSignatureState				string
+	ZltxdcbUrl							[]string
+	ZltxdcbExchangeState				string
+	ZltxdcbSignatureState				string
+	HgghfdabUrl							[]string
+	HgghfdabExchangeState				string
+	HgghfdabSignatureState				string
+	YljxjyxkzUrl						[]string
+	YljxjyxkzExchangeState				string
+	YljxjyxkzSignatureState				string
+	YpjyzlglgfrzsUrl					[]string
+	YpjyzlglgfrzsExchangeState			string
+	YpjyzlglgfrzsSignatureState			string
+	SalesIdCardUrl						[]string
+	SalesIdCardExchangeState			string
+	SalesIdCardSignatureState			string
+	FrwtsyjUrl							[]string
+	FrwtsyjExchangeState				string
+	FrwtsyjSignatureState				string
+	EducationProveUrl					[]string
+	EducationProveExchangeState			string
+	EducationProveSignatureState		string
+	YljgzyxkzUrl						[]string
+	YljgzyxkzExchangeState				string
+	YljgzyxkzSignatureState				string
+	ZyyszgzUrl							[]string
+	ZyyszgzExchangeState				string
+	ZyyszgzSignatureState				string
+	YpsczlglgfrzsUrl					[]string
+	YpsczlglgfrzsExchangeState			string
+	YpsczlglgfrzsSignatureState			string
+	YljxscxkbabUrl						[]string
+	YljxscxkbabExchangeState			string
+	YljxscxkbabSignatureState			string
+	YljxscxkzUrl						[]string
+	YljxscxkzExchangeState				string
+	YljxscxkzSignatureState				string
+	YpzcpjUrl							[]string
+	YpzcpjExchangeState					string
+	YpzcpjSignatureState				string
+	YpzcpjNextUrl						[]string
+	YpzcpjNextExchangeState				string
+	YpzcpjNextSignatureState			string
+	YpbcpjUrl							[]string
+	YpbcpjExchangeState					string
+	YpbcpjSignatureState				string
+	XyzsUrl								[]string
+	XyzsExchangeState					string
+	XyzsSignatureState					string
+	CpzlbzUrl							[]string
+	CpzlbzExchangeState					string
+	CpzlbzSignatureState				string
+	ZlzsUrl								[]string
+	ZlzsExchangeState					string
+	ZlzsSignatureState					string
+	JkypzczUrl							[]string
+	JkypzczExchangeState				string
+	JkypzczSignatureState				string
+	PriceApprovalUrl					[]string
+	PriceApprovalExchangeState			string
+	PriceApprovalSignatureState			string
+	YpjybgUrl							[]string
+	YpjybgExchangeState					string
+	YpjybgSignatureState				string
+	BoxUrl								[]string
+	BoxExchangeState					string
+	BoxSignatureState					string
+	LabelUrl							[]string
+	LabelExchangeState					string
+	LabelSignatureState					string
+	DescriptionBookUrl					[]string
+	DescriptionBookExchangeState		string
+	DescriptionBookSignatureState		string
+	YpjgjgzdbaUrl						[]string
+	YpjgjgzdbaExchangeState				string
+	YpjgjgzdbaSignatureState			string
+	Token                               string
+}
+
+type SyzlProductGmp struct{
+	Id										string
+	No										string
+	SyzlEnterpriseId						string
+	ProductFirstInformationExchangeState	string
+	ProductFirstInformationSignatureState	string
+	ProductName								string
+	ApprovalNo								string
+	ApprovalUrl								[]string
+	ProductPatentUrl						[]string
+	ProductTrademarkUrl						[]string
+	SmallestPackageUrl						[]string
+	DrugDescriptionUrl						[]string
+	TaxpayerRecordUrl						[]string
+	FrwtsUrl								[]string
+	IdCardUrl								[]string
+	CpscbzUrl								[]string
+	GxhtUrl									[]string
+	CpbzsmsfjUrl							[]string
+	SjjybgUrl								[]string
+	CpwjwjUrl								[]string
+	MpcpcjbgUrl								[]string
+	GxyzgzsUrl								[]string
+	Token                              		string
+	SjjybgEndTime					        int64
+	CpwjwjEndTime					        int64
+	MpcpcjbgEndTime					        int64
+	GxyzgzsEndTime					        int64
+}
+
+type SyzlExchangeRecord struct{
+	Id										string
+	No										string
+	EnterpriseFirstInformation              SyzlEnterpriseGmp
+	ProductFirstInformationList				[]SyzlProductGmp
+	SendEnterpriseId						string
+	SendEnterpriseName						string
+	SendEnterpriseType						string
+	ReceiveEnterpriseId						string
+	ReceiveEnterpriseName					string
+	ReceiveEnterpriseType					string
+	EntrustBookUrl							[]string
+	EntrustBookEndTime						int64
+	Token									string
+}
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -471,6 +642,15 @@ func (t *myChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	switch function {
+
+	case "saveSyzlExchangeRecord":
+		return t.saveSyzlExchangeRecord(stub, args)
+
+	case "saveSyzlProductGmp":
+		return t.saveSyzlProductGmp(stub, args)
+
+	case "saveSyzlEnterpriseGmp":
+		return t.saveSyzlEnterpriseGmp(stub, args)
 
 	case "saveEnterpriseGmp":
 		return t.saveEnterpriseGmp(stub, args)
@@ -558,6 +738,52 @@ func (t *myChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	}
 }
 
+func (t *myChaincode) saveSyzlExchangeRecord(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveSyzlExchangeRecord===")
+	if len(args) < 1 {
+		return shim.Error("saveSyzlExchangeRecord operation must have 1 arg")
+	}
+	// get the args
+	bSyzlProductGmp := []byte(args[0])
+	//get some info
+	productGmp := &SyzlExchangeRecord{}
+	err := json.Unmarshal(bSyzlProductGmp, &productGmp)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	err = stub.PutState(productGmp.Id, bSyzlProductGmp)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
+
+func (t *myChaincode) saveSyzlEnterpriseGmp(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveSyzlEnterpriseGmp===")
+	if len(args) < 1 {
+		return shim.Error("saveSyzlEnterpriseGmp operation must have 1 arg")
+	}
+	// get the args
+	bSyzlEnterpriseGmp := []byte(args[0])
+	//get some info
+	enterpriseGmp := &SyzlEnterpriseGmp{}
+	err := json.Unmarshal(bSyzlEnterpriseGmp, &enterpriseGmp)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+	//save the json info
+	err = stub.PutState(enterpriseGmp.Id, bSyzlEnterpriseGmp)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
+
+
 func (t *myChaincode) saveEnterpriseGmp(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	fmt.Println("===saveEnterpriseGmp===")
 	if len(args) < 1 {
@@ -574,6 +800,30 @@ func (t *myChaincode) saveEnterpriseGmp(stub shim.ChaincodeStubInterface, args [
 	}
 	//save the json info
 	err = stub.PutState(enterpriseGmp.EnterpriseName, bEnterpriseGmp)
+	if err != nil {
+		return shim.Error("putting state err: " + err.Error())
+	}
+	return shim.Success(nil)
+}
+
+
+func (t *myChaincode) saveSyzlProductGmp(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	fmt.Println("===saveSyzlProductGmp===")
+	if len(args) < 1 {
+		return shim.Error("saveSyzlProductGmp operation must have 1 arg")
+	}
+	// get the args
+	bSyzlProductGmp := []byte(args[0])
+	//get some info
+	productGmp := &SyzlProductGmp{}
+	err := json.Unmarshal(bSyzlProductGmp, &productGmp)
+	if err != nil {
+		fmt.Println(err)
+		return shim.Error("Unmarshal failed")
+	}
+
+	//save the json info
+	err = stub.PutState(productGmp.Id, bSyzlProductGmp)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}
