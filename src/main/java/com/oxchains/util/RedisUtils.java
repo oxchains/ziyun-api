@@ -8,10 +8,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class RedisUtils {
+
     public static JedisCluster getJedisCluster(){
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         Set<HostAndPort> nodes = new HashSet<HostAndPort>();
-        HostAndPort hostAndPort = new HostAndPort("192.168.1.16", 7000);
+        HostAndPort hostAndPort = new HostAndPort("192.168.4.122", 6379);
       /*  HostAndPort hostAndPort1 = new HostAndPort("192.168.1.16", 7001);
         HostAndPort hostAndPort2 = new HostAndPort("192.168.1.16", 7002);
         HostAndPort hostAndPort3 = new HostAndPort("192.168.1.10", 7003);
