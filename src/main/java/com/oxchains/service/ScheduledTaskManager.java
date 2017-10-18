@@ -27,8 +27,8 @@ public class ScheduledTaskManager {
     /**
      * 启动时执行一次，之后每隔1分钟执行一次
      */
-    @Scheduled(fixedRate = 1000*60*60*24)
-    //@Scheduled(cron = "0 0 02 * * *")
+    //@Scheduled(fixedRate = 1000*60*60*24)
+    @Scheduled(cron = "0 0 2 * * *")
     public void getDataV() {
         log.info("===getDataV schedule==="+new Date());
         try{
