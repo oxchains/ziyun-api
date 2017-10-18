@@ -5,6 +5,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.oxchains.bean.dto.datav.NameValue;
 import com.oxchains.bean.dto.datav.ValueContent;
 import com.oxchains.bean.dto.datav.XY;
+import com.oxchains.bean.model.DataV;
 import com.oxchains.util.RedisUtils;
 import com.oxchains.util.SerializeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -43,9 +44,9 @@ public class DataVService extends BaseService {
     }
 
     public NameValue<Long> getChainTxCount() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
-        String key = "getChainTxCount";
-        Long result = Long.valueOf(jedisCluster.get(key));
-
+        byte[] data = jedisCluster.get("chianinfo".getBytes());
+        DataV.BlockChainInfo blockChainInfo = DataV.BlockChainInfo.parseFrom(data);
+        Long result = blockChainInfo.getTxcount();
         return new NameValue<>("", result);
     }
 
@@ -54,18 +55,35 @@ public class DataVService extends BaseService {
      * @return
      */
     public List<XY> getChainTxNum() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
-        String key = "getChainTxNum";
-        return (List<XY>)SerializeUtil.unSerializeList(key.getBytes());
+        byte[] data = jedisCluster.get("chianinfo".getBytes());
+        DataV.BlockChainInfo blockChainInfo = DataV.BlockChainInfo.parseFrom(data);
+        List<DataV.XY> xyList = blockChainInfo.getXyList();
+        List<XY> list = new ArrayList<>();
+        if(xyList != null && xyList.size() > 0){
+            for(DataV.XY v : xyList){
+                list.add(new XY(v.getX(),v.getY()));
+            }
+        }
+        return list;
     }
 
     public List<ValueContent> getChainNewBlock() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
-        String key = "getChainNewBlock";
-        return (List<ValueContent>)SerializeUtil.unSerializeList(key.getBytes());
+        byte[] data = jedisCluster.get("chianinfo".getBytes());
+        DataV.BlockChainInfo blockChainInfo = DataV.BlockChainInfo.parseFrom(data);
+        List<DataV.ValueContent> valueContentList = blockChainInfo.getValuecontentList();
+        List<ValueContent> list = new ArrayList<>();
+        if(valueContentList != null && valueContentList.size() > 0){
+            for(DataV.ValueContent v : valueContentList){
+                list.add(new ValueContent(v.getValue(),v.getContent()));
+            }
+        }
+        return list;
     }
 
     private long getBlockChainHeight() throws InvalidProtocolBufferException, ProposalException, InvalidArgumentException, ExecutionException {
-        String key = "getBlockChain";
-        return Long.valueOf(jedisCluster.get(key));
+        byte[] data = jedisCluster.get("chianinfo".getBytes());
+        DataV.BlockChainInfo blockChainInfo = DataV.BlockChainInfo.parseFrom(data);
+        return blockChainInfo.getHeight();
     }
 
 

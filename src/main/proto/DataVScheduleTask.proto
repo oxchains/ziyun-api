@@ -1,0 +1,17 @@
+syntax = "proto3";
+ option java_outer_classname = "DataV";
+ message Person {
+   int64 height = 1;
+   int64 txcount = 2;
+   repeated XY xy = 3;
+   repeated ValueContent valuecontent = 4;
+ }
+ message XY {
+   string x = 1;
+   int64 y = 2;
+ }
+
+ message ValueContent {
+   string value = 1;
+   string content = 2;
+ }
