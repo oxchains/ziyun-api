@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.hyperledger.fabric.sdk.BlockInfo;
 import org.hyperledger.fabric.sdk.BlockchainInfo;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.JedisCluster;
@@ -24,12 +25,18 @@ public class ScheduledTaskManager {
     @Resource
     private ChaincodeService chaincodeService;
 
+    @Value("${schedule.enabled}")
+    private String scheduled;
+
     /**
-     * 启动时执行一次，之后每隔1分钟执行一次
+     * 启动时执行一次，之后每隔10hour执行一次
      */
-    //@Scheduled(fixedRate = 1000*60*60*24)
+    //@Scheduled(fixedRate = 1000*60*60*10)
     @Scheduled(cron = "0 0 2 * * *")
     public void getDataV() {
+        if("false".equals(scheduled)){
+            return;
+        }
         log.info("===getDataV schedule==="+new Date());
         try{
             DataV.BlockChainInfo.Builder builder = DataV.BlockChainInfo.newBuilder();
@@ -70,8 +77,8 @@ public class ScheduledTaskManager {
                         .replace("#{currentHash}", Hex.encodeHexString(blockInfo.getBlock().getHeader().getDataHash().toByteArray()))
                         .replace("#{previousHash}", Hex.encodeHexString(blockInfo.getPreviousHash()));
                 DataV.ValueContent.Builder valueContent = DataV.ValueContent.newBuilder();
-                valueContent.setContent("100");
-                valueContent.setValue(content);
+                valueContent.setContent(content);
+                valueContent.setValue("100");
                 builder.addValuecontent(valueContent);
             }
 
