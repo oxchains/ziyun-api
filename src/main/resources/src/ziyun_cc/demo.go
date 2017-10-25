@@ -575,6 +575,9 @@ type SyzlEnterpriseGmp struct {
 	YpjgjgzdbaExchangeState				string
 	YpjgjgzdbaSignatureState			string
 	Token                               string
+	UploadToNmbaState					int32
+	EnterpriseFirstAuditStatus			string
+	AuditNotPassedReason				string
 }
 
 type SyzlProductGmp struct{
@@ -605,6 +608,12 @@ type SyzlProductGmp struct{
 	CpwjwjEndTime					        int64
 	MpcpcjbgEndTime					        int64
 	GxyzgzsEndTime					        int64
+	UploadToNmbaState						int32
+	EnterpriseType							string
+	EnterpriseName							string
+	ProductFirstAuditStatus					string
+	ReturnReason							string
+	AuditNotPassedReason					string
 }
 
 type SyzlExchangeRecord struct{
@@ -621,6 +630,7 @@ type SyzlExchangeRecord struct{
 	EntrustBookUrl							[]string
 	EntrustBookEndTime						int64
 	Token									string
+	UploadToNmbaState						int32
 }
 
 // ============================================================================================================================
@@ -776,7 +786,7 @@ func (t *myChaincode) saveSyzlEnterpriseGmp(stub shim.ChaincodeStubInterface, ar
 		return shim.Error("Unmarshal failed")
 	}
 	//save the json info
-	err = stub.PutState(enterpriseGmp.Id, bSyzlEnterpriseGmp)
+	err = stub.PutState(enterpriseGmp.SyzlEnterpriseId, bSyzlEnterpriseGmp)
 	if err != nil {
 		return shim.Error("putting state err: " + err.Error())
 	}

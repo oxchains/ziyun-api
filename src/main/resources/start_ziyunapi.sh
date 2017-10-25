@@ -1,0 +1,1 @@
+docker run --name ziyunapi -e "schedule_enabled=true" -d -p 8080:8080 -v /root/ziyun/start_script/ziyunapi:/root/oxchains/ziyunapi/resources -v /tmp/files:/tmp/files oxchains/ziyun-api

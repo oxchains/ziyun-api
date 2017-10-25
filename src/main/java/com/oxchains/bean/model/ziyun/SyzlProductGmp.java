@@ -89,6 +89,24 @@ public class SyzlProductGmp extends BaseEntity {
     @JsonProperty("GxyzgzsEndTime")
     private long GxyzgzsEndTime;//购销员资格证书有效时间
 
+    @JsonProperty("UploadToNmbaState")
+    private int UploadToNmbaState;//区块链上传状态
+
+    @JsonProperty("EnterpriseType")
+    private String EnterpriseType;//产品首营所属企业类型
+
+    @JsonProperty("EnterpriseName")
+    private String EnterpriseName;//产品首营所属企业名称
+
+    @JsonProperty("ProductFirstAuditStatus")
+    private String ProductFirstAuditStatus;//产品首营资料审核状态
+
+    @JsonProperty("ReturnReason")
+    private String ReturnReason;//退回原因
+
+    @JsonProperty("AuditNotPassedReason")
+    private String AuditNotPassedReason;//审核不通过原因
+
     @JsonIgnore
     public List<String> getApprovalUrl() {
         return ApprovalUrl;

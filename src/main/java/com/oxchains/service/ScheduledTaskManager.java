@@ -32,7 +32,8 @@ public class ScheduledTaskManager {
      * 启动时执行一次，之后每隔10hour执行一次
      */
     //@Scheduled(fixedRate = 1000*60*60*10)
-    @Scheduled(cron = "0 0 2 * * *")
+    //每天凌晨两点执行定时任务，docker与host相差8个小时
+    @Scheduled(cron = "0 0 18 * * *")
     public void getDataV() {
         if("false".equals(scheduled)){
             return;

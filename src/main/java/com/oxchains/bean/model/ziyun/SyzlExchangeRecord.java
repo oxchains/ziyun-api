@@ -49,6 +49,9 @@ public class SyzlExchangeRecord extends BaseEntity {
     @JsonProperty("Token")
     private String Token;//token
 
+    @JsonProperty("UploadToNmbaState")
+    private int UploadToNmbaState;//区块链上传状态
+
     @JsonIgnore
     public String getToken() {
         return Token;

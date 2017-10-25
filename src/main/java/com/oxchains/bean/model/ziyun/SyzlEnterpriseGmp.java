@@ -378,6 +378,15 @@ public class SyzlEnterpriseGmp extends BaseEntity {
     @JsonProperty("Token")
     private String Token;//token
 
+    @JsonProperty("UploadToNmbaState")
+    private int UploadToNmbaState;//区块链上传状态
+
+    @JsonProperty("EnterpriseFirstAuditStatus")
+    private String EnterpriseFirstAuditStatus;//企业首营资料审核状态
+
+    @JsonProperty("AuditNotPassedReason")
+    private String AuditNotPassedReason;//审核不通过原因
+
     @JsonIgnore
     public String getToken() {
         return Token;
