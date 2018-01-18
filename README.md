@@ -20,3 +20,10 @@
 
 ### 健康检查
 	1. 心跳检测
+	
+	
+-----------------------------------------------------------------
+### Docker 命令
+docker build -t oxchains/ziyun-api .
+
+docker run -d --name ziyun-api -p 8080:8080 -v /etc/localtime:/etc/localtime -it oxchains/ziyun-api
